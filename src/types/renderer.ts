@@ -6,6 +6,6 @@ export enum PowerPreference {
   DEFAULT = 'default'
 }
 
-export interface ImplRenderer {
+export interface InjectRenderer {
   renderer: WebGLRenderer | null
 }
