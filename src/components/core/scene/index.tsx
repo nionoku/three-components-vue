@@ -17,13 +17,11 @@ export interface Props {
 export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isScene'> {}
 
 @Options({})
-export default class Scene extends TransformatableComponentImpl implements
+export default class Scene extends TransformatableComponentImpl<Props> implements
     ComponentWithProps<Props>,
     Props,
     SceneComponent {
   declare public $parent: RendererComponent
-
-  declare public $props: Props
 
   @Prop({ type: [String, Object], default: 'white' })
   public readonly background!: NonNullable<Props['background']>;

@@ -17,7 +17,7 @@ export class Looper {
   }
 
   public start(): void {
-    this.renderer.render(this.scene, this.camera);
+    this.loop(0);
   }
 
   public cancel(): void {
@@ -27,7 +27,7 @@ export class Looper {
   protected loop(time: number): void {
     if (!this.hasLoop) return;
 
-    requestAnimationFrame(this.loop);
+    requestAnimationFrame((time) => this.loop(time));
 
     if (time - this.lastTimestamp < this.timestep) return;
 

@@ -91,6 +91,7 @@ export default class Renderer extends Component implements
   }
 
   public beforeDestroy(): void {
+    this.cancelRendering();
     this.$$renderer?.domElement.remove();
     this.$$renderer?.dispose();
   }

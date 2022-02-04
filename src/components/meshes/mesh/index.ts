@@ -6,10 +6,7 @@ import { ObjectComponent, SupportsShadowComponent, TransformatableComponent } fr
 import { Prop } from 'vue-property-decorator';
 import { TransformatableComponentImpl } from '@/components/super/object';
 
-export interface Props extends
-  Partial<TransformatableComponent>,
-  Partial<SupportsShadowComponent>
-{}
+export type Props = Partial<SupportsShadowComponent>
 
 export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 'isMesh'> {
   setGeometry(geometry: BufferGeometry): void
@@ -17,13 +14,11 @@ export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 
 }
 
 @Options({})
-export default class Mesh extends TransformatableComponentImpl implements
+export default class Mesh extends TransformatableComponentImpl<Props> implements
     ComponentWithProps<Props>,
     Props,
     MeshComponent {
   declare public $parent: ObjectComponent
-
-  declare public $props: Props
 
   @Prop({ type: Boolean, default: false })
   public readonly castShadow!: NonNullable<Props['castShadow']>;
@@ -43,19 +38,6 @@ export default class Mesh extends TransformatableComponentImpl implements
     if (!this.$parent.isObject3D) {
       throw new Error('Mesh must be child of Object3D');
     }
-
-    // TODO (2022.02.04): Supports create mesh without geometry
-    if (!this.$$geometry) {
-      throw new Error('Can not create mesh. Geometry is null');
-    }
-
-    // TODO (2022.02.04): Supports create mesh without material
-    if (!this.$$material) {
-      throw new Error('Can not create mesh. Material is null');
-    }
-
-    this.$$mesh = this.createMesh(this.$$geometry, this.$$material);
-    this.$parent.add(this.$$mesh);
   }
 
   public beforeDestroy(): void {
@@ -64,10 +46,20 @@ export default class Mesh extends TransformatableComponentImpl implements
 
   public setGeometry(geometry: BufferGeometry): void {
     this.$$geometry = geometry;
+
+    if (this.$$geometry && this.$$material) {
+      this.$$mesh = this.createMesh(this.$$geometry, this.$$material);
+      this.$parent.add(this.$$mesh);
+    }
   }
 
   public setMaterial(material: Material): void {
     this.$$material = material;
+
+    if (this.$$geometry && this.$$material) {
+      this.$$mesh = this.createMesh(this.$$geometry, this.$$material);
+      this.$parent.add(this.$$mesh);
+    }
   }
 
   protected createMesh(geometry: BufferGeometry, material: Material): ThreeMesh {
