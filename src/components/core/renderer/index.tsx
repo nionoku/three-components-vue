@@ -1,17 +1,15 @@
 import { Options, Vue } from 'vue-class-component';
-import { Prop, ProvideReactive } from 'vue-property-decorator';
+import { Prop } from 'vue-property-decorator';
 import {
   WebGLRendererParameters,
   WebGLRenderer,
   Scene,
   Camera,
 } from 'three';
-import { InjectRenderer, PowerPreference } from '@/types/renderer';
+import { PowerPreference } from '@/types/renderer';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentWithProps } from '@/types/component';
 import { Looper } from '@/handlers/Looper';
-
-export const RENDERER_KEY = Symbol('renderer');
 
 export interface Props extends Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'powerPreference'> {
   width?: number
@@ -30,10 +28,7 @@ export interface RendererComponent extends ComponentPublicInstance {
 }
 
 @Options({})
-export default class Renderer extends Vue implements
-    ComponentWithProps<Props>,
-    RendererComponent,
-    InjectRenderer {
+export default class Renderer extends Vue implements ComponentWithProps<Props>, RendererComponent {
   public declare $props: Props
 
   @Prop({ type: Number, default: 100 })
@@ -57,11 +52,9 @@ export default class Renderer extends Vue implements
   @Prop({ type: String, default: PowerPreference.DEFAULT })
   public readonly powerPreference!: NonNullable<Props['powerPreference']>;
 
-  /** @deprecated will be removed */
-  @ProvideReactive(RENDERER_KEY)
-  public renderer: InjectRenderer['renderer'] = null
-
   public readonly isRenderer: RendererComponent['isRenderer'] = true
+
+  protected $$renderer: WebGLRenderer | null = null
 
   protected $$scene: Scene | null = null
 
@@ -70,18 +63,18 @@ export default class Renderer extends Vue implements
   protected $$looper: Looper | null = null
 
   public created(): void {
-    this.renderer = new WebGLRenderer({
+    this.$$renderer = new WebGLRenderer({
       antialias: this.antialias,
       alpha: this.alpha,
       powerPreference: this.powerPreference,
     });
 
-    this.renderer.setSize(this.width, this.height);
-    this.renderer.setPixelRatio(this.pixelRatio);
+    this.$$renderer.setSize(this.width, this.height);
+    this.$$renderer.setPixelRatio(this.pixelRatio);
   }
 
   public mounted(): void {
-    if (!this.renderer) {
+    if (!this.$$renderer) {
       throw new Error('Renderer not ready');
     }
 
@@ -91,12 +84,12 @@ export default class Renderer extends Vue implements
 
     // append canvas to parent
     (this.$parent.$el as HTMLElement)
-      .appendChild(this.renderer.domElement);
+      .appendChild(this.$$renderer.domElement);
   }
 
   public beforeDestroy(): void {
-    this.renderer?.domElement.remove();
-    this.renderer?.dispose();
+    this.$$renderer?.domElement.remove();
+    this.$$renderer?.dispose();
   }
 
   public setScene(scene: Scene): void {
@@ -108,7 +101,7 @@ export default class Renderer extends Vue implements
   }
 
   public startRendering(): void {
-    if (!this.renderer) {
+    if (!this.$$renderer) {
       throw new Error('Can not start rendering. Renderer not ready');
     }
 
@@ -120,7 +113,7 @@ export default class Renderer extends Vue implements
       throw new Error('Can not start rendering. Camera not mounted');
     }
 
-    this.$$looper = new Looper(this.fps, this.renderer, this.$$scene, this.$$camera);
+    this.$$looper = new Looper(this.fps, this.$$renderer, this.$$scene, this.$$camera);
     this.$$looper.start();
   }
 

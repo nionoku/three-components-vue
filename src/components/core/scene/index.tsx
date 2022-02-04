@@ -1,7 +1,5 @@
 import { ComponentWithProps } from '@/types/component';
 import { ObjectContainer } from '@/types/object3d';
-import { InjectRenderer } from '@/types/renderer';
-import { InjectScene } from '@/types/scene';
 import {
   Color,
   Texture,
@@ -10,10 +8,8 @@ import {
 } from 'three';
 import { ComponentPublicInstance } from 'vue';
 import { Options, Vue } from 'vue-class-component';
-import { InjectReactive, Prop, ProvideReactive } from 'vue-property-decorator';
-import { RendererComponent, RENDERER_KEY } from '../renderer';
-
-export const SCENE_KEY = Symbol('scene');
+import { Prop } from 'vue-property-decorator';
+import { RendererComponent } from '../renderer';
 
 export interface Props {
   background?: Color | Texture | string
@@ -26,25 +22,13 @@ export interface SceneComponent extends
 {}
 
 @Options({})
-export default class Scene extends Vue implements
-      ComponentWithProps<Props>,
-      SceneComponent,
-      InjectRenderer,
-      InjectScene {
+export default class Scene extends Vue implements ComponentWithProps<Props>, SceneComponent {
   declare public $parent: RendererComponent
 
   declare public $props: Props
 
   @Prop({ type: [String, Object], default: 'white' })
   public readonly background!: NonNullable<Props['background']>;
-
-  /** @deprecated will be removed */
-  @InjectReactive(RENDERER_KEY)
-  public readonly renderer!: InjectRenderer['renderer']
-
-  /** @deprecated will be removed */
-  @ProvideReactive(SCENE_KEY)
-  public scene: InjectScene['scene'] = null
 
   public readonly isScene: SceneComponent['isScene'] = true;
 
