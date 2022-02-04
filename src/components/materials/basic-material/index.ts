@@ -63,6 +63,22 @@ export default class BasicMaterial extends BaseMaterial<Props, MeshBasicMaterial
   protected createMaterial(): MeshBasicMaterial {
     const geometry = new MeshBasicMaterial({
       color: this.color,
+      opacity: this.opacity,
+      map: this.map,
+      lightMap: this.lightMap,
+      lightMapIntensity: this.lightMapIntensity,
+      aoMap: this.aoMap,
+      aoMapIntensity: this.aoMapIntensity,
+      specularMap: this.specularMap,
+      alphaMap: this.alphaMap,
+      envMap: this.envMap,
+      combine: this.combine,
+      reflectivity: this.reflectivity,
+      refractionRatio: this.refractionRatio,
+      wireframe: this.wireframe,
+      wireframeLinewidth: this.wireframeLinewidth,
+      wireframeLinecap: this.wireframeLinecap,
+      wireframeLinejoin: this.wireframeLinejoin,
     });
     return geometry;
   }
