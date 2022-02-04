@@ -1,6 +1,7 @@
-import { Prop } from 'vue-property-decorator';
+import { Prop, Watch } from 'vue-property-decorator';
 import { TransformatableComponent } from '@/types/object3d';
-import { Object3D, Vector3 } from 'three';
+import { Object3D } from 'three';
+import { Vec3 } from '@/types/vector';
 import { Component } from '../component';
 
 export abstract class TransformatableComponentImpl<P> extends Component implements
@@ -19,21 +20,61 @@ export abstract class TransformatableComponentImpl<P> extends Component implemen
   @Prop({ type: Object, default: null })
   public readonly scale: Nullishable<TransformatableComponent['scale']>;
 
-  protected applyTransforms(target: Object3D): void {
+  protected abstract $$target: Object3D | null
+
+  protected abstract createTarget<T extends Array<string>>(...args: T): Object3D
+
+  @Watch('rotation', { deep: true })
+  protected whenRotation(value: Vec3): void {
+    if (!this.$$target) {
+      throw new Error('Can not apply rotation to target. Target is not ready');
+    }
+
+    this.$$target.rotation.set(value.x, value.y, value.z);
+  }
+
+  @Watch('position')
+  protected whenTranslate(value: Vec3): void {
+    if (!this.$$target) {
+      throw new Error('Can not apply position to target. Target is not ready');
+    }
+
+    this.$$target.position.set(value.x, value.y, value.z);
+  }
+
+  @Watch('lookAt')
+  protected whenLookAt(value: Vec3): void {
+    if (!this.$$target) {
+      throw new Error('Can not apply lookAt to target. Target is not ready');
+    }
+
+    this.$$target.lookAt(value.x, value.y, value.z);
+  }
+
+  @Watch('scale')
+  protected whenScale(value: Vec3): void {
+    if (!this.$$target) {
+      throw new Error('Can not apply scale to target. Target is not ready');
+    }
+
+    this.$$target.scale.set(value.x, value.y, value.z);
+  }
+
+  protected applyTransforms(): void {
     if (this.position) {
-      target.position.set(this.position.x, this.position.y, this.position.z);
+      this.whenTranslate(this.position);
     }
 
     if (this.rotation) {
-      target.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
+      this.whenRotation(this.rotation);
     }
 
     if (this.scale) {
-      target.scale.set(this.scale.x, this.scale.y, this.scale.z);
+      this.whenScale(this.scale);
     }
 
     if (this.lookAt) {
-      target.lookAt(new Vector3(this.lookAt.x, this.lookAt.y, this.lookAt.z));
+      this.whenLookAt(this.lookAt);
     }
   }
 }
