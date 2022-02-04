@@ -11,8 +11,9 @@ import { PowerPreference } from '@/types/renderer';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentWithProps } from '@/types/component';
 import { Looper } from '@/handlers/Looper';
+import { Component } from '@/components/super/component';
 
-export interface Props extends Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'powerPreference'> {
+export interface Props extends Partial<Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'powerPreference'>> {
   width?: number
   height?: number
   pixelRatio?: number
@@ -29,7 +30,7 @@ export interface RendererComponent extends ComponentPublicInstance {
 }
 
 @Options({})
-export default class Renderer extends Vue implements
+export default class Renderer extends Component implements
     ComponentWithProps<Props>,
     Props,
     RendererComponent {
@@ -122,11 +123,6 @@ export default class Renderer extends Vue implements
   public cancelRendering(): void {
     this.$$looper?.cancel();
     this.$$looper = null;
-  }
-
-  // FIXME (2022.02.04): Fix any
-  public render(): any {
-    return this.$slots?.default?.() ?? [];
   }
 
   protected createRenderer(): WebGLRenderer {

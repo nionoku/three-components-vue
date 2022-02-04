@@ -8,7 +8,7 @@ import { Prop } from 'vue-property-decorator';
 import { TransformatableComponentImpl } from '@/components/super/object';
 import { RendererComponent } from '../renderer';
 
-export type Props = Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>
+export type Props = Partial<Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>>
 
 export interface PerspectiveCameraComponent extends
   ComponentPublicInstance,
@@ -51,11 +51,6 @@ export default class PerspectiveCamera extends TransformatableComponentImpl impl
 
   public beforeDestroy(): void {
     this.$$camera?.removeFromParent();
-  }
-
-  // FIXME (2022.02.04): Fix any
-  public render(): any {
-    return this.$slots?.default?.() ?? [];
   }
 
   protected createCamera(): ThreePerspectiveCamera {

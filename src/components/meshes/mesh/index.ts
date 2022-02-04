@@ -2,10 +2,15 @@ import { Options, Vue } from 'vue-class-component';
 import { BufferGeometry, Material, Mesh as ThreeMesh } from 'three';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentWithProps } from '@/types/component';
-import { ObjectComponent, SupportsShadowComponent } from '@/types/object3d';
+import { ObjectComponent, SupportsShadowComponent, TransformatableComponent } from '@/types/object3d';
 import { Prop } from 'vue-property-decorator';
+import { Vec3 } from '@/types/vector';
+import { TransformatableComponentImpl } from '@/components/super/object';
 
-type Props = SupportsShadowComponent
+export interface Props extends
+  Partial<TransformatableComponent>,
+  Partial<SupportsShadowComponent>
+{}
 
 export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 'isMesh'> {
   setGeometry(geometry: BufferGeometry): void
@@ -13,7 +18,10 @@ export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 
 }
 
 @Options({})
-export default class Mesh extends Vue implements ComponentWithProps<Props>, Props, MeshComponent {
+export default class Mesh extends TransformatableComponentImpl implements
+    ComponentWithProps<Props>,
+    Props,
+    MeshComponent {
   declare public $parent: ObjectComponent
 
   declare public $props: Props
@@ -55,11 +63,6 @@ export default class Mesh extends Vue implements ComponentWithProps<Props>, Prop
     this.$$mesh?.removeFromParent();
   }
 
-  // FIXME (2022.02.04): Fix any
-  public render(): any {
-    return this.$slots?.default?.() ?? [];
-  }
-
   public setGeometry(geometry: BufferGeometry): void {
     this.$$geometry = geometry;
   }
@@ -70,6 +73,7 @@ export default class Mesh extends Vue implements ComponentWithProps<Props>, Prop
 
   protected createMesh(geometry: BufferGeometry, material: Material): ThreeMesh {
     const mesh = new ThreeMesh(geometry, material);
+    this.applyTransforms(mesh);
     mesh.castShadow = this.castShadow;
     mesh.receiveShadow = this.receiveShadow;
 

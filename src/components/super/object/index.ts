@@ -1,9 +1,9 @@
 import { Prop } from 'vue-property-decorator';
 import { TransformatableComponent } from '@/types/object3d';
-import { Vue } from 'vue-class-component';
-import { Object3D } from 'three';
+import { Object3D, Vector3 } from 'three';
+import { Component } from '../component';
 
-export abstract class TransformatableComponentImpl extends Vue implements
+export abstract class TransformatableComponentImpl extends Component implements
     Partial<TransformatableComponent> {
   @Prop({ type: [Object, null], default: null })
   public readonly position: Nullishable<TransformatableComponent['position']>;
@@ -19,7 +19,7 @@ export abstract class TransformatableComponentImpl extends Vue implements
 
   protected applyTransforms(target: Object3D): void {
     if (this.lookAt) {
-      target.lookAt(this.lookAt.x, this.lookAt.y, this.lookAt.z);
+      target.lookAt(new Vector3(this.lookAt.x, this.lookAt.y, this.lookAt.z));
     }
 
     if (this.scale) {

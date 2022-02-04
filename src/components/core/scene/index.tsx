@@ -3,7 +3,6 @@ import { ComponentWithProps } from '@/types/component';
 import { ObjectComponent } from '@/types/object3d';
 import {
   Color,
-  Texture,
   Scene as ThreeScene,
   Object3D,
 } from 'three';
@@ -12,7 +11,7 @@ import { Prop } from 'vue-property-decorator';
 import { RendererComponent } from '../renderer';
 
 export interface Props {
-  background?: Color | Texture | string
+  background?: NonNullable<ThreeScene['background']> | string
 }
 
 export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isScene'> {}
@@ -50,11 +49,6 @@ export default class Scene extends TransformatableComponentImpl implements
 
   public beforeDestroy(): void {
     this.$$scene?.removeFromParent();
-  }
-
-  // FIXME (2022.02.04): Fix any
-  public render(): any {
-    return this.$slots?.default?.() ?? [];
   }
 
   public add(...objects: Array<Object3D>): ThreeScene {
