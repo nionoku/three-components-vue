@@ -1,8 +1,10 @@
 import { Options } from 'vue-class-component';
-import { BufferGeometry, Material, Mesh as ThreeMesh } from 'three';
+import {
+  BufferGeometry, Material, Mesh as ThreeMesh,
+} from 'three';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentWithProps } from '@/types/component';
-import { ObjectComponent, SupportsShadowComponent, TransformatableComponent } from '@/types/object3d';
+import { ObjectComponent, SupportsShadowComponent } from '@/types/object3d';
 import { Prop } from 'vue-property-decorator';
 import { TransformatableComponentImpl } from '@/components/super/object';
 
@@ -28,34 +30,41 @@ export default class Mesh extends TransformatableComponentImpl<Props> implements
 
   public readonly isMesh = true
 
-  protected $$mesh: ThreeMesh | null = null
+  /** @alias $$mesh */
+  protected $$target: ThreeMesh | null = null
 
   public created(): void {
     if (!this.$parent.isObject3D) {
       throw new Error('Mesh must be child of Object3D');
     }
 
-    this.$$mesh = new ThreeMesh();
-    this.$parent.add(this.$$mesh);
+    this.$$target = this.createTarget();
+    this.applyTransforms();
+    this.$parent.add(this.$$target);
   }
 
   public beforeDestroy(): void {
-    this.$$mesh?.removeFromParent();
+    this.$$target?.removeFromParent();
   }
 
   public setGeometry(geometry: BufferGeometry): void {
-    if (!this.$$mesh) {
+    if (!this.$$target) {
       throw new Error('Mesh is not ready so geometry can not be added to it');
     }
 
-    this.$$mesh.geometry = geometry;
+    this.$$target.geometry = geometry;
   }
 
   public setMaterial(material: Material): void {
-    if (!this.$$mesh) {
+    if (!this.$$target) {
       throw new Error('Mesh is not ready so material can not be addedto it');
     }
 
-    this.$$mesh.material = material;
+    this.$$target.material = material;
+  }
+
+  protected createTarget(): ThreeMesh {
+    const mesh = new ThreeMesh();
+    return mesh;
   }
 }

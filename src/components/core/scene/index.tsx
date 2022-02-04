@@ -30,15 +30,17 @@ export default class Scene extends TransformatableComponentImpl<Props> implement
 
   public readonly isObject3D: SceneComponent['isObject3D'] = true;
 
-  protected $$scene: ThreeScene | null = null
+  /** @alias $$scene */
+  protected $$target: ThreeScene | null = null
 
   public created(): void {
     if (!this.$parent.isRenderer) {
       throw new Error('Scene must be child of renderer');
     }
 
-    this.$$scene = this.createScene();
-    this.$parent.setScene(this.$$scene);
+    this.$$target = this.createTarget();
+    this.applyTransforms();
+    this.$parent.setScene(this.$$target);
   }
 
   public mounted(): void {
@@ -46,28 +48,28 @@ export default class Scene extends TransformatableComponentImpl<Props> implement
   }
 
   public beforeDestroy(): void {
-    this.$$scene?.removeFromParent();
+    this.$$target?.removeFromParent();
   }
 
   public add(...objects: Array<Object3D>): ThreeScene {
-    if (!this.$$scene) {
+    if (!this.$$target) {
       throw new Error('Can not add objects on scene. Scene is null');
     }
 
-    this.$$scene?.add(...objects);
-    return this.$$scene;
+    this.$$target?.add(...objects);
+    return this.$$target;
   }
 
   public remove(...objects: Array<Object3D>): ThreeScene {
-    if (!this.$$scene) {
+    if (!this.$$target) {
       throw new Error('Can not remove objects from scene. Scene is null');
     }
 
-    this.$$scene?.remove(...objects);
-    return this.$$scene;
+    this.$$target?.remove(...objects);
+    return this.$$target;
   }
 
-  protected createScene(): ThreeScene {
+  protected createTarget(): ThreeScene {
     const scene = new ThreeScene();
 
     if (typeof this.background === 'string') {
@@ -75,7 +77,6 @@ export default class Scene extends TransformatableComponentImpl<Props> implement
     } else {
       scene.background = this.background;
     }
-    this.applyTransforms(scene);
 
     return scene;
   }

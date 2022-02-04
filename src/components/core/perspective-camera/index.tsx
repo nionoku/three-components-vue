@@ -37,7 +37,8 @@ export default class PerspectiveCamera extends TransformatableComponentImpl<Prop
 
   public isPerspectiveCamera: PerspectiveCameraComponent['isPerspectiveCamera'] = true
 
-  protected $$camera: ThreePerspectiveCamera | null = null
+  /** @alias $$camera */
+  protected $$target: ThreePerspectiveCamera | null = null
 
   @Watch('position')
   protected whenPositionChanged(value: Vec3): void {
@@ -45,8 +46,8 @@ export default class PerspectiveCamera extends TransformatableComponentImpl<Prop
       throw new Error('Invalid position value');
     }
 
-    this.$$camera?.position.set(value.x, value.y, value.z);
-    this.$$camera?.updateProjectionMatrix();
+    this.$$target?.position.set(value.x, value.y, value.z);
+    this.$$target?.updateProjectionMatrix();
   }
 
   public created(): void {
@@ -54,18 +55,18 @@ export default class PerspectiveCamera extends TransformatableComponentImpl<Prop
       throw new Error('PerspectiveCamera must be child of renderer');
     }
 
-    this.$$camera = this.createCamera();
-    this.$parent.setCamera(this.$$camera);
+    this.$$target = this.createTarget();
+    this.applyTransforms();
+    this.$$target.updateProjectionMatrix();
+    this.$parent.setCamera(this.$$target);
   }
 
   public beforeDestroy(): void {
-    this.$$camera?.removeFromParent();
+    this.$$target?.removeFromParent();
   }
 
-  protected createCamera(): ThreePerspectiveCamera {
+  protected createTarget(): ThreePerspectiveCamera {
     const camera = new ThreePerspectiveCamera(this.fov, this.aspect, this.near, this.far);
-    this.applyTransforms(camera);
-    camera.updateProjectionMatrix();
 
     return camera;
   }
