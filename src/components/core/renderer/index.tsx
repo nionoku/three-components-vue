@@ -6,6 +6,7 @@ import {
   Scene,
   Camera,
 } from 'three';
+import { WebGL } from 'three/examples/jsm/capabilities/WebGL';
 import { PowerPreference } from '@/types/renderer';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentWithProps } from '@/types/component';
@@ -66,6 +67,10 @@ export default class Renderer extends Vue implements
   protected $$looper: Looper | null = null
 
   public created(): void {
+    if (!WebGL.isWebGLAvailable()) {
+      throw new Error('This browser is not supports WebGL');
+    }
+
     this.$$renderer = new WebGLRenderer({
       antialias: this.antialias,
       alpha: this.alpha,
