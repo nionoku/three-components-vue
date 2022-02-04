@@ -33,6 +33,10 @@ export default class Mesh extends Vue implements ComponentWithProps<Props>, Prop
   protected $$material: Material | null = null
 
   public created(): void {
+    if (!this.$parent.isObject3D) {
+      throw new Error('Mesh must be child of Object3D');
+    }
+
     // TODO (2022.02.04): Supports create mesh without geometry
     if (!this.$$geometry) {
       throw new Error('Can not create mesh. Geometry is null');
