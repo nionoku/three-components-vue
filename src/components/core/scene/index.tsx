@@ -34,6 +34,7 @@ export default class Scene extends Vue implements
   @Prop({ type: [String, Object], default: 'white' })
   public readonly background!: NonNullable<Props['background']>;
 
+  /** @deprecated will be removed */
   @InjectReactive(RENDERER_KEY)
   public renderer!: InjectRenderer['renderer']
 
@@ -45,6 +46,10 @@ export default class Scene extends Vue implements
   protected $$scene: ThreeScene | null = null
 
   public created(): void {
+    if (!this.$parent.isRenderer) {
+      throw new Error('Scene must be child of renderer');
+    }
+
     this.$$scene = new ThreeScene();
 
     if (typeof this.background === 'string') {
@@ -53,11 +58,10 @@ export default class Scene extends Vue implements
       this.$$scene.background = this.background;
     }
 
-    if (!this.$parent.isRenderer) {
-      throw new Error('Scene must be child of renderer');
-    }
-
     this.$parent.setScene(this.$$scene);
+  }
+
+  public mounted(): void {
     this.$parent.startRendering();
   }
 

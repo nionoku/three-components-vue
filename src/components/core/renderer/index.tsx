@@ -1,11 +1,10 @@
 import { Options, Vue } from 'vue-class-component';
-import { Prop, ProvideReactive, Watch } from 'vue-property-decorator';
+import { Prop, ProvideReactive } from 'vue-property-decorator';
 import {
   WebGLRendererParameters,
   WebGLRenderer,
   Scene,
   Camera,
-  PerspectiveCamera,
 } from 'three';
 import { InjectRenderer, PowerPreference } from '@/types/renderer';
 import { ComponentPublicInstance } from 'vue';
