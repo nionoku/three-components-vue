@@ -65,7 +65,7 @@ export default class PerspectiveCamera extends Vue implements
     this.$$camera?.removeFromParent();
   }
 
-  // TODO (2022.02.04): Fix any
+  // FIXME (2022.02.04): Fix any
   public render(): any {
     return this.$slots?.default?.() ?? [];
   }

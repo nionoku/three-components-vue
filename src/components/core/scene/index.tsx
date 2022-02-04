@@ -36,14 +36,7 @@ export default class Scene extends Vue implements ComponentWithProps<Props>, Pro
       throw new Error('Scene must be child of renderer');
     }
 
-    this.$$scene = new ThreeScene();
-
-    if (typeof this.background === 'string') {
-      this.$$scene.background = new Color(this.background);
-    } else {
-      this.$$scene.background = this.background;
-    }
-
+    this.$$scene = this.createScene();
     this.$parent.setScene(this.$$scene);
   }
 
@@ -55,7 +48,7 @@ export default class Scene extends Vue implements ComponentWithProps<Props>, Pro
     this.$$scene?.removeFromParent();
   }
 
-  // TODO (2022.02.04): Fix any
+  // FIXME (2022.02.04): Fix any
   public render(): any {
     return this.$slots?.default?.() ?? [];
   }
@@ -76,5 +69,17 @@ export default class Scene extends Vue implements ComponentWithProps<Props>, Pro
 
     this.$$scene?.remove(...objects);
     return this.$$scene;
+  }
+
+  protected createScene(): ThreeScene {
+    const scene = new ThreeScene();
+
+    if (typeof this.background === 'string') {
+      scene.background = new Color(this.background);
+    } else {
+      scene.background = this.background;
+    }
+
+    return scene;
   }
 }

@@ -8,7 +8,7 @@ import {
 } from 'three';
 import WebGL from 'three/examples/jsm/capabilities/WebGL';
 import { PowerPreference } from '@/types/renderer';
-import { ComponentPublicInstance, onMounted } from 'vue';
+import { ComponentPublicInstance } from 'vue';
 import { ComponentWithProps } from '@/types/component';
 import { Looper } from '@/handlers/Looper';
 
@@ -21,7 +21,7 @@ export interface Props extends Pick<WebGLRendererParameters, 'alpha' | 'antialia
 }
 
 export interface RendererComponent extends ComponentPublicInstance {
-  isRenderer: boolean
+  isRenderer: true
   setScene(scene: Scene): void
   setCamera(camera: Camera): void
   startRendering(): void
@@ -71,14 +71,7 @@ export default class Renderer extends Vue implements
       throw new Error('This browser is not supports WebGL');
     }
 
-    this.$$renderer = new WebGLRenderer({
-      antialias: this.antialias,
-      alpha: this.alpha,
-      powerPreference: this.powerPreference,
-    });
-
-    this.$$renderer.setSize(this.width, this.height);
-    this.$$renderer.setPixelRatio(this.pixelRatio);
+    this.$$renderer = this.createRenderer();
   }
 
   public mounted(): void {
@@ -130,8 +123,21 @@ export default class Renderer extends Vue implements
     this.$$looper = null;
   }
 
-  // TODO (2022.02.04): Fix any
+  // FIXME (2022.02.04): Fix any
   public render(): any {
     return this.$slots?.default?.() ?? [];
+  }
+
+  protected createRenderer(): WebGLRenderer {
+    const renderer = new WebGLRenderer({
+      antialias: this.antialias,
+      alpha: this.alpha,
+      powerPreference: this.powerPreference,
+    });
+
+    renderer.setSize(this.width, this.height);
+    renderer.setPixelRatio(this.pixelRatio);
+
+    return renderer;
   }
 }
