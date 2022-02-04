@@ -30,14 +30,13 @@ export default class Mesh extends TransformatableComponentImpl<Props> implements
 
   protected $$mesh: ThreeMesh | null = null
 
-  protected $$geometry: BufferGeometry | null = null
-
-  protected $$material: Material | null = null
-
   public created(): void {
     if (!this.$parent.isObject3D) {
       throw new Error('Mesh must be child of Object3D');
     }
+
+    this.$$mesh = new ThreeMesh();
+    this.$parent.add(this.$$mesh);
   }
 
   public beforeDestroy(): void {
@@ -45,29 +44,18 @@ export default class Mesh extends TransformatableComponentImpl<Props> implements
   }
 
   public setGeometry(geometry: BufferGeometry): void {
-    this.$$geometry = geometry;
-
-    if (this.$$geometry && this.$$material) {
-      this.$$mesh = this.createMesh(this.$$geometry, this.$$material);
-      this.$parent.add(this.$$mesh);
+    if (!this.$$mesh) {
+      throw new Error('Mesh is not ready so geometry can not be added to it');
     }
+
+    this.$$mesh.geometry = geometry;
   }
 
   public setMaterial(material: Material): void {
-    this.$$material = material;
-
-    if (this.$$geometry && this.$$material) {
-      this.$$mesh = this.createMesh(this.$$geometry, this.$$material);
-      this.$parent.add(this.$$mesh);
+    if (!this.$$mesh) {
+      throw new Error('Mesh is not ready so material can not be addedto it');
     }
-  }
 
-  protected createMesh(geometry: BufferGeometry, material: Material): ThreeMesh {
-    const mesh = new ThreeMesh(geometry, material);
-    this.applyTransforms(mesh);
-    mesh.castShadow = this.castShadow;
-    mesh.receiveShadow = this.receiveShadow;
-
-    return mesh;
+    this.$$mesh.material = material;
   }
 }

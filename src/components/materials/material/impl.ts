@@ -7,7 +7,7 @@ import { Material as BaseMaterial } from '.';
 @Options({})
 export default class Material extends BaseMaterial<never, ThreeMaterial> {
   protected createMaterial(): ThreeMaterial {
-    const geometry = new ThreeMaterial();
-    return geometry;
+    const material = new ThreeMaterial();
+    return material;
   }
 }
