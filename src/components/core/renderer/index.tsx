@@ -6,9 +6,9 @@ import {
   Scene,
   Camera,
 } from 'three';
-import { WebGL } from 'three/examples/jsm/capabilities/WebGL';
+import WebGL from 'three/examples/jsm/capabilities/WebGL';
 import { PowerPreference } from '@/types/renderer';
-import { ComponentPublicInstance } from 'vue';
+import { ComponentPublicInstance, onMounted } from 'vue';
 import { ComponentWithProps } from '@/types/component';
 import { Looper } from '@/handlers/Looper';
 
