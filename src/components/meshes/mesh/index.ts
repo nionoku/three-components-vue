@@ -1,10 +1,9 @@
-import { Options, Vue } from 'vue-class-component';
+import { Options } from 'vue-class-component';
 import { BufferGeometry, Material, Mesh as ThreeMesh } from 'three';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentWithProps } from '@/types/component';
 import { ObjectComponent, SupportsShadowComponent, TransformatableComponent } from '@/types/object3d';
 import { Prop } from 'vue-property-decorator';
-import { Vec3 } from '@/types/vector';
 import { TransformatableComponentImpl } from '@/components/super/object';
 
 export interface Props extends

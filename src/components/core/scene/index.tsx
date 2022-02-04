@@ -6,7 +6,7 @@ import {
   Scene as ThreeScene,
   Object3D,
 } from 'three';
-import { Options, Vue } from 'vue-class-component';
+import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { RendererComponent } from '../renderer';
 
