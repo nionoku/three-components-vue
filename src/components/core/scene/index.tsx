@@ -17,7 +17,7 @@ export interface Props {
 export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isScene'> {}
 
 @Options({})
-export default class Scene extends Vue implements ComponentWithProps<Props>, SceneComponent {
+export default class Scene extends Vue implements ComponentWithProps<Props>, Props, SceneComponent {
   declare public $parent: RendererComponent
 
   declare public $props: Props
@@ -49,6 +49,10 @@ export default class Scene extends Vue implements ComponentWithProps<Props>, Sce
 
   public mounted(): void {
     this.$parent.startRendering();
+  }
+
+  public beforeDestroy(): void {
+    this.$$scene?.removeFromParent();
   }
 
   // TODO (2022.02.04): Fix any

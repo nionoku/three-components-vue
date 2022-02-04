@@ -28,7 +28,10 @@ export interface RendererComponent extends ComponentPublicInstance {
 }
 
 @Options({})
-export default class Renderer extends Vue implements ComponentWithProps<Props>, RendererComponent {
+export default class Renderer extends Vue implements
+    ComponentWithProps<Props>,
+    Props,
+    RendererComponent {
   public declare $props: Props
 
   @Prop({ type: Number, default: 100 })
