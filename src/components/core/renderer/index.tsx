@@ -35,6 +35,8 @@ export default class Renderer extends Vue implements
     RendererComponent {
   public declare $props: Props
 
+  public declare $parent: ComponentPublicInstance;
+
   @Prop({ type: Number, default: 100 })
   public readonly width!: NonNullable<Props['width']>;
 
@@ -84,8 +86,7 @@ export default class Renderer extends Vue implements
     }
 
     // append canvas to parent
-    (this.$parent.$el as HTMLElement)
-      .appendChild(this.$$renderer.domElement);
+    this.$parent.$el.appendChild(this.$$renderer.domElement);
   }
 
   public beforeDestroy(): void {
