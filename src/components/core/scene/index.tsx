@@ -1,3 +1,4 @@
+import { TransformatableComponentImpl } from '@/components/super/object';
 import { ComponentWithProps } from '@/types/component';
 import { ObjectComponent } from '@/types/object3d';
 import {
@@ -17,7 +18,10 @@ export interface Props {
 export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isScene'> {}
 
 @Options({})
-export default class Scene extends Vue implements ComponentWithProps<Props>, Props, SceneComponent {
+export default class Scene extends TransformatableComponentImpl implements
+    ComponentWithProps<Props>,
+    Props,
+    SceneComponent {
   declare public $parent: RendererComponent
 
   declare public $props: Props
@@ -79,6 +83,7 @@ export default class Scene extends Vue implements ComponentWithProps<Props>, Pro
     } else {
       scene.background = this.background;
     }
+    this.applyTransforms(scene);
 
     return scene;
   }

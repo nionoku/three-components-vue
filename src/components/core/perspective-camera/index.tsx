@@ -2,16 +2,13 @@ import { ComponentWithProps } from '@/types/component';
 import {
   ComponentPublicInstance,
 } from 'vue';
-import { Options, Vue } from 'vue-class-component';
+import { Options } from 'vue-class-component';
 import { PerspectiveCamera as ThreePerspectiveCamera } from 'three';
 import { Prop } from 'vue-property-decorator';
-import { Vec3 } from '@/types/vector';
+import { TransformatableComponentImpl } from '@/components/super/object';
 import { RendererComponent } from '../renderer';
 
-export interface Props extends Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'> {
-  rotation: Vec3
-  lookAt: Vec3
-}
+export type Props = Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>
 
 export interface PerspectiveCameraComponent extends
   ComponentPublicInstance,
@@ -19,7 +16,7 @@ export interface PerspectiveCameraComponent extends
 {}
 
 @Options({})
-export default class PerspectiveCamera extends Vue implements
+export default class PerspectiveCamera extends TransformatableComponentImpl implements
     ComponentWithProps<Props>,
     Props,
     PerspectiveCameraComponent {
@@ -39,12 +36,6 @@ export default class PerspectiveCamera extends Vue implements
   @Prop({ type: Number, default: 2000 })
   public readonly far!: NonNullable<Props['far']>;
 
-  @Prop({ type: Object, default: () => ({ x: 0, y: 0, z: 0 }) })
-  public readonly rotation!: NonNullable<Props['rotation']>;
-
-  @Prop({ type: Object, default: () => ({ x: 0, y: 0, z: 0 }) })
-  public readonly lookAt!: NonNullable<Props['lookAt']>;
-
   public isPerspectiveCamera: PerspectiveCameraComponent['isPerspectiveCamera'] = true
 
   protected $$camera: ThreePerspectiveCamera | null = null
@@ -54,10 +45,7 @@ export default class PerspectiveCamera extends Vue implements
       throw new Error('PerspectiveCamera must be child of renderer');
     }
 
-    this.$$camera = new ThreePerspectiveCamera(this.fov, this.aspect, this.near, this.far);
-    this.$$camera.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
-    this.$$camera.lookAt(this.lookAt.x, this.lookAt.y, this.lookAt.z);
-
+    this.$$camera = this.createCamera();
     this.$parent.setCamera(this.$$camera);
   }
 
@@ -68,5 +56,12 @@ export default class PerspectiveCamera extends Vue implements
   // FIXME (2022.02.04): Fix any
   public render(): any {
     return this.$slots?.default?.() ?? [];
+  }
+
+  protected createCamera(): ThreePerspectiveCamera {
+    const camera = new ThreePerspectiveCamera(this.fov, this.aspect, this.near, this.far);
+    this.applyTransforms(camera);
+
+    return camera;
   }
 }
