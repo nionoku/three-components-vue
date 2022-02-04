@@ -1,6 +1,6 @@
 {
   "name": "three-components-vue",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "lib/index.common.js",
   "module": "lib/index.umd.js",
   "types": "lib/index.d.ts",
