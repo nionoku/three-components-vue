@@ -1,4 +1,4 @@
-import { VNode } from "vue"
+import { VNode } from 'vue'
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -10,13 +10,9 @@ export const parameters = {
   },
 }
 
-export const decorators = [
-  (story: VNode) => ({
-    components: { story },
-    template: `
-      <div style="width: 600px; height: 400px; border: 1px dashed black">
-        <story />
-      </div>
-    `
-  })
-]
+// export const decorators = [
+//   (story: VNode) => ({
+//     components: { story },
+//     template: '<story />'
+//   })
+// ]
