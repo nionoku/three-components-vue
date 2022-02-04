@@ -51,6 +51,11 @@ export default class Mesh extends Vue implements ComponentWithProps<Props>, Prop
     this.$$mesh?.removeFromParent();
   }
 
+  // FIXME (2022.02.04): Fix any
+  public render(): any {
+    return this.$slots?.default?.() ?? [];
+  }
+
   public setGeometry(geometry: BufferGeometry): void {
     this.$$geometry = geometry;
   }
