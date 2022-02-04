@@ -1,6 +1,7 @@
 import { Object3D } from 'three';
+import { ComponentPublicInstance } from 'vue';
 
-export interface ObjectContainer {
-  add(...objects: Array<Object3D>): void
-  remove(...objects: Array<Object3D>): void
-}
+export interface ObjectComponent extends
+  ComponentPublicInstance,
+  Pick<Object3D, 'isObject3D' | 'add' | 'remove'>
+{}

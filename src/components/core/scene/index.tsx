@@ -1,12 +1,11 @@
 import { ComponentWithProps } from '@/types/component';
-import { ObjectContainer } from '@/types/object3d';
+import { ObjectComponent } from '@/types/object3d';
 import {
   Color,
   Texture,
   Scene as ThreeScene,
   Object3D,
 } from 'three';
-import { ComponentPublicInstance } from 'vue';
 import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { RendererComponent } from '../renderer';
@@ -15,11 +14,7 @@ export interface Props {
   background?: Color | Texture | string
 }
 
-export interface SceneComponent extends
-    ComponentPublicInstance,
-    ObjectContainer,
-    Pick<ThreeScene, 'isScene'>
-{}
+export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isScene'> {}
 
 @Options({})
 export default class Scene extends Vue implements ComponentWithProps<Props>, SceneComponent {
@@ -31,6 +26,8 @@ export default class Scene extends Vue implements ComponentWithProps<Props>, Sce
   public readonly background!: NonNullable<Props['background']>;
 
   public readonly isScene: SceneComponent['isScene'] = true;
+
+  public readonly isObject3D: SceneComponent['isObject3D'] = true;
 
   protected $$scene: ThreeScene | null = null
 
@@ -59,11 +56,21 @@ export default class Scene extends Vue implements ComponentWithProps<Props>, Sce
     return this.$slots?.default?.() ?? [];
   }
 
-  public add(...objects: Array<Object3D>): void {
+  public add(...objects: Array<Object3D>): ThreeScene {
+    if (!this.$$scene) {
+      throw new Error('Can not add objects on scene. Scene is null');
+    }
+
     this.$$scene?.add(...objects);
+    return this.$$scene;
   }
 
-  public remove(...objects: Array<Object3D>): void {
+  public remove(...objects: Array<Object3D>): ThreeScene {
+    if (!this.$$scene) {
+      throw new Error('Can not remove objects from scene. Scene is null');
+    }
+
     this.$$scene?.remove(...objects);
+    return this.$$scene;
   }
 }
