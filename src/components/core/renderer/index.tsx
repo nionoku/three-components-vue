@@ -9,6 +9,7 @@ import {
 import { InjectRenderer, PowerPreference } from '@/types/renderer';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentWithProps } from '@/types/component';
+import { Looper } from '@/handlers/Looper';
 
 export const RENDERER_KEY = Symbol('renderer');
 
@@ -26,11 +27,6 @@ export interface RendererComponent extends ComponentPublicInstance {
   setCamera(camera: Camera): void
   startRendering(): void
   cancelRendering(): void
-}
-
-interface Looper {
-  loop(time: number): void
-  cancel(): void
 }
 
 @Options({})
@@ -112,6 +108,10 @@ export default class Renderer extends Vue implements
   }
 
   public startRendering(): void {
+    if (!this.renderer) {
+      throw new Error('Can not start rendering. Renderer not ready');
+    }
+
     if (!this.$$scene) {
       throw new Error('Can not start rendering. Scene not mounted');
     }
@@ -120,8 +120,8 @@ export default class Renderer extends Vue implements
       throw new Error('Can not start rendering. Camera not mounted');
     }
 
-    this.$$looper = this.looper(this.$$scene, this.$$camera);
-    this.$$looper.loop(0);
+    this.$$looper = new Looper(this.fps, this.renderer, this.$$scene, this.$$camera);
+    this.$$looper.start();
   }
 
   public cancelRendering(): void {
@@ -132,33 +132,5 @@ export default class Renderer extends Vue implements
   // TODO (2022.02.04): Fix any
   public render(): any {
     return this.$slots?.default?.() ?? [];
-  }
-
-  protected looper(scene: Scene, camera: Camera): Looper {
-    const timestep = 1000 / this.fps;
-    let lastTimestamp = 0;
-    let hasLoop = true;
-
-    const handler = (time: number): void => {
-      if (!hasLoop) return;
-
-      requestAnimationFrame(handler);
-      // FPS counter
-      if (time - lastTimestamp < timestep) return;
-
-      lastTimestamp = time;
-      this.whenRender(scene, camera);
-    };
-
-    const cancel = () => { hasLoop = false; };
-
-    return {
-      loop: handler,
-      cancel,
-    };
-  }
-
-  protected whenRender(scene: Scene, camera: Camera): void {
-    this.renderer?.render(scene, camera);
   }
 }
