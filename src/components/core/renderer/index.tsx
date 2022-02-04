@@ -61,10 +61,11 @@ export default class Renderer extends Vue implements
   @Prop({ type: String, default: PowerPreference.DEFAULT })
   public readonly powerPreference!: NonNullable<Props['powerPreference']>;
 
+  /** @deprecated will be removed */
   @ProvideReactive(RENDERER_KEY)
   public renderer: InjectRenderer['renderer'] = null
 
-  public readonly isRenderer: boolean = true
+  public readonly isRenderer: RendererComponent['isRenderer'] = true
 
   protected $$scene: Scene | null = null
 

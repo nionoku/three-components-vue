@@ -1,10 +1,12 @@
 import { ComponentWithProps } from '@/types/component';
+import { ObjectContainer } from '@/types/object3d';
 import { InjectRenderer } from '@/types/renderer';
 import { InjectScene } from '@/types/scene';
 import {
   Color,
   Texture,
   Scene as ThreeScene,
+  Object3D,
 } from 'three';
 import { ComponentPublicInstance } from 'vue';
 import { Options, Vue } from 'vue-class-component';
@@ -17,9 +19,11 @@ export interface Props {
   background?: Color | Texture | string
 }
 
-export interface SceneComponent extends ComponentPublicInstance {
-  isScene: boolean
-}
+export interface SceneComponent extends
+    ComponentPublicInstance,
+    ObjectContainer,
+    Pick<ThreeScene, 'isScene'>
+{}
 
 @Options({})
 export default class Scene extends Vue implements
@@ -36,12 +40,13 @@ export default class Scene extends Vue implements
 
   /** @deprecated will be removed */
   @InjectReactive(RENDERER_KEY)
-  public renderer!: InjectRenderer['renderer']
+  public readonly renderer!: InjectRenderer['renderer']
 
+  /** @deprecated will be removed */
   @ProvideReactive(SCENE_KEY)
   public scene: InjectScene['scene'] = null
 
-  public isScene: SceneComponent['isScene'] = true;
+  public readonly isScene: SceneComponent['isScene'] = true;
 
   protected $$scene: ThreeScene | null = null
 
@@ -68,5 +73,13 @@ export default class Scene extends Vue implements
   // TODO (2022.02.04): Fix any
   public render(): any {
     return this.$slots?.default?.() ?? [];
+  }
+
+  public add(...objects: Array<Object3D>): void {
+    this.$$scene?.add(...objects);
+  }
+
+  public remove(...objects: Array<Object3D>): void {
+    this.$$scene?.remove(...objects);
   }
 }
