@@ -13,9 +13,6 @@ export default class BasicMaterial extends BaseMaterial<Props, MeshBasicMaterial
   @Prop({ type: [Object, Number, String], default: 'white' })
   public readonly color!: NonNullable<Props['color']>
 
-  @Prop({ type: Number, default: 1 })
-  public readonly opacity!: NonNullable<Props['opacity']>
-
   @Prop({ type: Object, default: null })
   public readonly map!: NonNullable<Props['map']>
 
@@ -93,7 +90,6 @@ export default class BasicMaterial extends BaseMaterial<Props, MeshBasicMaterial
       clippingPlanes: this.clippingPlanes,
       clipShadows: this.clipShadows,
       colorWrite: this.colorWrite,
-      defines: this.defines,
       depthFunc: this.depthFunc,
       depthTest: this.depthTest,
       depthWrite: this.depthWrite,

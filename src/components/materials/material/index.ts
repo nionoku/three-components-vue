@@ -2,26 +2,31 @@ import { MeshComponent } from '@/components/meshes/mesh';
 import {
   AddEquation,
   AlwaysStencilFunc,
-  BlendingDstFactor,
   FrontSide,
   KeepStencilOp,
   LessEqualDepth,
   Material as ThreeMaterial,
   MaterialParameters,
   NormalBlending,
+  OneMinusSrcAlphaFactor,
   SrcAlphaFactor,
 } from 'three';
 import { Component } from '@/components/super/component';
 import { Prop } from 'vue-property-decorator';
 
+type Props = MaterialParameters
+
 export type MaterialComponent = Pick<ThreeMaterial, 'isMaterial'>
 
 export abstract class BaseMaterial<
     P = unknown, M extends ThreeMaterial = ThreeMaterial
-> extends Component<P, M> implements MaterialComponent, MaterialParameters {
+> extends Component<P & Props, M> implements Required<Props>, MaterialComponent {
   declare public $parent: MeshComponent
 
   public readonly isMaterial: MaterialComponent['isMaterial'] = true
+
+  @Prop({ type: Number, default: 1 })
+  public readonly opacity!: NonNullable<Props['opacity']>
 
   @Prop({ type: Number, default: 0 })
   public readonly alphaTest!: NonNullable<MaterialParameters['alphaTest']>
@@ -29,7 +34,7 @@ export abstract class BaseMaterial<
   @Prop({ type: Boolean, default: false })
   public readonly alphaToCoverage!: NonNullable<MaterialParameters['alphaToCoverage']>
 
-  @Prop({ type: Number, default: BlendingDstFactor })
+  @Prop({ type: Number, default: OneMinusSrcAlphaFactor })
   public readonly blendDst!: NonNullable<MaterialParameters['blendDst']>
 
   @Prop({ type: Number, default: null })
@@ -63,7 +68,7 @@ export abstract class BaseMaterial<
   @Prop({ type: Boolean, default: true })
   public readonly colorWrite!: NonNullable<MaterialParameters['colorWrite']>
 
-  @Prop({ type: Object, default: undefined })
+  @Prop({ type: Object, default: {} })
   public readonly defines!: NonNullable<MaterialParameters['defines']>
 
   @Prop({ type: Number, default: LessEqualDepth })

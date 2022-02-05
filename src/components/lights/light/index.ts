@@ -34,6 +34,7 @@ export abstract class BaseLight<
     }
 
     this.$$target = this.createTarget();
+    this.applyTransforms();
     this.$parent.add(this.$$target);
 
     // add helper to parent

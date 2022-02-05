@@ -65,9 +65,6 @@ export default class StandartMaterial extends BaseMaterial<Props, MeshStandardMa
   @Prop({ type: [Object, Number, String], default: 'white' })
   public readonly color!: NonNullable<Props['color']>
 
-  @Prop({ type: Number, default: 1 })
-  public readonly opacity!: NonNullable<Props['opacity']>
-
   @Prop({ type: Object, default: null })
   public readonly map!: NonNullable<Props['map']>
 
@@ -162,7 +159,6 @@ export default class StandartMaterial extends BaseMaterial<Props, MeshStandardMa
       transparent: this.transparent,
       vertexColors: this.vertexColors,
       visible: this.visible,
-      format: this.format,
       stencilWrite: this.stencilWrite,
       stencilFunc: this.stencilFunc,
       stencilRef: this.stencilRef,
