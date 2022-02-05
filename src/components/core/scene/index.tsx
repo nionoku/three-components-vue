@@ -17,7 +17,7 @@ export interface Props {
 export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isScene'> {}
 
 @Options({})
-export default class Scene extends TransformatableComponentImpl<Props> implements
+export default class Scene extends TransformatableComponentImpl<Props, ThreeScene> implements
     ComponentWithProps<Props>,
     Required<Props>,
     SceneComponent {

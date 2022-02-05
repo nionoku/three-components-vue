@@ -16,7 +16,7 @@ export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 
 }
 
 @Options({})
-export default class Mesh extends TransformatableComponentImpl<Props> implements
+export default class Mesh extends TransformatableComponentImpl<Props, ThreeMesh> implements
     ComponentWithProps<Props>,
     Required<Props>,
     MeshComponent {
