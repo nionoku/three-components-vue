@@ -1,5 +1,5 @@
 import {
-  Light as ThreeLight,
+  Light as ThreeLight, Object3D,
 } from 'three';
 import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
@@ -20,5 +20,9 @@ export default class Light extends BaseLight<Props, ThreeLight> implements Requi
   protected createTarget(): ThreeLight {
     const light = new ThreeLight(this.hex, this.intensity);
     return light;
+  }
+
+  protected createLightHelper(): Object3D {
+    throw new Error('Light unsupport helpers');
   }
 }
