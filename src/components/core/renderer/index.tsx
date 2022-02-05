@@ -1,4 +1,4 @@
-import { Options, Vue } from 'vue-class-component';
+import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import {
   WebGLRendererParameters,
@@ -9,7 +9,6 @@ import {
 import WebGL from 'three/examples/jsm/capabilities/WebGL';
 import { PowerPreference } from '@/types/renderer';
 import { ComponentPublicInstance } from 'vue';
-import { ComponentWithProps } from '@/types/component';
 import { Looper } from '@/handlers/Looper';
 import { Component } from '@/components/super/component';
 
@@ -30,8 +29,7 @@ export interface RendererComponent extends ComponentPublicInstance {
 }
 
 @Options({})
-export default class Renderer extends Component implements
-    ComponentWithProps<Props>,
+export default class Renderer extends Component<Props, WebGLRenderer> implements
     Required<Props>,
     RendererComponent {
   public declare $props: Props
@@ -61,8 +59,6 @@ export default class Renderer extends Component implements
 
   public readonly isRenderer: RendererComponent['isRenderer'] = true
 
-  protected $$renderer: WebGLRenderer | null = null
-
   protected $$scene: Scene | null = null
 
   protected $$camera: Camera | null = null
@@ -74,11 +70,11 @@ export default class Renderer extends Component implements
       throw new Error('This browser is not supports WebGL');
     }
 
-    this.$$renderer = this.createRenderer();
+    this.$$target = this.createTarget();
   }
 
   public mounted(): void {
-    if (!this.$$renderer) {
+    if (!this.$$target) {
       throw new Error('Renderer not ready');
     }
 
@@ -87,13 +83,13 @@ export default class Renderer extends Component implements
     }
 
     // append canvas to parent
-    this.$parent.$el.appendChild(this.$$renderer.domElement);
+    this.$parent.$el.appendChild(this.$$target.domElement);
   }
 
   public beforeDestroy(): void {
     this.cancelRendering();
-    this.$$renderer?.domElement.remove();
-    this.$$renderer?.dispose();
+    this.$$target?.domElement.remove();
+    this.$$target?.dispose();
   }
 
   public setScene(scene: Scene): void {
@@ -105,7 +101,7 @@ export default class Renderer extends Component implements
   }
 
   public startRendering(): void {
-    if (!this.$$renderer) {
+    if (!this.$$target) {
       throw new Error('Can not start rendering. Renderer not ready');
     }
 
@@ -117,7 +113,7 @@ export default class Renderer extends Component implements
       throw new Error('Can not start rendering. Camera not mounted');
     }
 
-    this.$$looper = new Looper(this.fps, this.$$renderer, this.$$scene, this.$$camera);
+    this.$$looper = new Looper(this.fps, this.$$target, this.$$scene, this.$$camera);
     this.$$looper.start();
   }
 
@@ -126,7 +122,7 @@ export default class Renderer extends Component implements
     this.$$looper = null;
   }
 
-  protected createRenderer(): WebGLRenderer {
+  protected createTarget(): WebGLRenderer {
     const renderer = new WebGLRenderer({
       antialias: this.antialias,
       alpha: this.alpha,

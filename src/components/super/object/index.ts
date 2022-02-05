@@ -4,7 +4,7 @@ import { Object3D } from 'three';
 import { Vec3 } from '@/types/vector';
 import { Component } from '../component';
 
-export abstract class TransformatableComponentImpl<P, T extends Object3D> extends Component
+export abstract class TransformatableComponentImpl<P, T extends Object3D> extends Component<P, T>
   implements Partial<TransformatableComponent> {
   declare public $props: P & Partial<TransformatableComponent>
 
@@ -19,10 +19,6 @@ export abstract class TransformatableComponentImpl<P, T extends Object3D> extend
 
   @Prop({ type: Object, default: null })
   public readonly scale: Nullishable<TransformatableComponent['scale']>;
-
-  protected abstract $$target: T | null
-
-  protected abstract createTarget<P extends Array<string> = []>(...args: P): T
 
   @Watch('rotation', { deep: true })
   protected whenRotation(value: Vec3): void {

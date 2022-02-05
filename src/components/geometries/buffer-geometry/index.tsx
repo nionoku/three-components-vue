@@ -11,7 +11,7 @@ export default class BufferGeometry<T = unknown> extends Geometry<T, ThreeBuffer
     BufferGeometryComponent {
   public readonly isBufferGeometry: BufferGeometryComponent['isBufferGeometry'] = true;
 
-  protected createGeometry(): ThreeBufferGeometry {
+  protected createTarget(): ThreeBufferGeometry {
     const geometry = new ThreeBufferGeometry();
     return geometry;
   }

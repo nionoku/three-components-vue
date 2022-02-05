@@ -11,7 +11,6 @@ import {
   NormalBlending,
   SrcAlphaFactor,
 } from 'three';
-import { ComponentWithProps } from '@/types/component';
 import { Component } from '@/components/super/component';
 import { Prop } from 'vue-property-decorator';
 
@@ -19,16 +18,10 @@ export type MaterialComponent = Pick<ThreeMaterial, 'isMaterial'>
 
 export abstract class BaseMaterial<
     P = unknown, M extends ThreeMaterial = ThreeMaterial
-> extends Component implements ComponentWithProps<P>, MaterialComponent, MaterialParameters {
+> extends Component<P, M> implements MaterialComponent, MaterialParameters {
   declare public $parent: MeshComponent
 
-  declare public $props: P
-
   public readonly isMaterial: MaterialComponent['isMaterial'] = true
-
-  protected $$material: ThreeMaterial | null = null
-
-  protected abstract createMaterial(): M
 
   @Prop({ type: Number, default: 0 })
   public readonly alphaTest!: NonNullable<MaterialParameters['alphaTest']>
@@ -160,11 +153,11 @@ export abstract class BaseMaterial<
       throw new Error('Material must be child of Mesh');
     }
 
-    this.$$material = this.createMaterial();
-    this.$parent.setMaterial(this.$$material);
+    this.$$target = this.createTarget();
+    this.$parent.setMaterial(this.$$target);
   }
 
   public beforeDestroy(): void {
-    this.$$material?.dispose();
+    this.$$target?.dispose();
   }
 }

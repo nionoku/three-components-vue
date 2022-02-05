@@ -1,5 +1,4 @@
 import { TransformatableComponentImpl } from '@/components/super/object';
-import { ComponentWithProps } from '@/types/component';
 import { ObjectComponent } from '@/types/object3d';
 import {
   Color,
@@ -18,7 +17,6 @@ export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isSce
 
 @Options({})
 export default class Scene extends TransformatableComponentImpl<Props, ThreeScene> implements
-    ComponentWithProps<Props>,
     Required<Props>,
     SceneComponent {
   declare public $parent: RendererComponent
@@ -29,9 +27,6 @@ export default class Scene extends TransformatableComponentImpl<Props, ThreeScen
   public readonly isScene: SceneComponent['isScene'] = true;
 
   public readonly isObject3D: SceneComponent['isObject3D'] = true;
-
-  /** @alias $$scene */
-  protected $$target: ThreeScene | null = null
 
   public created(): void {
     if (!this.$parent.isRenderer) {

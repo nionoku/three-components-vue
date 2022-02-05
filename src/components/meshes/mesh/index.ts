@@ -3,7 +3,6 @@ import {
   BufferGeometry, Material, Mesh as ThreeMesh,
 } from 'three';
 import { ComponentPublicInstance } from 'vue';
-import { ComponentWithProps } from '@/types/component';
 import { ObjectComponent, SupportsShadowComponent } from '@/types/object3d';
 import { Prop } from 'vue-property-decorator';
 import { TransformatableComponentImpl } from '@/components/super/object';
@@ -17,7 +16,6 @@ export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 
 
 @Options({})
 export default class Mesh extends TransformatableComponentImpl<Props, ThreeMesh> implements
-    ComponentWithProps<Props>,
     Required<Props>,
     MeshComponent {
   declare public $parent: ObjectComponent
@@ -29,9 +27,6 @@ export default class Mesh extends TransformatableComponentImpl<Props, ThreeMesh>
   public readonly receiveShadow!: NonNullable<Props['receiveShadow']>;
 
   public readonly isMesh = true
-
-  /** @alias $$mesh */
-  protected $$target: ThreeMesh | null = null
 
   public created(): void {
     if (!this.$parent.isObject3D) {

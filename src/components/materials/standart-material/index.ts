@@ -101,7 +101,7 @@ export default class StandartMaterial extends BaseMaterial<Props, MeshStandardMa
   @Prop({ type: Boolean, default: false })
   public readonly flatShading!: NonNullable<Props['flatShading']>
 
-  protected createMaterial(): MeshStandardMaterial {
+  protected createTarget(): MeshStandardMaterial {
     const material = new MeshStandardMaterial({
       roughness: this.roughness,
       metalness: this.metalness,

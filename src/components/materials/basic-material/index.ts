@@ -61,7 +61,7 @@ export default class BasicMaterial extends BaseMaterial<Props, MeshBasicMaterial
   @Prop({ type: String, default: 'round' })
   public readonly wireframeLinejoin!: NonNullable<Props['wireframeLinejoin']>
 
-  protected createMaterial(): MeshBasicMaterial {
+  protected createTarget(): MeshBasicMaterial {
     const geometry = new MeshBasicMaterial({
       color: this.color,
       opacity: this.opacity,

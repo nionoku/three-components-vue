@@ -1,4 +1,3 @@
-import { ComponentWithProps } from '@/types/component';
 import {
   ComponentPublicInstance,
 } from 'vue';
@@ -19,7 +18,7 @@ export interface PerspectiveCameraComponent extends
 @Options({})
 export default class PerspectiveCamera
   extends TransformatableComponentImpl<Props, ThreePerspectiveCamera>
-  implements ComponentWithProps<Props>, Required<Props>, PerspectiveCameraComponent {
+  implements Required<Props>, PerspectiveCameraComponent {
   declare public $parent: RendererComponent
 
   @Prop({ type: Number, default: 1 })
@@ -35,9 +34,6 @@ export default class PerspectiveCamera
   public readonly far!: NonNullable<Props['far']>;
 
   public isPerspectiveCamera: PerspectiveCameraComponent['isPerspectiveCamera'] = true
-
-  /** @alias $$camera */
-  protected $$target: ThreePerspectiveCamera | null = null
 
   @Watch('position')
   protected whenPositionChanged(value: Vec3): void {
