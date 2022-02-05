@@ -32,7 +32,7 @@ export interface RendererComponent extends ComponentPublicInstance {
 @Options({})
 export default class Renderer extends Component implements
     ComponentWithProps<Props>,
-    Props,
+    Required<Props>,
     RendererComponent {
   public declare $props: Props
 

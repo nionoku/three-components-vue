@@ -11,7 +11,7 @@ export type BoxGeometryComponent = Pick<ThreeBoxGeometry, 'isBufferGeometry'>
 
 @Options({})
 export default class BoxGeometry extends BufferGeometry<Props> implements
-    Props,
+    Required<Props>,
     BoxGeometryComponent {
   @Prop({ type: Number, default: 1 })
   public readonly width!: NonNullable<Props['width']>;

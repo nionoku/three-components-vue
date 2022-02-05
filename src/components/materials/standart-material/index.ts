@@ -7,13 +7,13 @@ import {
 } from 'three';
 import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
-import { Material as BaseMaterial } from '../material';
+import { BaseMaterial } from '../material';
 
 export type Props = Partial<MeshStandardMaterialParameters>
 
 @Options({})
 export default class StandartMaterial extends BaseMaterial<Props, MeshStandardMaterial> implements
-    Props {
+    Required<Props> {
   @Prop({ type: Number, default: 1 })
   public readonly roughness!: NonNullable<Props['roughness']>
 
@@ -98,6 +98,9 @@ export default class StandartMaterial extends BaseMaterial<Props, MeshStandardMa
   @Prop({ type: Number, default: 1 })
   public readonly wireframeLinewidth!: NonNullable<Props['wireframeLinewidth']>
 
+  @Prop({ type: Boolean, default: false })
+  public readonly flatShading!: NonNullable<Props['flatShading']>
+
   protected createMaterial(): MeshStandardMaterial {
     const material = new MeshStandardMaterial({
       roughness: this.roughness,
@@ -128,6 +131,48 @@ export default class StandartMaterial extends BaseMaterial<Props, MeshStandardMa
       refractionRatio: this.refractionRatio,
       wireframe: this.wireframe,
       wireframeLinewidth: this.wireframeLinewidth,
+      alphaTest: this.alphaTest,
+      alphaToCoverage: this.alphaToCoverage,
+      blendDst: this.blendDst,
+      blendDstAlpha: this.blendDstAlpha,
+      blendEquation: this.blendEquation,
+      blendEquationAlpha: this.blendEquationAlpha,
+      blending: this.blending,
+      blendSrc: this.blendSrc,
+      blendSrcAlpha: this.blendSrcAlpha,
+      clipIntersection: this.clipIntersection,
+      clippingPlanes: this.clippingPlanes,
+      clipShadows: this.clipShadows,
+      colorWrite: this.colorWrite,
+      defines: this.defines,
+      depthFunc: this.depthFunc,
+      depthTest: this.depthTest,
+      depthWrite: this.depthWrite,
+      fog: this.fog,
+      name: this.name,
+      polygonOffset: this.polygonOffset,
+      polygonOffsetFactor: this.polygonOffsetFactor,
+      polygonOffsetUnits: this.polygonOffsetUnits,
+      precision: this.precision,
+      premultipliedAlpha: this.premultipliedAlpha,
+      dithering: this.dithering,
+      side: this.side,
+      shadowSide: this.shadowSide,
+      toneMapped: this.toneMapped,
+      transparent: this.transparent,
+      vertexColors: this.vertexColors,
+      visible: this.visible,
+      format: this.format,
+      stencilWrite: this.stencilWrite,
+      stencilFunc: this.stencilFunc,
+      stencilRef: this.stencilRef,
+      stencilWriteMask: this.stencilWriteMask,
+      stencilFuncMask: this.stencilFuncMask,
+      stencilFail: this.stencilFail,
+      stencilZFail: this.stencilZFail,
+      stencilZPass: this.stencilZPass,
+      userData: this.userData,
+      flatShading: this.flatShading,
     });
     return material;
   }

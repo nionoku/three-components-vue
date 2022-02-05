@@ -19,7 +19,7 @@ export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isSce
 @Options({})
 export default class Scene extends TransformatableComponentImpl<Props> implements
     ComponentWithProps<Props>,
-    Props,
+    Required<Props>,
     SceneComponent {
   declare public $parent: RendererComponent
 

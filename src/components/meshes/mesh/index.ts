@@ -18,7 +18,7 @@ export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 
 @Options({})
 export default class Mesh extends TransformatableComponentImpl<Props> implements
     ComponentWithProps<Props>,
-    Props,
+    Required<Props>,
     MeshComponent {
   declare public $parent: ObjectComponent
 

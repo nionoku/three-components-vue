@@ -19,7 +19,7 @@ export interface PerspectiveCameraComponent extends
 @Options({})
 export default class PerspectiveCamera extends TransformatableComponentImpl<Props> implements
     ComponentWithProps<Props>,
-    Props,
+    Required<Props>,
     PerspectiveCameraComponent {
   declare public $parent: RendererComponent
 
