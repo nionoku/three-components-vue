@@ -102,18 +102,28 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
 
   public startRendering(): void {
     if (!this.$$target) {
-      throw new Error('Can not start rendering. Renderer not ready');
+      throw new Error('Can not start rendering. Renderer is null');
     }
 
     if (!this.$$scene) {
-      throw new Error('Can not start rendering. Scene not mounted');
+      throw new Error('Can not start rendering. Scene is null');
     }
 
     if (!this.$$camera) {
-      throw new Error('Can not start rendering. Camera not mounted');
+      throw new Error('Can not start rendering. Camera is nuu');
     }
 
-    this.$$looper = new Looper(this.fps, this.$$target, this.$$scene, this.$$camera);
+    this.$$looper = new Looper(this.fps, () => {
+      if (!this.$$scene) {
+        throw new Error('Can not render scene. Scene is null');
+      }
+
+      if (!this.$$camera) {
+        throw new Error('Can not render scene. Camera is null');
+      }
+
+      this.$$target?.render(this.$$scene, this.$$camera);
+    });
     this.$$looper.start();
   }
 

@@ -1,5 +1,3 @@
-import { Camera, Renderer, Scene } from 'three';
-
 export class Looper {
   protected timestep: number
 
@@ -9,9 +7,7 @@ export class Looper {
 
   constructor(
     protected fps: number,
-    protected renderer: Renderer,
-    protected scene: Scene,
-    protected camera: Camera,
+    protected renderFrame: () => void,
   ) {
     this.timestep = 1000 / this.fps;
   }
@@ -32,6 +28,6 @@ export class Looper {
     if (time - this.lastTimestamp < this.timestep) return;
 
     this.lastTimestamp = time;
-    this.renderer.render(this.scene, this.camera);
+    this.renderFrame?.();
   }
 }
