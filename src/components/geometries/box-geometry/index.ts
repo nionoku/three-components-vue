@@ -31,7 +31,7 @@ export default class BoxGeometry extends BufferGeometry<Props> implements
   @Prop({ type: Number, default: 1 })
   public readonly depthSegments!: NonNullable<Props['depthSegments']>;
 
-  protected createGeometry(): ThreeBoxGeometry {
+  protected createTarget(): ThreeBoxGeometry {
     const geometry = new ThreeBoxGeometry(
       this.width, this.height, this.depth,
       this.widthSegments, this.heightSegments, this.depthSegments,
