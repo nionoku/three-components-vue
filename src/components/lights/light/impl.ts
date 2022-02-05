@@ -17,7 +17,7 @@ export default class Light extends BaseLight<Props, ThreeLight> implements Requi
   @Prop({ type: Number, default: 1 })
   public readonly intensity!: NonNullable<Props['intensity']>
 
-  protected createLight(): ThreeLight {
+  protected createTarget(): ThreeLight {
     const light = new ThreeLight(this.hex, this.intensity);
     return light;
   }

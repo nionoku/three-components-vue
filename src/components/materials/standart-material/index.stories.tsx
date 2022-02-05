@@ -1,5 +1,5 @@
 import {
-  StandartMaterial, Mesh, PerspectiveCamera, Renderer, Scene,
+  StandartMaterial, Mesh, PerspectiveCamera, Renderer, Scene, AmbientLight,
 } from '@/components';
 import BoxGeometry from '@/components/geometries/box-geometry';
 import { Vec3 } from '@/types/vector';
@@ -30,6 +30,7 @@ const Template = (args: any) => ({
         <Renderer width={500} height={300}>
           <PerspectiveCamera position={{ x: 2, y: 2, z: 1 }} lookAt={{ x: 0, y: 0, z: 0 }} />
           <Scene background={'#F0F0F0'}>
+            <AmbientLight position={{ x: 10, y: 10, z: 10 }} intensity={0.4} />
             {/* @ts-expect-error figureRotation was returns in setup */}
             <Mesh rotation={this.figureRotation}>
               <BoxGeometry />
