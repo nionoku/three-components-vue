@@ -5,7 +5,7 @@ export abstract class Component<P, T> extends Vue {
 
   protected $$target: T | null = null
 
-  protected abstract createTarget<P extends Array<string> = []>(...args: P): T
+  protected abstract createTarget(...args: Array<unknown>): T
 
   // FIXME (2022.02.04): Fix any
   public render(): any {
