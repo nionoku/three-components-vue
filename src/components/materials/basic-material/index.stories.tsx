@@ -1,5 +1,5 @@
 import {
-  BasicMaterial, Mesh, PerspectiveCamera, Renderer, Scene,
+  BasicMaterial, DirectionalLight, Mesh, PerspectiveCamera, Renderer, Scene,
 } from '@/components';
 import BoxGeometry from '@/components/geometries/box-geometry';
 import { Vec3 } from '@/types/vector';
@@ -11,8 +11,6 @@ export default {
 };
 
 const Template = (args: any) => ({
-  // Components used in your story `template` are defined in the `components` object
-  components: { Scene, Mesh, BasicMaterial },
   // The story's `args` need to be mapped into the template through the `setup()` method
   setup() {
     // Story args can be spread into the returned object
@@ -30,6 +28,7 @@ const Template = (args: any) => ({
         <Renderer width={500} height={300}>
           <PerspectiveCamera position={{ x: 2, y: 2, z: 1 }} lookAt={{ x: 0, y: 0, z: 0 }} />
           <Scene background={'#F0F0F0'}>
+            <DirectionalLight position={{ x: 2, y: 2, z: 2 }} intensity={0.4} helper={{ size: 0.1, color: 'blue' }} />
             {/* @ts-expect-error figureRotation was returns in setup */}
             <Mesh rotation={this.figureRotation}>
               <BoxGeometry />

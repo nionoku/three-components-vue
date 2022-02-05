@@ -1,13 +1,13 @@
 import {
-  BasicMaterial, Mesh, PerspectiveCamera, Renderer, Scene,
+  StandartMaterial, Mesh, PerspectiveCamera, Renderer, Scene, DirectionalLight,
 } from '@/components';
 import BoxGeometry from '@/components/geometries/box-geometry';
 import { Vec3 } from '@/types/vector';
 import { onBeforeUnmount, Ref, ref } from 'vue';
 
 export default {
-  title: 'Geometries/BoxGeometry',
-  component: BasicMaterial,
+  title: 'Lights/DirectionalLight',
+  component: DirectionalLight,
 };
 
 const Template = (args: any) => ({
@@ -28,10 +28,11 @@ const Template = (args: any) => ({
         <Renderer width={500} height={300}>
           <PerspectiveCamera position={{ x: 2, y: 2, z: 1 }} lookAt={{ x: 0, y: 0, z: 0 }} />
           <Scene background={'#F0F0F0'}>
+            <DirectionalLight position={{ x: 2, y: 2, z: 2 }} intensity={0.4} />
             {/* @ts-expect-error figureRotation was returns in setup */}
             <Mesh rotation={this.figureRotation}>
               <BoxGeometry />
-              <BasicMaterial color={'cadetblue'} wireframe />
+              <StandartMaterial color={'darkviolet'} />
             </Mesh>
           </Scene>
         </Renderer>
