@@ -15,12 +15,8 @@ export interface Props {
   thetaLength?: number,
 }
 
-export type ConeGeometryComponent = Pick<ThreeConeGeometry, 'isBufferGeometry'>
-
 @Options({})
-export default class ConeGeometry extends BufferGeometry<Props> implements
-    Required<Props>,
-    ConeGeometryComponent {
+export default class ConeGeometry extends BufferGeometry<Props> implements Required<Props> {
   @Prop({ type: Number, default: 1 })
   public readonly radius!: NonNullable<Props['radius']>;
 

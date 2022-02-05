@@ -7,12 +7,8 @@ import BufferGeometry from '../buffer-geometry';
 
 export type Props = Partial<ThreeRingGeometry['parameters']>
 
-export type RingGeometryComponent = Pick<ThreeRingGeometry, 'isBufferGeometry'>
-
 @Options({})
-export default class RingGeometry extends BufferGeometry<Props> implements
-    Required<Props>,
-    RingGeometryComponent {
+export default class RingGeometry extends BufferGeometry<Props> implements Required<Props> {
   @Prop({ type: Number, default: 0.5 })
   public readonly innerRadius!: NonNullable<Props['innerRadius']>;
 

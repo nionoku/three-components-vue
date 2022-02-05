@@ -7,12 +7,8 @@ import BufferGeometry from '../buffer-geometry';
 
 export type Props = Partial<ThreeBoxGeometry['parameters']>
 
-export type BoxGeometryComponent = Pick<ThreeBoxGeometry, 'isBufferGeometry'>
-
 @Options({})
-export default class BoxGeometry extends BufferGeometry<Props> implements
-    Required<Props>,
-    BoxGeometryComponent {
+export default class BoxGeometry extends BufferGeometry<Props> implements Required<Props> {
   @Prop({ type: Number, default: 1 })
   public readonly width!: NonNullable<Props['width']>;
 

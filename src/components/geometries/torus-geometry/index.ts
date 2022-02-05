@@ -7,12 +7,8 @@ import BufferGeometry from '../buffer-geometry';
 
 export type Props = Partial<ThreeTorusGeometry['parameters']>
 
-export type ConeGeometryComponent = Pick<ThreeTorusGeometry, 'isBufferGeometry'>
-
 @Options({})
-export default class TorusGeometry extends BufferGeometry<Props> implements
-    Required<Props>,
-    ConeGeometryComponent {
+export default class TorusGeometry extends BufferGeometry<Props> implements Required<Props> {
   @Prop({ type: Number, default: 1 })
   public readonly radius!: NonNullable<Props['radius']>;
 
