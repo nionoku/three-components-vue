@@ -20,12 +20,16 @@ export interface Props extends Partial<Pick<WebGLRendererParameters, 'alpha' | '
   fps?: number
 }
 
+type RenderAction = (renderer: WebGLRenderer, camera: Camera, scene: Scene) => void
+
 export interface RendererComponent extends ComponentPublicInstance {
   isRenderer: true
   setScene(scene: Scene): void
   setCamera(camera: Camera): void
   startRendering(): void
   cancelRendering(): void
+  addOnBeforeRender(action: RenderAction): void
+  removeOnBeforeRender(action: RenderAction): void
 }
 
 @Options({})
@@ -51,7 +55,7 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
   @Prop({ type: Number, default: window.devicePixelRatio })
   public readonly pixelRatio!: NonNullable<Props['pixelRatio']>;
 
-  @Prop({ type: Number, default: 60 })
+  @Prop({ type: Number, default: 30 })
   public readonly fps!: NonNullable<Props['fps']>;
 
   @Prop({ type: String, default: PowerPreference.DEFAULT })
@@ -65,12 +69,15 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
 
   protected $$looper: Looper | null = null
 
+  protected $$whenBeforeRender: Array<RenderAction> | null = null
+
   public created(): void {
     if (!WebGL.isWebGLAvailable()) {
       throw new Error('This browser is not supports WebGL');
     }
 
     this.$$target = this.createTarget();
+    this.$$whenBeforeRender = [];
   }
 
   public mounted(): void {
@@ -114,6 +121,10 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
     }
 
     this.$$looper = new Looper(this.fps, () => {
+      if (!this.$$target) {
+        throw new Error('Can not render scene. Renderer is null');
+      }
+
       if (!this.$$scene) {
         throw new Error('Can not render scene. Scene is null');
       }
@@ -122,7 +133,9 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
         throw new Error('Can not render scene. Camera is null');
       }
 
-      this.$$target?.render(this.$$scene, this.$$camera);
+      // @ts-expect-error target, scene and camera not null
+      this.$$whenBeforeRender?.forEach((it) => it(this.$$target, this.$$scene, this.$$camera));
+      this.$$target.render(this.$$scene, this.$$camera);
     });
     this.$$looper.start();
   }
@@ -130,6 +143,14 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
   public cancelRendering(): void {
     this.$$looper?.cancel();
     this.$$looper = null;
+  }
+
+  public addOnBeforeRender(action: RenderAction): void {
+    this.$$whenBeforeRender?.push(action);
+  }
+
+  public removeOnBeforeRender(action: RenderAction): void {
+    this.$$whenBeforeRender?.splice(this.$$whenBeforeRender.indexOf(action), 1);
   }
 
   protected createTarget(): WebGLRenderer {

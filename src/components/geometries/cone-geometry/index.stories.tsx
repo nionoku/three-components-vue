@@ -1,5 +1,5 @@
 import {
-  BasicMaterial, ConeGeometry, Mesh, PerspectiveCamera, Renderer, Scene,
+  BasicMaterial, ConeGeometry, Mesh, OrbitControls, PerspectiveCamera, Renderer, Scene,
 } from '@/components';
 import { Vec3 } from '@/types/vector';
 import { onBeforeUnmount, Ref, ref } from 'vue';
@@ -26,6 +26,7 @@ const Template = (args: any) => ({
       <div style={{ width: '500px', height: '300px', border: '1px dashed black' }}>
         <Renderer width={500} height={300}>
           <PerspectiveCamera position={{ x: 2, y: 1.5, z: 1 }} lookAt={{ x: 0, y: 0, z: 0 }} />
+          <OrbitControls />
           <Scene background={'#F0F0F0'}>
             {/* @ts-expect-error figureRotation was returns in setup */}
             <Mesh rotation={this.figureRotation}>
