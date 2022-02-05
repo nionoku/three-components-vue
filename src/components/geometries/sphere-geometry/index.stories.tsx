@@ -1,12 +1,12 @@
 import {
-  StandartMaterial, Mesh, PerspectiveCamera, Renderer, Scene, AmbientLight, BoxGeometry,
+  BasicMaterial, Mesh, PerspectiveCamera, Renderer, Scene, SphereGeometry,
 } from '@/components';
 import { Vec3 } from '@/types/vector';
 import { onBeforeUnmount, Ref, ref } from 'vue';
 
 export default {
-  title: 'Lights/AmbientLight',
-  component: AmbientLight,
+  title: 'Geometries/ShpereGeometry',
+  component: SphereGeometry,
 };
 
 const Template = (args: any) => ({
@@ -27,11 +27,10 @@ const Template = (args: any) => ({
         <Renderer width={500} height={300}>
           <PerspectiveCamera position={{ x: 2, y: 1.5, z: 1 }} lookAt={{ x: 0, y: 0, z: 0 }} />
           <Scene background={'#F0F0F0'}>
-            <AmbientLight position={{ x: 10, y: 10, z: 10 }} intensity={0.4} />
             {/* @ts-expect-error figureRotation was returns in setup */}
             <Mesh rotation={this.figureRotation}>
-              <BoxGeometry />
-              <StandartMaterial color={'orange'} />
+              <SphereGeometry radius={0.6} heightSegments={20} widthSegments={20} />
+              <BasicMaterial color={'cadetblue'} wireframe />
             </Mesh>
           </Scene>
         </Renderer>

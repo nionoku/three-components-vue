@@ -95,7 +95,6 @@ export default class BasicMaterial extends BaseMaterial<Props, MeshBasicMaterial
       depthWrite: this.depthWrite,
       fog: this.fog,
       name: this.name,
-      format: this.format,
       polygonOffset: this.polygonOffset,
       polygonOffsetFactor: this.polygonOffsetFactor,
       polygonOffsetUnits: this.polygonOffsetUnits,
