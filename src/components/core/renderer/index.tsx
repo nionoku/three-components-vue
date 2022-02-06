@@ -9,8 +9,10 @@ import {
 import WebGL from 'three/examples/jsm/capabilities/WebGL';
 import { PowerPreference } from '@/types/renderer';
 import { ComponentPublicInstance } from 'vue';
-import { Looper } from '@/handlers/Looper';
+import { useLooper } from '@/handlers/useLooper';
 import { Component } from '@/components/super/component';
+import { Handler } from '@/types/handler';
+import { usePointerEventHandlers } from '@/handlers/useEventListeners';
 
 export interface Props extends Partial<Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'powerPreference'>> {
   width?: number
@@ -67,7 +69,9 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
 
   protected $$camera: Camera | null = null
 
-  protected $$looper: Looper | null = null
+  protected $$looper: Handler | null = null
+
+  protected $$pointerEventListener: Handler | null = null
 
   protected $$whenBeforeRender: Array<RenderAction> | null = null
 
@@ -120,7 +124,12 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
       throw new Error('Can not start rendering. Camera is nuu');
     }
 
-    this.$$looper = new Looper(this.fps, () => {
+    this.$$pointerEventListener = usePointerEventHandlers(
+      this.$$target.domElement,
+      this.$$camera,
+      this.$$scene,
+    );
+    this.$$looper = useLooper(this.fps, () => {
       if (!this.$$target) {
         throw new Error('Can not render scene. Renderer is null');
       }
@@ -138,6 +147,7 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
       this.$$target.render(this.$$scene, this.$$camera);
     });
     this.$$looper.start();
+    this.$$pointerEventListener.start();
   }
 
   public cancelRendering(): void {

@@ -1,4 +1,6 @@
-export class Looper {
+import { Handler } from '@/types/handler';
+
+class Looper implements Handler {
   protected timestep: number
 
   protected lastTimestamp = 0
@@ -7,7 +9,7 @@ export class Looper {
 
   constructor(
     protected fps: number,
-    protected renderFrame: () => void,
+    protected whenRenderFrame: FrameRequestCallback,
   ) {
     this.timestep = 1000 / this.fps;
   }
@@ -28,6 +30,10 @@ export class Looper {
     if (time - this.lastTimestamp < this.timestep) return;
 
     this.lastTimestamp = time;
-    this.renderFrame?.();
+    this.whenRenderFrame?.(time);
   }
+}
+
+export function useLooper(fps: number, whenRenderFrame: FrameRequestCallback): Handler {
+  return new Looper(fps, whenRenderFrame);
 }
