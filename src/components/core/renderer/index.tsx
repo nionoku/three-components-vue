@@ -134,7 +134,7 @@ export default class Renderer extends Component<Props, WebGLRenderer> implements
       }
 
       // @ts-expect-error target, scene and camera not null
-      this.$$whenBeforeRender?.forEach((it) => it(this.$$target, this.$$scene, this.$$camera));
+      this.$$whenBeforeRender?.forEach((it) => it(this.$$target, this.$$camera, this.$$scene));
       this.$$target.render(this.$$scene, this.$$camera);
     });
     this.$$looper.start();
