@@ -35,8 +35,7 @@ export abstract class BaseLight<L extends ThreeLight, P = Record<string, unknown
       throw new Error('Light must be child of Object3D');
     }
 
-    this.$$target = this.createTarget();
-    this.applyTransforms();
+    this.$$target = this.prepareTarget();
     this.$parent.add(this.$$target);
 
     // add helper to parent

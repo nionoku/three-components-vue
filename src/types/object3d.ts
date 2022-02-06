@@ -14,4 +14,8 @@ export interface Transformatable {
   scale: Vec3
 }
 
-export type SupportsShadowComponent = Pick<Object3D, 'castShadow' | 'receiveShadow'>
+export type Shadowable = Pick<Object3D, 'castShadow' | 'receiveShadow'>
+
+export interface SupportsPointerEvents {
+  whenClick: (target: Object3D) => void
+}

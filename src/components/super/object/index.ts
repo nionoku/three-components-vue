@@ -2,28 +2,49 @@
 import { Prop, Watch } from 'vue-property-decorator';
 import { Object3D } from 'three';
 import { Vec3 } from '@/types/vector';
-import { TinyEmitter } from 'tiny-emitter';
-import { Transformatable } from '@/types/object3d';
+import Emitter from 'tiny-emitter/instance';
+import {
+  Shadowable, SupportsPointerEvents, Transformatable,
+} from '@/types/object3d';
+import { MouseEventMap } from '@/types/events/mouse';
+import { IntersectionEventHandler } from '@/types/events';
 import { Component } from '../component';
 
-type TransformatableInterface = Nullable<Required<Transformatable>>
+interface Props extends
+  Transformatable,
+  Shadowable,
+  SupportsPointerEvents
+{}
+
+interface PropsImpl extends
+  Omit<Props, keyof Transformatable | keyof SupportsPointerEvents>,
+  Nullable<Transformatable>,
+  Nullable<SupportsPointerEvents>
+{}
 
 export abstract class ObjectComponent<T extends Object3D, P = Record<string, unknown>>
-  extends Component<T, P & Partial<Transformatable>>
-  implements TransformatableInterface {
-  protected $$emitter = new TinyEmitter()
+  extends Component<T, P & Partial<Props>>
+  implements PropsImpl {
+  @Prop({ type: Boolean, default: false })
+  public readonly castShadow!: PropsImpl['castShadow'];
+
+  @Prop({ type: Boolean, default: false })
+  public readonly receiveShadow!: PropsImpl['receiveShadow'];
 
   @Prop({ type: Object, default: null })
-  public readonly position!: TransformatableInterface['position'];
+  public readonly position!: PropsImpl['position'];
 
   @Prop({ type: Object, default: null })
-  public readonly rotation!: TransformatableInterface['rotation'];
+  public readonly rotation!: PropsImpl['rotation'];
 
   @Prop({ type: Object, default: null })
-  public readonly lookAt!: TransformatableInterface['lookAt'];
+  public readonly lookAt!: PropsImpl['lookAt'];
 
   @Prop({ type: Object, default: null })
-  public readonly scale!: TransformatableInterface['scale'];
+  public readonly scale!: PropsImpl['scale'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenClick!: PropsImpl['whenClick'];
 
   @Watch('rotation', { deep: true })
   protected whenRotation(value: Vec3): void {
@@ -61,6 +82,19 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     this.$$target.scale.set(value.x, value.y, value.z);
   }
 
+  public beforeDestroy(): void {
+    this.$$target?.removeFromParent();
+  }
+
+  protected prepareTarget(): T {
+    this.$$target = this.createTarget();
+
+    this.applyTransforms();
+    this.subscribeToEvents();
+
+    return this.$$target;
+  }
+
   protected applyTransforms(): void {
     if (this.position) {
       this.whenTranslate(this.position);
@@ -76,6 +110,12 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
 
     if (this.lookAt) {
       this.whenLookAt(this.lookAt);
+    }
+  }
+
+  protected subscribeToEvents(): void {
+    if (typeof this.whenClick === 'function') {
+      Emitter.on<MouseEventMap, IntersectionEventHandler>('click', (a) => console.log(a));
     }
   }
 }

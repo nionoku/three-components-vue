@@ -3,39 +3,17 @@ import {
   BufferGeometry, Material, Mesh as ThreeMesh,
 } from 'three';
 import { ComponentPublicInstance } from 'vue';
-import { ObjectComponent as ParentObjectComponent, SupportsShadowComponent } from '@/types/object3d';
-import { Prop } from 'vue-property-decorator';
-import { MouseEventMap } from '@/types/events/mouse';
-import { IntersectionEventHandler } from '@/types/events';
+import { ObjectComponent as ParentObjectComponent } from '@/types/object3d';
 import { ObjectComponent } from '@/components/super/object';
-
-interface Props extends SupportsShadowComponent {
-  whenClick: (mesh: ThreeMesh) => void
-}
 
 export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 'isMesh'> {
   setGeometry(geometry: BufferGeometry): void
   setMaterial(material: Material): void
 }
 
-interface PropsImpl extends Omit<Props, 'whenClick'> {
-  whenClick: Props['whenClick'] | null
-}
-
 @Options({})
-export default class Mesh extends ObjectComponent<ThreeMesh, Partial<Props>> implements
-    PropsImpl,
-    MeshComponent {
+export default class Mesh extends ObjectComponent<ThreeMesh> implements MeshComponent {
   declare public $parent: ParentObjectComponent
-
-  @Prop({ type: Boolean, default: false })
-  public readonly castShadow!: PropsImpl['castShadow'];
-
-  @Prop({ type: Boolean, default: false })
-  public readonly receiveShadow!: PropsImpl['receiveShadow'];
-
-  @Prop({ type: Function, default: null })
-  public readonly whenClick!: PropsImpl['whenClick'];
 
   public readonly isMesh = true
 
@@ -44,13 +22,8 @@ export default class Mesh extends ObjectComponent<ThreeMesh, Partial<Props>> imp
       throw new Error('Mesh must be child of Object3D');
     }
 
-    this.$$target = this.createTarget();
-    this.applyTransforms();
+    this.$$target = this.prepareTarget();
     this.$parent.add(this.$$target);
-  }
-
-  public mounted(): void {
-    this.subscribeToEvents();
   }
 
   public beforeDestroy(): void {
@@ -76,11 +49,5 @@ export default class Mesh extends ObjectComponent<ThreeMesh, Partial<Props>> imp
   protected createTarget(): ThreeMesh {
     const mesh = new ThreeMesh();
     return mesh;
-  }
-
-  protected subscribeToEvents(): void {
-    if (typeof this.whenClick === 'function') {
-      this.$$emitter.on<MouseEventMap, IntersectionEventHandler>('click', (a) => console.log(a));
-    }
   }
 }

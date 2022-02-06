@@ -35,8 +35,7 @@ export default class Scene extends ObjectComponent<ThreeScene, Partial<Props>> i
       throw new Error('Scene must be child of renderer');
     }
 
-    this.$$target = this.createTarget();
-    this.applyTransforms();
+    this.$$target = this.prepareTarget();
     this.$parent.setScene(this.$$target);
   }
 

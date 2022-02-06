@@ -52,8 +52,7 @@ export default class PerspectiveCamera
       throw new Error('PerspectiveCamera must be child of renderer');
     }
 
-    this.$$target = this.createTarget();
-    this.applyTransforms();
+    this.$$target = this.prepareTarget();
     this.$$target.updateProjectionMatrix();
     this.$parent.setCamera(this.$$target);
   }
@@ -66,5 +65,10 @@ export default class PerspectiveCamera
     const camera = new ThreePerspectiveCamera(this.fov, this.aspect, this.near, this.far);
 
     return camera;
+  }
+
+  protected subscribeToEvents(): void {
+    // Camera can't supports click on itself
+    return undefined;
   }
 }

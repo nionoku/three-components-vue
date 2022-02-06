@@ -57,7 +57,7 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
   @Prop({ type: Number, default: window.devicePixelRatio })
   public readonly pixelRatio!: PropsImpl['pixelRatio'];
 
-  @Prop({ type: Number, default: 30 })
+  @Prop({ type: Number, default: 60 })
   public readonly fps!: PropsImpl['fps'];
 
   @Prop({ type: String, default: PowerPreference.DEFAULT })
