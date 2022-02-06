@@ -1,5 +1,5 @@
-import { TransformatableComponentImpl } from '@/components/super/object';
-import { ObjectComponent } from '@/types/object3d';
+import { ObjectComponent } from '@/components/super/object';
+import { ObjectComponent as ContainerComponent } from '@/types/object3d';
 import {
   Color,
   Scene as ThreeScene,
@@ -13,10 +13,10 @@ export interface Props {
   background?: NonNullable<ThreeScene['background']> | string
 }
 
-export interface SceneComponent extends ObjectComponent, Pick<ThreeScene, 'isScene'> {}
+export interface SceneComponent extends ContainerComponent, Pick<ThreeScene, 'isScene'> {}
 
 @Options({})
-export default class Scene extends TransformatableComponentImpl<Props, ThreeScene> implements
+export default class Scene extends ObjectComponent<Props, ThreeScene> implements
     Required<Props>,
     SceneComponent {
   declare public $parent: RendererComponent

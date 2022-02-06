@@ -1,24 +1,29 @@
+// eslint-disable-next-line max-classes-per-file
 import { Prop, Watch } from 'vue-property-decorator';
-import { TransformatableComponent } from '@/types/object3d';
 import { Object3D } from 'three';
 import { Vec3 } from '@/types/vector';
+import { TinyEmitter } from 'tiny-emitter';
+import { Transformatable } from '@/types/object3d';
 import { Component } from '../component';
 
-export abstract class TransformatableComponentImpl<P, T extends Object3D> extends Component<P, T>
-  implements Partial<TransformatableComponent> {
-  declare public $props: P & Partial<TransformatableComponent>
+type TransformatableInterface = Nullable<Required<Transformatable>>
+
+export abstract class ObjectComponent<P, T extends Object3D>
+  extends Component<P & Transformatable, T>
+  implements TransformatableInterface {
+  protected $$emitter = new TinyEmitter()
 
   @Prop({ type: Object, default: null })
-  public readonly position: Nullishable<TransformatableComponent['position']>;
+  public readonly position!: TransformatableInterface['position'];
 
   @Prop({ type: Object, default: null })
-  public readonly rotation: Nullishable<TransformatableComponent['rotation']>;
+  public readonly rotation!: TransformatableInterface['rotation'];
 
   @Prop({ type: Object, default: null })
-  public readonly lookAt: Nullishable<TransformatableComponent['lookAt']>;
+  public readonly lookAt!: TransformatableInterface['lookAt'];
 
   @Prop({ type: Object, default: null })
-  public readonly scale: Nullishable<TransformatableComponent['scale']>;
+  public readonly scale!: TransformatableInterface['scale'];
 
   @Watch('rotation', { deep: true })
   protected whenRotation(value: Vec3): void {

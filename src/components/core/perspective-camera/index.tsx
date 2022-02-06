@@ -4,7 +4,7 @@ import {
 import { Options } from 'vue-class-component';
 import { PerspectiveCamera as ThreePerspectiveCamera } from 'three';
 import { Prop, Watch } from 'vue-property-decorator';
-import { TransformatableComponentImpl } from '@/components/super/object';
+import { ObjectComponent } from '@/components/super/object';
 import { Vec3 } from '@/types/vector';
 import { RendererComponent } from '../renderer';
 
@@ -17,7 +17,7 @@ export interface PerspectiveCameraComponent extends
 
 @Options({})
 export default class PerspectiveCamera
-  extends TransformatableComponentImpl<Props, ThreePerspectiveCamera>
+  extends ObjectComponent<Props, ThreePerspectiveCamera>
   implements Required<Props>, PerspectiveCameraComponent {
   declare public $parent: RendererComponent
 

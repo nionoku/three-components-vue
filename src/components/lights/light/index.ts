@@ -1,6 +1,6 @@
 import { ColorRepresentation, Light as ThreeLight, Object3D } from 'three';
-import { ObjectComponent } from '@/types/object3d';
-import { TransformatableComponentImpl } from '@/components/super/object';
+import { ObjectComponent as ParentObjectComponent } from '@/types/object3d';
+import { ObjectComponent } from '@/components/super/object';
 import { Prop } from 'vue-property-decorator';
 
 interface LightHelperArguments {
@@ -16,8 +16,8 @@ export type LightComponent = Pick<ThreeLight, 'isLight'>
 
 export abstract class BaseLight<
     P = unknown, L extends ThreeLight = ThreeLight
-> extends TransformatableComponentImpl<P & Props, L> implements Required<Props>, LightComponent {
-  declare public $parent: ObjectComponent
+> extends ObjectComponent<P & Props, L> implements Required<Props>, LightComponent {
+  declare public $parent: ParentObjectComponent
 
   @Prop({ type: [Object, Boolean], default: false })
   public readonly helper!: NonNullable<Props['helper']>
