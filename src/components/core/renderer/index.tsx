@@ -14,15 +14,15 @@ import { Component } from '@/components/super/component';
 import { Handler } from '@/types/handler';
 import { usePointerEventHandlers } from '@/handlers/useEventListeners';
 
-export interface Props extends Partial<Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'powerPreference'>> {
-  width?: number
-  height?: number
-  pixelRatio?: number
-  powerPreference?: PowerPreference
-  fps?: number
-}
-
 type RenderAction = (renderer: WebGLRenderer, camera: Camera, scene: Scene) => void
+
+interface Props extends Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'powerPreference'> {
+  width: number
+  height: number
+  pixelRatio: number
+  powerPreference: PowerPreference
+  fps: number
+}
 
 export interface RendererComponent extends ComponentPublicInstance {
   isRenderer: true
@@ -34,34 +34,34 @@ export interface RendererComponent extends ComponentPublicInstance {
   removeOnBeforeRender(action: RenderAction): void
 }
 
-@Options({})
-export default class Renderer extends Component<Props, WebGLRenderer> implements
-    Required<Props>,
-    RendererComponent {
-  public declare $props: Props
+type PropsImpl = Props
 
+@Options({})
+export default class Renderer extends Component<WebGLRenderer, Partial<Props>> implements
+    PropsImpl,
+    RendererComponent {
   public declare $parent: ComponentPublicInstance;
 
   @Prop({ type: Number, default: 100 })
-  public readonly width!: NonNullable<Props['width']>;
+  public readonly width!: PropsImpl['width'];
 
   @Prop({ type: Number, default: 100 })
-  public readonly height!: NonNullable<Props['height']>;
+  public readonly height!: PropsImpl['height'];
 
   @Prop({ type: Boolean, default: false })
-  public readonly antialias!: NonNullable<Props['antialias']>;
+  public readonly antialias!: PropsImpl['antialias'];
 
   @Prop({ type: Boolean, default: false })
-  public readonly alpha!: NonNullable<Props['alpha']>;
+  public readonly alpha!: PropsImpl['alpha'];
 
   @Prop({ type: Number, default: window.devicePixelRatio })
-  public readonly pixelRatio!: NonNullable<Props['pixelRatio']>;
+  public readonly pixelRatio!: PropsImpl['pixelRatio'];
 
   @Prop({ type: Number, default: 30 })
-  public readonly fps!: NonNullable<Props['fps']>;
+  public readonly fps!: PropsImpl['fps'];
 
   @Prop({ type: String, default: PowerPreference.DEFAULT })
-  public readonly powerPreference!: NonNullable<Props['powerPreference']>;
+  public readonly powerPreference!: PropsImpl['powerPreference'];
 
   public readonly isRenderer: RendererComponent['isRenderer'] = true
 

@@ -1,6 +1,6 @@
 import { Vue } from 'vue-class-component';
 
-export abstract class Component<P, T> extends Vue {
+export abstract class Component<T, P = Record<string, unknown>> extends Vue {
   declare public $props: P
 
   protected $$target: T | null = null

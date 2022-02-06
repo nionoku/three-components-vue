@@ -8,8 +8,8 @@ import { Component } from '../component';
 
 type TransformatableInterface = Nullable<Required<Transformatable>>
 
-export abstract class ObjectComponent<P, T extends Object3D>
-  extends Component<P & Transformatable, T>
+export abstract class ObjectComponent<T extends Object3D, P = Record<string, unknown>>
+  extends Component<T, P & Partial<Transformatable>>
   implements TransformatableInterface {
   protected $$emitter = new TinyEmitter()
 

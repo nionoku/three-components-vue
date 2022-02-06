@@ -5,18 +5,21 @@ import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { BaseLight } from '../light';
 
-export type Props = Partial<Pick<ThreeAmbientLight, 'color' | 'intensity'>>
+type Props = Pick<ThreeAmbientLight, 'color' | 'intensity'>
 
 export type AmbientLightComponent = Pick<ThreeAmbientLight, 'isAmbientLight'>
 
+type PropsImpl = Props
+
 @Options({})
-export default class AmbientLight extends BaseLight<Props, ThreeAmbientLight> implements
-    Required<Props>, AmbientLightComponent {
+export default class AmbientLight
+  extends BaseLight<ThreeAmbientLight, Partial<Props>>
+  implements PropsImpl, AmbientLightComponent {
   @Prop({ type: [Object, Number, String], default: 'white' })
-  public readonly color!: NonNullable<Props['color']>
+  public readonly color!: PropsImpl['color']
 
   @Prop({ type: Number, default: 1 })
-  public readonly intensity!: NonNullable<Props['intensity']>
+  public readonly intensity!: PropsImpl['intensity']
 
   public readonly isAmbientLight: AmbientLightComponent['isAmbientLight'] = true
 

@@ -9,94 +9,97 @@ import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { BaseMaterial } from '../material';
 
-export type Props = Partial<MeshStandardMaterialParameters>
+type Props = MeshStandardMaterialParameters
+
+type PropsImpl = Props
 
 @Options({})
-export default class StandartMaterial extends BaseMaterial<Props, MeshStandardMaterial> implements
-    Required<Props> {
+export default class StandartMaterial
+  extends BaseMaterial<MeshStandardMaterial, Partial<Props>>
+  implements PropsImpl {
   @Prop({ type: Number, default: 1 })
-  public readonly roughness!: NonNullable<Props['roughness']>
+  public readonly roughness!: PropsImpl['roughness']
 
   @Prop({ type: Number, default: 0 })
-  public readonly metalness!: NonNullable<Props['metalness']>
+  public readonly metalness!: PropsImpl['metalness']
 
   @Prop({ type: Object, default: () => new Color(0x000000) })
-  public readonly emissive!: NonNullable<Props['emissive']>
+  public readonly emissive!: PropsImpl['emissive']
 
   @Prop({ type: Number, default: 1 })
-  public readonly emissiveIntensity!: NonNullable<Props['emissiveIntensity']>
+  public readonly emissiveIntensity!: PropsImpl['emissiveIntensity']
 
   @Prop({ type: Object, default: null })
-  public readonly emissiveMap!: NonNullable<Props['emissiveMap']>
+  public readonly emissiveMap!: PropsImpl['emissiveMap']
 
   @Prop({ type: Object, default: null })
-  public readonly bumpMap!: NonNullable<Props['bumpMap']>
+  public readonly bumpMap!: PropsImpl['bumpMap']
 
   @Prop({ type: Number, default: 1 })
-  public readonly bumpScale!: NonNullable<Props['bumpScale']>
+  public readonly bumpScale!: PropsImpl['bumpScale']
 
   @Prop({ type: Object, default: null })
-  public readonly normalMap!: NonNullable<Props['normalMap']>
+  public readonly normalMap!: PropsImpl['normalMap']
 
   @Prop({ type: Object, default: TangentSpaceNormalMap })
-  public readonly normalMapType!: NonNullable<Props['normalMapType']>
+  public readonly normalMapType!: PropsImpl['normalMapType']
 
   @Prop({ type: Object, default: () => new Vector2(1, 1) })
-  public readonly normalScale!: NonNullable<Props['normalScale']>
+  public readonly normalScale!: PropsImpl['normalScale']
 
   @Prop({ type: Object, default: null })
-  public readonly displacementMap!: NonNullable<Props['displacementMap']>
+  public readonly displacementMap!: PropsImpl['displacementMap']
 
   @Prop({ type: Number, default: 1 })
-  public readonly displacementScale!: NonNullable<Props['displacementScale']>
+  public readonly displacementScale!: PropsImpl['displacementScale']
 
   @Prop({ type: Number, default: 0 })
-  public readonly displacementBias!: NonNullable<Props['displacementBias']>
+  public readonly displacementBias!: PropsImpl['displacementBias']
 
   @Prop({ type: Object, default: null })
-  public readonly roughnessMap!: NonNullable<Props['roughnessMap']>
+  public readonly roughnessMap!: PropsImpl['roughnessMap']
 
   @Prop({ type: Object, default: null })
-  public readonly metalnessMap!: NonNullable<Props['metalnessMap']>
+  public readonly metalnessMap!: PropsImpl['metalnessMap']
 
   @Prop({ type: Number, default: 1 })
-  public readonly envMapIntensity!: NonNullable<Props['envMapIntensity']>
+  public readonly envMapIntensity!: PropsImpl['envMapIntensity']
 
   @Prop({ type: [Object, Number, String], default: 'white' })
-  public readonly color!: NonNullable<Props['color']>
+  public readonly color!: PropsImpl['color']
 
   @Prop({ type: Object, default: null })
-  public readonly map!: NonNullable<Props['map']>
+  public readonly map!: PropsImpl['map']
 
   @Prop({ type: Object, default: null })
-  public readonly lightMap!: NonNullable<Props['lightMap']>
+  public readonly lightMap!: PropsImpl['lightMap']
 
   @Prop({ type: Number, default: 1 })
-  public readonly lightMapIntensity!: NonNullable<Props['lightMapIntensity']>
+  public readonly lightMapIntensity!: PropsImpl['lightMapIntensity']
 
   @Prop({ type: Object, default: null })
-  public readonly aoMap!: NonNullable<Props['aoMap']>
+  public readonly aoMap!: PropsImpl['aoMap']
 
   @Prop({ type: Number, default: 1 })
-  public readonly aoMapIntensity!: NonNullable<Props['aoMapIntensity']>
+  public readonly aoMapIntensity!: PropsImpl['aoMapIntensity']
 
   @Prop({ type: Object, default: null })
-  public readonly alphaMap!: NonNullable<Props['alphaMap']>
+  public readonly alphaMap!: PropsImpl['alphaMap']
 
   @Prop({ type: Object, default: null })
-  public readonly envMap!: NonNullable<Props['envMap']>
+  public readonly envMap!: PropsImpl['envMap']
 
   @Prop({ type: Number, default: 0.98 })
-  public readonly refractionRatio!: NonNullable<Props['refractionRatio']>
+  public readonly refractionRatio!: PropsImpl['refractionRatio']
 
   @Prop({ type: Boolean, default: false })
-  public readonly wireframe!: NonNullable<Props['wireframe']>
+  public readonly wireframe!: PropsImpl['wireframe']
 
   @Prop({ type: Number, default: 1 })
-  public readonly wireframeLinewidth!: NonNullable<Props['wireframeLinewidth']>
+  public readonly wireframeLinewidth!: PropsImpl['wireframeLinewidth']
 
   @Prop({ type: Boolean, default: false })
-  public readonly flatShading!: NonNullable<Props['flatShading']>
+  public readonly flatShading!: PropsImpl['flatShading']
 
   protected createTarget(): MeshStandardMaterial {
     const material = new MeshStandardMaterial({

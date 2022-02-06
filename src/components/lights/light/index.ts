@@ -8,19 +8,21 @@ interface LightHelperArguments {
   color: ColorRepresentation
 }
 
-export interface Props {
-  helper?: boolean | LightHelperArguments
+interface Props {
+  helper: boolean | LightHelperArguments
 }
 
 export type LightComponent = Pick<ThreeLight, 'isLight'>
 
-export abstract class BaseLight<
-    P = unknown, L extends ThreeLight = ThreeLight
-> extends ObjectComponent<P & Props, L> implements Required<Props>, LightComponent {
+type PropsImpl = Props
+
+export abstract class BaseLight<L extends ThreeLight, P = Record<string, unknown>>
+  extends ObjectComponent<L, P & Partial<Props>>
+  implements PropsImpl, LightComponent {
   declare public $parent: ParentObjectComponent
 
   @Prop({ type: [Object, Boolean], default: false })
-  public readonly helper!: NonNullable<Props['helper']>
+  public readonly helper!: PropsImpl['helper']
 
   protected $$helper: Object3D | null = null
 

@@ -8,10 +8,10 @@ export interface ObjectComponent extends
 {}
 
 export interface Transformatable {
-  rotation?: Vec3,
-  position?: Vec3,
-  lookAt?: Vec3,
-  scale?: Vec3
+  rotation: Vec3,
+  position: Vec3,
+  lookAt: Vec3,
+  scale: Vec3
 }
 
 export type SupportsShadowComponent = Pick<Object3D, 'castShadow' | 'receiveShadow'>

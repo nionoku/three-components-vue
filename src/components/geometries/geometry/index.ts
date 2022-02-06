@@ -6,8 +6,9 @@ export interface GeometryComponent {
   isGeometry: BufferGeometry['isBufferGeometry']
 }
 
-export abstract class Geometry<P, G extends BufferGeometry> extends Component<P, G> implements
-    GeometryComponent {
+export abstract class Geometry<G extends BufferGeometry, P>
+  extends Component<G, P>
+  implements GeometryComponent {
   declare public $parent: MeshComponent
 
   declare public $props: P

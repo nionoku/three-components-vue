@@ -18,140 +18,142 @@ type Props = MaterialParameters
 
 export type MaterialComponent = Pick<ThreeMaterial, 'isMaterial'>
 
-export abstract class BaseMaterial<
-    P = unknown, M extends ThreeMaterial = ThreeMaterial
-> extends Component<P & Props, M> implements Required<Props>, MaterialComponent {
+type PropsImpl = Props
+
+export abstract class BaseMaterial<M extends ThreeMaterial, P = Record<string, unknown>>
+  extends Component<M, P & Partial<Props>>
+  implements PropsImpl, MaterialComponent {
   declare public $parent: MeshComponent
 
   public readonly isMaterial: MaterialComponent['isMaterial'] = true
 
   @Prop({ type: Number, default: 1 })
-  public readonly opacity!: NonNullable<Props['opacity']>
+  public readonly opacity!: PropsImpl['opacity']
 
   @Prop({ type: Number, default: 0 })
-  public readonly alphaTest!: NonNullable<MaterialParameters['alphaTest']>
+  public readonly alphaTest!: PropsImpl['alphaTest']
 
   @Prop({ type: Boolean, default: false })
-  public readonly alphaToCoverage!: NonNullable<MaterialParameters['alphaToCoverage']>
+  public readonly alphaToCoverage!: PropsImpl['alphaToCoverage']
 
   @Prop({ type: Number, default: OneMinusSrcAlphaFactor })
-  public readonly blendDst!: NonNullable<MaterialParameters['blendDst']>
+  public readonly blendDst!: PropsImpl['blendDst']
 
   @Prop({ type: Number, default: null })
-  public readonly blendDstAlpha!: NonNullable<MaterialParameters['blendDstAlpha']>
+  public readonly blendDstAlpha!: PropsImpl['blendDstAlpha']
 
   @Prop({ type: Number, default: AddEquation })
-  public readonly blendEquation!: NonNullable<MaterialParameters['blendEquation']>
+  public readonly blendEquation!: PropsImpl['blendEquation']
 
   @Prop({ type: Number, default: null })
-  public readonly blendEquationAlpha!: NonNullable<MaterialParameters['blendEquationAlpha']>
+  public readonly blendEquationAlpha!: PropsImpl['blendEquationAlpha']
 
   @Prop({ type: Number, default: NormalBlending })
-  public readonly blending!: NonNullable<MaterialParameters['blending']>
+  public readonly blending!: PropsImpl['blending']
 
   @Prop({ type: Number, default: SrcAlphaFactor })
-  public readonly blendSrc!: NonNullable<MaterialParameters['blendSrc']>
+  public readonly blendSrc!: PropsImpl['blendSrc']
 
   @Prop({ type: Number, default: null })
-  public readonly blendSrcAlpha!: NonNullable<MaterialParameters['blendSrcAlpha']>
+  public readonly blendSrcAlpha!: PropsImpl['blendSrcAlpha']
 
   @Prop({ type: Boolean, default: false })
-  public readonly clipIntersection!: NonNullable<MaterialParameters['clipIntersection']>
+  public readonly clipIntersection!: PropsImpl['clipIntersection']
 
   // TODO (2022.02.05): Check this type
   @Prop({ type: null, default: null })
-  public readonly clippingPlanes!: NonNullable<MaterialParameters['clippingPlanes']>
+  public readonly clippingPlanes!: PropsImpl['clippingPlanes']
 
   @Prop({ type: Boolean, default: false })
-  public readonly clipShadows!: NonNullable<MaterialParameters['clipShadows']>
+  public readonly clipShadows!: PropsImpl['clipShadows']
 
   @Prop({ type: Boolean, default: true })
-  public readonly colorWrite!: NonNullable<MaterialParameters['colorWrite']>
+  public readonly colorWrite!: PropsImpl['colorWrite']
 
   @Prop({ type: Object, default: {} })
-  public readonly defines!: NonNullable<MaterialParameters['defines']>
+  public readonly defines!: PropsImpl['defines']
 
   @Prop({ type: Number, default: LessEqualDepth })
-  public readonly depthFunc!: NonNullable<MaterialParameters['depthFunc']>
+  public readonly depthFunc!: PropsImpl['depthFunc']
 
   @Prop({ type: Boolean, default: true })
-  public readonly depthTest!: NonNullable<MaterialParameters['depthTest']>
+  public readonly depthTest!: PropsImpl['depthTest']
 
   @Prop({ type: Boolean, default: true })
-  public readonly depthWrite!: NonNullable<MaterialParameters['depthWrite']>
+  public readonly depthWrite!: PropsImpl['depthWrite']
 
   @Prop({ type: Boolean, default: false })
-  public readonly fog!: NonNullable<MaterialParameters['fog']>
+  public readonly fog!: PropsImpl['fog']
 
   @Prop({ type: String, default: '' })
-  public readonly name!: NonNullable<MaterialParameters['name']>
+  public readonly name!: PropsImpl['name']
 
   @Prop({ type: Boolean, default: false })
-  public readonly polygonOffset!: NonNullable<MaterialParameters['polygonOffset']>
+  public readonly polygonOffset!: PropsImpl['polygonOffset']
 
   @Prop({ type: Number, default: 0 })
-  public readonly polygonOffsetFactor!: NonNullable<MaterialParameters['polygonOffsetFactor']>
+  public readonly polygonOffsetFactor!: PropsImpl['polygonOffsetFactor']
 
   @Prop({ type: Number, default: 0 })
-  public readonly polygonOffsetUnits!: NonNullable<MaterialParameters['polygonOffsetUnits']>
+  public readonly polygonOffsetUnits!: PropsImpl['polygonOffsetUnits']
 
   @Prop({ type: String, default: null })
-  public readonly precision!: NonNullable<MaterialParameters['precision']>
+  public readonly precision!: PropsImpl['precision']
 
   @Prop({ type: Boolean, default: false })
-  public readonly premultipliedAlpha!: NonNullable<MaterialParameters['premultipliedAlpha']>
+  public readonly premultipliedAlpha!: PropsImpl['premultipliedAlpha']
 
   @Prop({ type: Boolean, default: false })
-  public readonly dithering!: NonNullable<MaterialParameters['dithering']>
+  public readonly dithering!: PropsImpl['dithering']
 
   @Prop({ type: Number, default: FrontSide })
-  public readonly side!: NonNullable<MaterialParameters['side']>
+  public readonly side!: PropsImpl['side']
 
   @Prop({ type: Number, default: null })
-  public readonly shadowSide!: NonNullable<MaterialParameters['shadowSide']>
+  public readonly shadowSide!: PropsImpl['shadowSide']
 
   @Prop({ type: Boolean, default: true })
-  public readonly toneMapped!: NonNullable<MaterialParameters['toneMapped']>
+  public readonly toneMapped!: PropsImpl['toneMapped']
 
   @Prop({ type: Boolean, default: false })
-  public readonly transparent!: NonNullable<MaterialParameters['transparent']>
+  public readonly transparent!: PropsImpl['transparent']
 
   @Prop({ type: Boolean, default: false })
-  public readonly vertexColors!: NonNullable<MaterialParameters['vertexColors']>
+  public readonly vertexColors!: PropsImpl['vertexColors']
 
   @Prop({ type: Boolean, default: true })
-  public readonly visible!: NonNullable<MaterialParameters['visible']>
+  public readonly visible!: PropsImpl['visible']
 
   @Prop({ type: Boolean, default: false })
-  public readonly stencilWrite!: NonNullable<MaterialParameters['stencilWrite']>
+  public readonly stencilWrite!: PropsImpl['stencilWrite']
 
   @Prop({ type: Number, default: AlwaysStencilFunc })
-  public readonly stencilFunc!: NonNullable<MaterialParameters['stencilFunc']>
+  public readonly stencilFunc!: PropsImpl['stencilFunc']
 
   @Prop({ type: Number, default: 0 })
-  public readonly stencilRef!: NonNullable<MaterialParameters['stencilRef']>
+  public readonly stencilRef!: PropsImpl['stencilRef']
 
   @Prop({ type: Number, default: 0xFFFFFF })
-  public readonly stencilWriteMask!: NonNullable<MaterialParameters['stencilWriteMask']>
+  public readonly stencilWriteMask!: PropsImpl['stencilWriteMask']
 
   @Prop({ type: Number, default: 0xFFFFFF })
-  public readonly stencilFuncMask!: NonNullable<MaterialParameters['stencilFuncMask']>
+  public readonly stencilFuncMask!: PropsImpl['stencilFuncMask']
 
   @Prop({ type: Number, default: KeepStencilOp })
-  public readonly stencilFail!: NonNullable<MaterialParameters['stencilFail']>
+  public readonly stencilFail!: PropsImpl['stencilFail']
 
   @Prop({ type: Number, default: KeepStencilOp })
-  public readonly stencilZFail!: NonNullable<MaterialParameters['stencilZFail']>
+  public readonly stencilZFail!: PropsImpl['stencilZFail']
 
   @Prop({ type: Number, default: KeepStencilOp })
-  public readonly stencilZPass!: NonNullable<MaterialParameters['stencilZPass']>
+  public readonly stencilZPass!: PropsImpl['stencilZPass']
 
   @Prop({ type: Object, default: () => ({}) })
-  public readonly userData!: NonNullable<MaterialParameters['userData']>
+  public readonly userData!: PropsImpl['userData']
 
   /** @deprecated */
   @Prop({ type: Number, default: null })
-  public readonly format!: NonNullable<MaterialParameters['format']>
+  public readonly format!: PropsImpl['format']
 
   public created(): void {
     if (!this.$parent.isMesh) {

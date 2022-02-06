@@ -5,24 +5,28 @@ import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import BufferGeometry from '../buffer-geometry';
 
-export type Props = Partial<ThreeTorusGeometry['parameters']>
+type Props = ThreeTorusGeometry['parameters']
+
+type PropsImpl = Props
 
 @Options({})
-export default class TorusGeometry extends BufferGeometry<Props> implements Required<Props> {
+export default class TorusGeometry
+  extends BufferGeometry<Partial<Props>>
+  implements PropsImpl {
   @Prop({ type: Number, default: 1 })
-  public readonly radius!: NonNullable<Props['radius']>;
+  public readonly radius!: PropsImpl['radius'];
 
   @Prop({ type: Number, default: 0.4 })
-  public readonly tube!: NonNullable<Props['tube']>;
+  public readonly tube!: PropsImpl['tube'];
 
   @Prop({ type: Number, default: 8 })
-  public readonly radialSegments!: NonNullable<Props['radialSegments']>;
+  public readonly radialSegments!: PropsImpl['radialSegments'];
 
   @Prop({ type: Number, default: 6 })
-  public readonly tubularSegments!: NonNullable<Props['tubularSegments']>;
+  public readonly tubularSegments!: PropsImpl['tubularSegments'];
 
   @Prop({ type: Number, default: Math.PI * 2 })
-  public readonly arc!: NonNullable<Props['arc']>;
+  public readonly arc!: PropsImpl['arc'];
 
   protected createTarget(): ThreeTorusGeometry {
     const geometry = new ThreeTorusGeometry(

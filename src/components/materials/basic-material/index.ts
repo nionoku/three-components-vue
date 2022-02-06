@@ -5,58 +5,61 @@ import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { BaseMaterial } from '../material';
 
-export type Props = Partial<MeshBasicMaterialParameters>
+type Props = MeshBasicMaterialParameters
+
+type PropsImpl = Props
 
 @Options({})
-export default class BasicMaterial extends BaseMaterial<Props, MeshBasicMaterial> implements
-    Required<Props> {
+export default class BasicMaterial
+  extends BaseMaterial<MeshBasicMaterial, Partial<Props>>
+  implements PropsImpl {
   @Prop({ type: [Object, Number, String], default: 'white' })
-  public readonly color!: NonNullable<Props['color']>
+  public readonly color!: PropsImpl['color']
 
   @Prop({ type: Object, default: null })
-  public readonly map!: NonNullable<Props['map']>
+  public readonly map!: PropsImpl['map']
 
   @Prop({ type: Object, default: null })
-  public readonly lightMap!: NonNullable<Props['lightMap']>
+  public readonly lightMap!: PropsImpl['lightMap']
 
   @Prop({ type: Number, default: 1 })
-  public readonly lightMapIntensity!: NonNullable<Props['lightMapIntensity']>
+  public readonly lightMapIntensity!: PropsImpl['lightMapIntensity']
 
   @Prop({ type: Object, default: null })
-  public readonly aoMap!: NonNullable<Props['aoMap']>
+  public readonly aoMap!: PropsImpl['aoMap']
 
   @Prop({ type: Number, default: 1 })
-  public readonly aoMapIntensity!: NonNullable<Props['aoMapIntensity']>
+  public readonly aoMapIntensity!: PropsImpl['aoMapIntensity']
 
   @Prop({ type: Object, default: null })
-  public readonly specularMap!: NonNullable<Props['specularMap']>
+  public readonly specularMap!: PropsImpl['specularMap']
 
   @Prop({ type: Object, default: null })
-  public readonly alphaMap!: NonNullable<Props['alphaMap']>
+  public readonly alphaMap!: PropsImpl['alphaMap']
 
   @Prop({ type: Object, default: null })
-  public readonly envMap!: NonNullable<Props['envMap']>
+  public readonly envMap!: PropsImpl['envMap']
 
   @Prop({ type: Number, default: MultiplyOperation })
-  public readonly combine!: NonNullable<Props['combine']>
+  public readonly combine!: PropsImpl['combine']
 
   @Prop({ type: Number, default: 1 })
-  public readonly reflectivity!: NonNullable<Props['reflectivity']>
+  public readonly reflectivity!: PropsImpl['reflectivity']
 
   @Prop({ type: Number, default: 0.98 })
-  public readonly refractionRatio!: NonNullable<Props['refractionRatio']>
+  public readonly refractionRatio!: PropsImpl['refractionRatio']
 
   @Prop({ type: Boolean, default: false })
-  public readonly wireframe!: NonNullable<Props['wireframe']>
+  public readonly wireframe!: PropsImpl['wireframe']
 
   @Prop({ type: Number, default: 1 })
-  public readonly wireframeLinewidth!: NonNullable<Props['wireframeLinewidth']>
+  public readonly wireframeLinewidth!: PropsImpl['wireframeLinewidth']
 
   @Prop({ type: String, default: 'round' })
-  public readonly wireframeLinecap!: NonNullable<Props['wireframeLinecap']>
+  public readonly wireframeLinecap!: PropsImpl['wireframeLinecap']
 
   @Prop({ type: String, default: 'round' })
-  public readonly wireframeLinejoin!: NonNullable<Props['wireframeLinejoin']>
+  public readonly wireframeLinejoin!: PropsImpl['wireframeLinejoin']
 
   protected createTarget(): MeshBasicMaterial {
     const geometry = new MeshBasicMaterial({

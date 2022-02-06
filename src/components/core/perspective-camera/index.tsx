@@ -8,30 +8,32 @@ import { ObjectComponent } from '@/components/super/object';
 import { Vec3 } from '@/types/vector';
 import { RendererComponent } from '../renderer';
 
-export type Props = Partial<Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>>
+type Props = Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>
 
 export interface PerspectiveCameraComponent extends
   ComponentPublicInstance,
   Pick<ThreePerspectiveCamera, 'isPerspectiveCamera'>
 {}
 
+type PropsImpl = Props
+
 @Options({})
 export default class PerspectiveCamera
-  extends ObjectComponent<Props, ThreePerspectiveCamera>
-  implements Required<Props>, PerspectiveCameraComponent {
+  extends ObjectComponent<ThreePerspectiveCamera, Partial<Props>>
+  implements PropsImpl, PerspectiveCameraComponent {
   declare public $parent: RendererComponent
 
   @Prop({ type: Number, default: 1 })
-  public readonly aspect!: NonNullable<Props['aspect']>;
+  public readonly aspect!: PropsImpl['aspect'];
 
   @Prop({ type: Number, default: 50 })
-  public readonly fov!: NonNullable<Props['fov']>;
+  public readonly fov!: PropsImpl['fov'];
 
   @Prop({ type: Number, default: 0.1 })
-  public readonly near!: NonNullable<Props['near']>;
+  public readonly near!: PropsImpl['near'];
 
   @Prop({ type: Number, default: 2000 })
-  public readonly far!: NonNullable<Props['far']>;
+  public readonly far!: PropsImpl['far'];
 
   public isPerspectiveCamera: PerspectiveCameraComponent['isPerspectiveCamera'] = true
 

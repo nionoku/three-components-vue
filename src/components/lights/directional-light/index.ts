@@ -7,18 +7,21 @@ import { Prop } from 'vue-property-decorator';
 import { BaseLight } from '../light';
 
 // TODO (2022.02.05): Add target prop
-export type Props = Partial<Pick<ThreeDirectionalLight, 'color' | 'intensity'>>
+type Props = Partial<Pick<ThreeDirectionalLight, 'color' | 'intensity'>>
 
 export type DirectionalLightComponent = Pick<ThreeDirectionalLight, 'isDirectionalLight'>
 
+type PropsImpl = Props
+
 @Options({})
-export default class DirectionalLight extends BaseLight<Props, ThreeDirectionalLight> implements
-    Required<Props> {
+export default class DirectionalLight
+  extends BaseLight<ThreeDirectionalLight, Partial<Props>>
+  implements PropsImpl {
   @Prop({ type: [Object, Number, String], default: 'white' })
-  public readonly color!: NonNullable<Props['color']>
+  public readonly color!: PropsImpl['color']
 
   @Prop({ type: Number, default: 1 })
-  public readonly intensity!: NonNullable<Props['intensity']>
+  public readonly intensity!: PropsImpl['intensity']
 
   // TODO (2022.02.05): Impl target
   // @Prop({ type: Object, default: () => ({ x: 0, y: 0, z: 0 }) })

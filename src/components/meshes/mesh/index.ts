@@ -23,7 +23,7 @@ interface PropsImpl extends Omit<Props, 'whenClick'> {
 }
 
 @Options({})
-export default class Mesh extends ObjectComponent<Partial<Props>, ThreeMesh> implements
+export default class Mesh extends ObjectComponent<ThreeMesh, Partial<Props>> implements
     PropsImpl,
     MeshComponent {
   declare public $parent: ParentObjectComponent

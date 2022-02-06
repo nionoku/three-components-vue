@@ -5,27 +5,29 @@ import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import BufferGeometry from '../buffer-geometry';
 
-export type Props = Partial<ThreeBoxGeometry['parameters']>
+type Props = ThreeBoxGeometry['parameters']
+
+type PropsImpl = Props
 
 @Options({})
-export default class BoxGeometry extends BufferGeometry<Props> implements Required<Props> {
-  @Prop({ type: Number, default: 1 })
-  public readonly width!: NonNullable<Props['width']>;
+export default class BoxGeometry extends BufferGeometry<Partial<Props>> implements PropsImpl {
+@Prop({ type: Number, default: 1 })
+  public readonly width!: PropsImpl['width'];
 
   @Prop({ type: Number, default: 1 })
-  public readonly height!: NonNullable<Props['height']>;
+  public readonly height!: PropsImpl['height'];
 
   @Prop({ type: Number, default: 1 })
-  public readonly depth!: NonNullable<Props['depth']>;
+  public readonly depth!: PropsImpl['depth'];
 
   @Prop({ type: Number, default: 1 })
-  public readonly widthSegments!: NonNullable<Props['widthSegments']>;
+  public readonly widthSegments!: PropsImpl['widthSegments'];
 
   @Prop({ type: Number, default: 1 })
-  public readonly heightSegments!: NonNullable<Props['heightSegments']>;
+  public readonly heightSegments!: PropsImpl['heightSegments'];
 
   @Prop({ type: Number, default: 1 })
-  public readonly depthSegments!: NonNullable<Props['depthSegments']>;
+  public readonly depthSegments!: PropsImpl['depthSegments'];
 
   protected createTarget(): ThreeBoxGeometry {
     const geometry = new ThreeBoxGeometry(

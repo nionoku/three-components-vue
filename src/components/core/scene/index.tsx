@@ -9,20 +9,22 @@ import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { RendererComponent } from '../renderer';
 
-export interface Props {
-  background?: NonNullable<ThreeScene['background']> | string
+interface Props {
+  background: NonNullable<ThreeScene['background']> | string
 }
 
 export interface SceneComponent extends ContainerComponent, Pick<ThreeScene, 'isScene'> {}
 
+type PropsImpl = Props
+
 @Options({})
-export default class Scene extends ObjectComponent<Props, ThreeScene> implements
-    Required<Props>,
+export default class Scene extends ObjectComponent<ThreeScene, Partial<Props>> implements
+    PropsImpl,
     SceneComponent {
   declare public $parent: RendererComponent
 
   @Prop({ type: [String, Object], default: 'white' })
-  public readonly background!: NonNullable<Props['background']>;
+  public readonly background!: PropsImpl['background'];
 
   public readonly isScene: SceneComponent['isScene'] = true;
 

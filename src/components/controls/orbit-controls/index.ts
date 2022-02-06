@@ -4,11 +4,8 @@ import { Camera } from 'three';
 import { OrbitControls as ThreeOrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Options } from 'vue-class-component';
 
-export type Props = any
-
 @Options({})
-export default class OrbitControls extends Component<Props, ThreeOrbitControls> implements
-    Required<Props> {
+export default class OrbitControls extends Component<ThreeOrbitControls> {
   declare public $parent: RendererComponent
 
   public created(): void {

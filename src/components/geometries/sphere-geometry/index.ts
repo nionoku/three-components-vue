@@ -5,30 +5,34 @@ import { Options } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import BufferGeometry from '../buffer-geometry';
 
-export type Props = Partial<ThreeSphereGeometry['parameters']>
+type Props = ThreeSphereGeometry['parameters']
+
+type PropsImpl = Props
 
 @Options({})
-export default class SphereGeometry extends BufferGeometry<Props> implements Required<Props> {
+export default class SphereGeometry
+  extends BufferGeometry<Partial<Props>>
+  implements PropsImpl {
   @Prop({ type: Number, default: 50 })
-  public readonly radius!: NonNullable<Props['radius']>;
+  public readonly radius!: PropsImpl['radius'];
 
   @Prop({ type: Number, default: 8 })
-  public readonly widthSegments!: NonNullable<Props['widthSegments']>;
+  public readonly widthSegments!: PropsImpl['widthSegments'];
 
   @Prop({ type: Number, default: 6 })
-  public readonly heightSegments!: NonNullable<Props['heightSegments']>;
+  public readonly heightSegments!: PropsImpl['heightSegments'];
 
   @Prop({ type: Number, default: 0 })
-  public readonly phiStart!: NonNullable<Props['phiStart']>;
+  public readonly phiStart!: PropsImpl['phiStart'];
 
   @Prop({ type: Number, default: Math.PI * 2 })
-  public readonly phiLength!: NonNullable<Props['phiLength']>;
+  public readonly phiLength!: PropsImpl['phiLength'];
 
   @Prop({ type: Number, default: 0 })
-  public readonly thetaStart!: NonNullable<Props['thetaStart']>;
+  public readonly thetaStart!: PropsImpl['thetaStart'];
 
   @Prop({ type: Number, default: Math.PI * 2 })
-  public readonly thetaLength!: NonNullable<Props['thetaLength']>;
+  public readonly thetaLength!: PropsImpl['thetaLength'];
 
   protected createTarget(): ThreeSphereGeometry {
     const geometry = new ThreeSphereGeometry(
