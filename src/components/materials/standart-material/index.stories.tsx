@@ -2,7 +2,7 @@ import {
   StandartMaterial, Mesh, PerspectiveCamera, Renderer, Scene, DirectionalLight, BoxGeometry,
 } from '@/components';
 import { Vec3 } from '@/types/vector';
-import { onBeforeUnmount, Ref, ref } from 'vue';
+import { Ref, ref } from 'vue';
 
 export default {
   title: 'Materials/StandartMaterial',
@@ -14,17 +14,19 @@ const Template = (args: any) => ({
   setup() {
     // Story args can be spread into the returned object
     const figureRotation: Ref<Vec3> = ref({ x: 0, y: 10, z: 0 });
-
-    const intervalId = setInterval(() => { figureRotation.value.y += 0.1; }, 100);
-    onBeforeUnmount(() => clearInterval(intervalId));
-
     return { ...args, figureRotation };
   },
   // Then, the spread values can be accessed directly in the template
   render() {
     return (
       <div style={{ width: '500px', height: '300px', border: '1px dashed black' }}>
-        <Renderer width={500} height={300}>
+        <Renderer
+          width={500} height={300}
+          whenBeforeRender={() => {
+            /* @ts-expect-error figureRotation was returns in setup */
+            this.figureRotation.y += 0.01;
+          }}
+        >
           <PerspectiveCamera position={{ x: 2, y: 1.5, z: 1 }} lookAt={{ x: 0, y: 0, z: 0 }} />
           <Scene background={'#F0F0F0'}>
             <DirectionalLight position={{ x: 2, y: 3.5, z: 2 }} intensity={0.9} helper />

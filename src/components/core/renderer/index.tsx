@@ -14,7 +14,7 @@ import { Component } from '@/components/super/component';
 import { Handler } from '@/types/handler';
 import { usePointerEventHandlers } from '@/handlers/useEventListeners';
 
-type RenderAction = (renderer: WebGLRenderer, camera: Camera, scene: Scene) => void
+type RenderAction = (time: number, renderer: WebGLRenderer, camera: Camera, scene: Scene) => void
 
 interface Props extends Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'powerPreference'> {
   width: number
@@ -89,9 +89,7 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     this.$$target = this.createTarget();
     this.$$whenBeforeRender = [];
 
-    if (this.whenBeforeRender) {
-      this.$$whenBeforeRender.push(this.whenBeforeRender);
-    }
+    this.subscribeToEvents();
   }
 
   public mounted(): void {
@@ -139,7 +137,7 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
       this.$$camera,
       this.$$scene,
     );
-    this.$$looper = useLooper(this.fps, () => {
+    this.$$looper = useLooper(this.fps, (time) => {
       if (!this.$$target) {
         throw new Error('Can not render scene. Renderer is null');
       }
@@ -152,8 +150,10 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
         throw new Error('Can not render scene. Camera is null');
       }
 
-      // @ts-expect-error target, scene and camera not null
-      this.$$whenBeforeRender?.forEach((it) => it(this.$$target, this.$$camera, this.$$scene));
+      this.$$whenBeforeRender?.forEach((it) => {
+        // @ts-expect-error target, scene and camera not null
+        it(time, this.$$target, this.$$camera, this.$$scene);
+      });
       this.$$target.render(this.$$scene, this.$$camera);
     });
     this.$$looper.start();
@@ -184,5 +184,15 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     renderer.setPixelRatio(this.pixelRatio);
 
     return renderer;
+  }
+
+  protected subscribeToEvents(): void {
+    if (!this.$$whenBeforeRender) {
+      throw new Error('$$whenBeforeRender not ready');
+    }
+
+    if (typeof this.whenBeforeRender === 'function') {
+      this.$$whenBeforeRender.push(this.whenBeforeRender);
+    }
   }
 }

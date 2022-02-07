@@ -114,8 +114,10 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   }
 
   protected subscribeToEvents(): void {
-    if (typeof this.whenClick === 'function') {
-      Emitter.on<MouseEventMap, IntersectionEventHandler>('click', (a) => console.log(a));
-    }
+    Emitter.on<MouseEventMap, IntersectionEventHandler>('click', (uuids, intersecteds) => {
+      if (typeof this.whenClick === 'function') {
+        this.whenClick(uuids, intersecteds);
+      }
+    });
   }
 }

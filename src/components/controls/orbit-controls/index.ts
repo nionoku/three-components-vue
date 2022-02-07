@@ -13,7 +13,7 @@ export default class OrbitControls extends Component<ThreeOrbitControls> {
       throw new Error('OrbitControls must be child of renderer');
     }
 
-    this.$parent.addOnBeforeRender((renderer, camera) => {
+    this.$parent.addOnBeforeRender((time, renderer, camera) => {
       if (!this.$$target) {
         this.$$target = this.createTarget(camera, renderer.domElement);
       }
