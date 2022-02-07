@@ -32,7 +32,7 @@ const Template = (args: any) => ({
           <OrbitControls />
           <Scene background={'#F0F0F0'}>
             {/* @ts-expect-error figureRotation was returns in setup */}
-            <Mesh rotation={this.figureRotation} whenClick={() => console.log('click')}>
+            <Mesh rotation={this.figureRotation}>
               <BoxGeometry />
               <BasicMaterial color={'cadetblue'} wireframe={false} />
             </Mesh>

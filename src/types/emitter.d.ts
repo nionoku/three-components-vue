@@ -1,26 +1,27 @@
 declare module 'tiny-emitter/instance' {
-  declare class TinyEmitter {
-    private constructor()
+  declare function on<E extends string, C extends (...args: Array<any>) => void>(
+    event: E,
+    callback: C,
+    ctx?: any
+  ): this;
 
-    static on<E extends string, C extends (...args: Array<any>) => void>(
-      event: E,
-      callback: C,
-      ctx?: any
-    ): this;
+  declare function off<E extends string, C extends (...args: Array<any>) => void>(
+    event: E,
+    callback?: C
+  ): this;
 
-    static off<E extends string, C extends (...args: Array<any>) => void>(
-      event: E,
-      callback?: C
-    ): this;
+  declare function once<E extends string, C extends (...args: Array<any>) => void>(
+    event: E,
+    callback: C,
+    ctx?: any
+  ): this;
 
-    static once<E extends string, C extends (...args: Array<any>) => void>(
-      event: E,
-      callback: C,
-      ctx?: any
-    ): this;
+  declare function emit<E extends string, A extends Array>(event: E, ...args: A): this;
 
-    static emit<E extends string, A extends Array>(event: E, ...args: A): this;
-  }
-
-  export default TinyEmitter
+  export {
+    on,
+    off,
+    once,
+    emit,
+  };
 }

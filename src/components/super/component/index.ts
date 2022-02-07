@@ -11,4 +11,8 @@ export abstract class Component<T, P = Record<string, unknown>> extends Vue {
   public render(): any {
     return this.$slots?.default?.() ?? [];
   }
+
+  public get target(): T | null {
+    return this.$$target;
+  }
 }

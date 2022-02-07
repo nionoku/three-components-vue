@@ -1,13 +1,13 @@
 // eslint-disable-next-line max-classes-per-file
 import { Prop, Watch } from 'vue-property-decorator';
 import { Object3D } from 'three';
-import { Vec3 } from '@/types/vector';
 import Emitter from 'tiny-emitter/instance';
 import {
   Shadowable, SupportsPointerEvents, Transformatable,
 } from '@/types/object3d';
 import { MouseEventMap } from '@/types/events/mouse';
 import { IntersectionEventHandler } from '@/types/events';
+import { onBeforeUnmount } from 'vue';
 import { Component } from '../component';
 
 interface Props extends
@@ -46,8 +46,23 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   @Prop({ type: Function, default: null })
   public readonly whenClick!: PropsImpl['whenClick'];
 
+  @Prop({ type: Function, default: null })
+  public readonly whenDblClick!: PropsImpl['whenDblClick'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenMouseDown!: PropsImpl['whenMouseDown'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenMouseUp!: PropsImpl['whenMouseUp'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenMouseMove!: PropsImpl['whenMouseMove'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenWheel!: PropsImpl['whenWheel'];
+
   @Watch('rotation', { deep: true })
-  protected whenRotation(value: Vec3): void {
+  protected whenRotation(value: Props['rotation']): void {
     if (!this.$$target) {
       throw new Error('Can not apply rotation to target. Target is not ready');
     }
@@ -56,7 +71,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   }
 
   @Watch('position')
-  protected whenTranslate(value: Vec3): void {
+  protected whenTranslate(value: Props['position']): void {
     if (!this.$$target) {
       throw new Error('Can not apply position to target. Target is not ready');
     }
@@ -65,7 +80,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   }
 
   @Watch('lookAt')
-  protected whenLookAt(value: Vec3): void {
+  protected whenLookAt(value: Props['lookAt']): void {
     if (!this.$$target) {
       throw new Error('Can not apply lookAt to target. Target is not ready');
     }
@@ -74,12 +89,60 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   }
 
   @Watch('scale')
-  protected whenScale(value: Vec3): void {
+  protected whenScale(value: Props['scale']): void {
     if (!this.$$target) {
       throw new Error('Can not apply scale to target. Target is not ready');
     }
 
     this.$$target.scale.set(value.x, value.y, value.z);
+  }
+
+  @Watch('whenClick', { immediate: true })
+  protected whenClickActionChanged(
+    action: PropsImpl['whenClick'],
+    prev: PropsImpl['whenClick'],
+  ): void {
+    this.subscribeToEvent('click', action, prev);
+  }
+
+  @Watch('whenDblClick', { immediate: true })
+  protected whenDblClickActionChanged(
+    action: PropsImpl['whenDblClick'],
+    prev: PropsImpl['whenDblClick'],
+  ): void {
+    this.subscribeToEvent('dblclick', action, prev);
+  }
+
+  @Watch('whenMouseDown', { immediate: true })
+  protected whenMouseDownActionChanged(
+    action: PropsImpl['whenMouseDown'],
+    prev: PropsImpl['whenMouseDown'],
+  ): void {
+    this.subscribeToEvent('mousedown', action, prev);
+  }
+
+  @Watch('whenMouseUp', { immediate: true })
+  protected whenMouseUpActionChanged(
+    action: PropsImpl['whenMouseUp'],
+    prev: PropsImpl['whenMouseUp'],
+  ): void {
+    this.subscribeToEvent('mouseup', action, prev);
+  }
+
+  @Watch('whenMouseMove', { immediate: true })
+  protected whenMouseMoveActionChanged(
+    action: PropsImpl['whenMouseMove'],
+    prev: PropsImpl['whenMouseMove'],
+  ): void {
+    this.subscribeToEvent('mousemove', action, prev);
+  }
+
+  @Watch('whenWheel', { immediate: true })
+  protected whenMouseWheelActionChanged(
+    action: PropsImpl['whenWheel'],
+    prev: PropsImpl['whenWheel'],
+  ): void {
+    this.subscribeToEvent('wheel', action, prev);
   }
 
   public beforeDestroy(): void {
@@ -88,9 +151,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
 
   protected prepareTarget(): T {
     this.$$target = this.createTarget();
-
     this.applyTransforms();
-    this.subscribeToEvents();
 
     return this.$$target;
   }
@@ -113,10 +174,26 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     }
   }
 
-  protected subscribeToEvents(): void {
-    Emitter.on<MouseEventMap, IntersectionEventHandler>('click', (uuids, intersecteds) => {
-      if (typeof this.whenClick === 'function') {
-        this.whenClick(uuids, intersecteds);
+  private subscribeToEvent(
+    event: MouseEventMap,
+    action: IntersectionEventHandler | null,
+    prevAction?: IntersectionEventHandler | null,
+  ): void {
+    // disable previus action
+    if (prevAction) {
+      Emitter.off(event, prevAction);
+    }
+
+    // disable listener before unmount
+    onBeforeUnmount(() => {
+      if (action) {
+        Emitter.off(event, action);
+      }
+    });
+
+    Emitter.on<MouseEventMap, IntersectionEventHandler>(event, (uuids, intersecteds) => {
+      if (this.$$target?.uuid === uuids[0] && typeof action === 'function') {
+        action(uuids, intersecteds);
       }
     });
   }

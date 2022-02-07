@@ -55,19 +55,7 @@ class PointerEventHandlers implements Handler {
     });
 
     Object.entries(this.listeners).forEach(([key, listener]) => {
-      this.rootElement.addEventListener(key, (event) => {
-        event.preventDefault();
-
-        if (key === 'click') {
-          // console.log(event);
-          // console.log(window.innerWidth);
-          // console.log(this.rootElement.getBoundingClientRect());
-          // // @ts-expect-error awdw
-          // console.log(event.clientX, event.clientY);
-        }
-
-        listener(event as TypedMouseEvent);
-      });
+      this.rootElement.addEventListener(key, (event) => listener(event as TypedMouseEvent));
     });
   }
 
