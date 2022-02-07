@@ -22,6 +22,7 @@ interface Props extends Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'p
   pixelRatio: number
   powerPreference: PowerPreference
   fps: number
+  whenBeforeRender: RenderAction
 }
 
 export interface RendererComponent extends ComponentPublicInstance {
@@ -34,7 +35,9 @@ export interface RendererComponent extends ComponentPublicInstance {
   removeOnBeforeRender(action: RenderAction): void
 }
 
-type PropsImpl = Props
+interface PropsImpl extends Omit<Props, 'whenBeforeRender'> {
+  whenBeforeRender: RenderAction | null
+}
 
 @Options({})
 export default class Renderer extends Component<WebGLRenderer, Partial<Props>> implements
@@ -63,6 +66,9 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
   @Prop({ type: String, default: PowerPreference.DEFAULT })
   public readonly powerPreference!: PropsImpl['powerPreference'];
 
+  @Prop({ type: Function, default: null })
+  public readonly whenBeforeRender!: PropsImpl['whenBeforeRender'];
+
   public readonly isRenderer: RendererComponent['isRenderer'] = true
 
   protected $$scene: Scene | null = null
@@ -82,6 +88,10 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
 
     this.$$target = this.createTarget();
     this.$$whenBeforeRender = [];
+
+    if (this.whenBeforeRender) {
+      this.$$whenBeforeRender.push(this.whenBeforeRender);
+    }
   }
 
   public mounted(): void {
