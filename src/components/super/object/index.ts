@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { InjectReactive, Prop, Watch } from 'vue-property-decorator';
-import { Object3D, Vector3 } from 'three';
+import { Euler, Object3D, Vector3 } from 'three';
 import {
   Shadowable, SupportsPointerEvents, Transformatable,
 } from '@/types/object3d';
@@ -84,44 +84,44 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   @Prop({ type: Function, default: null })
   public readonly whenWheelGlobal!: PropsImpl['whenWheelGlobal'];
 
-  @Watch('rotation', { deep: true })
+  @Watch('rotation')
   protected whenRotation(value: Props['rotation']): void {
-    if (!this.$$target) {
-      throw new Error('Can not apply rotation to target. Target is not ready');
-    }
-
-    const vectorValue = new Vector3(value.x, value.y, value.z);
-    this.$$target.rotation.setFromVector3(vectorValue);
+    const eulurValue = new Euler(
+      value.x ?? this.target?.rotation?.x,
+      value.y ?? this.target?.rotation?.y,
+      value.z ?? this.target?.rotation?.z,
+    );
+    this.target?.rotation.set(eulurValue.x, eulurValue.y, eulurValue.z);
+    this.target?.updateMatrixWorld();
   }
 
   @Watch('position')
   protected whenTranslate(value: Props['position']): void {
-    if (!this.$$target) {
-      throw new Error('Can not apply position to target. Target is not ready');
-    }
-
-    const vectorValue = new Vector3(value.x, value.y, value.z);
-    this.$$target.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
-  }
-
-  @Watch('lookAt')
-  protected whenLookAt(value: Props['lookAt']): void {
-    if (!this.$$target) {
-      throw new Error('Can not apply lookAt to target. Target is not ready');
-    }
-
-    const vectorValue = new Vector3(value.x, value.y, value.z);
-    this.$$target.lookAt(vectorValue);
+    const vectorValue = new Vector3(
+      value.x ?? this.target?.position.x,
+      value.y ?? this.target?.position.y,
+      value.z ?? this.target?.position.z,
+    );
+    this.target?.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
+    this.target?.updateMatrixWorld();
   }
 
   @Watch('scale')
   protected whenScale(value: Props['scale']): void {
-    if (!this.$$target) {
-      throw new Error('Can not apply scale to target. Target is not ready');
-    }
+    const vectorValue = new Vector3(
+      value.x ?? this.target?.position.x,
+      value.y ?? this.target?.position.y,
+      value.z ?? this.target?.position.z,
+    );
+    this.target?.scale.set(vectorValue.x, vectorValue.y, vectorValue.z);
+    this.target?.updateMatrixWorld();
+  }
 
+  @Watch('lookAt')
+  protected whenLookAt(value: Props['lookAt']): void {
     const vectorValue = new Vector3(value.x, value.y, value.z);
-    this.$$target.scale.set(vectorValue.x, vectorValue.y, vectorValue.z);
+    this.target?.lookAt(vectorValue);
+    this.target?.updateMatrixWorld();
   }
 
   @Watch('whenClick', { immediate: true })
@@ -232,20 +232,20 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   }
 
   protected applyTransforms(): void {
+    if (this.scale) {
+      this.whenScale(this.scale);
+    }
+
     if (this.position) {
       this.whenTranslate(this.position);
     }
 
-    // if (this.rotation) {
-    //   this.whenRotation(this.rotation);
-    // }
-
-    // if (this.scale) {
-    //   this.whenScale(this.scale);
-    // }
-
     if (this.lookAt) {
       this.whenLookAt(this.lookAt);
+    }
+
+    if (this.rotation) {
+      this.whenRotation(this.rotation);
     }
   }
 
@@ -256,8 +256,6 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     // listen all event by type on canvas
     global = false,
   ): void {
-    console.log(this.$$emitter);
-
     // disable previus action
     if (prevAction) {
       this.$$emitter?.off(event, prevAction);

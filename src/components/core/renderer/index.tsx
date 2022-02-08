@@ -84,7 +84,7 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
   protected $$pointerEventListener: Handler | null = null
 
   @Watch('whenBeforeRender', { immediate: true })
-  protected whenGlobalMouseWheelActionChanged(
+  protected whenBeforeRenderChanged(
     action: PropsImpl['whenBeforeRender'],
     prev: PropsImpl['whenBeforeRender'],
   ): void {
