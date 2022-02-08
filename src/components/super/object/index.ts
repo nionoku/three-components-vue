@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { InjectReactive, Prop, Watch } from 'vue-property-decorator';
-import { Object3D } from 'three';
+import { Object3D, Vector3 } from 'three';
 import {
   Shadowable, SupportsPointerEvents, Transformatable,
 } from '@/types/object3d';
@@ -90,7 +90,8 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       throw new Error('Can not apply rotation to target. Target is not ready');
     }
 
-    this.$$target.rotation.set(value.x, value.y, value.z);
+    const vectorValue = new Vector3(value.x, value.y, value.z);
+    this.$$target.rotation.setFromVector3(vectorValue);
   }
 
   @Watch('position')
@@ -99,7 +100,8 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       throw new Error('Can not apply position to target. Target is not ready');
     }
 
-    this.$$target.position.set(value.x, value.y, value.z);
+    const vectorValue = new Vector3(value.x, value.y, value.z);
+    this.$$target.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
   }
 
   @Watch('lookAt')
@@ -108,7 +110,8 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       throw new Error('Can not apply lookAt to target. Target is not ready');
     }
 
-    this.$$target.lookAt(value.x, value.y, value.z);
+    const vectorValue = new Vector3(value.x, value.y, value.z);
+    this.$$target.lookAt(vectorValue);
   }
 
   @Watch('scale')
@@ -117,7 +120,8 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       throw new Error('Can not apply scale to target. Target is not ready');
     }
 
-    this.$$target.scale.set(value.x, value.y, value.z);
+    const vectorValue = new Vector3(value.x, value.y, value.z);
+    this.$$target.scale.set(vectorValue.x, vectorValue.y, vectorValue.z);
   }
 
   @Watch('whenClick', { immediate: true })
@@ -232,13 +236,13 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       this.whenTranslate(this.position);
     }
 
-    if (this.rotation) {
-      this.whenRotation(this.rotation);
-    }
+    // if (this.rotation) {
+    //   this.whenRotation(this.rotation);
+    // }
 
-    if (this.scale) {
-      this.whenScale(this.scale);
-    }
+    // if (this.scale) {
+    //   this.whenScale(this.scale);
+    // }
 
     if (this.lookAt) {
       this.whenLookAt(this.lookAt);
