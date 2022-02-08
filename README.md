@@ -1,6 +1,6 @@
 # three-components-vue
 
-### 🖼️ Draw Three.js scenes simple using Vue.js
+ 🖼️ Draw Three.js scenes simple using Vue.js
 
 ## Install
 ```
@@ -11,7 +11,7 @@ npm i three-components-vue three
 
 JSX-like style
 
-```
+```jsx
 render() {
   return (
     <div style={{ width: '500px', height: '300px' }}>
