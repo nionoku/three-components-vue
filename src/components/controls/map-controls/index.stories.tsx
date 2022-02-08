@@ -31,8 +31,10 @@ const Template = (args: any) => ({
           <PerspectiveCamera
             position={{ x: 2, y: 1.5, z: 1 }}
             lookAt={{ x: 0, y: 0, z: 0 }}
-          />
-          <MapControls />
+          >
+            <MapControls />
+          </PerspectiveCamera>
+
           <Scene background={'#F0F0F0'}>
             <DirectionalLight position={{ x: 2, y: 3.5, z: 2 }} intensity={0.9} helper />
             {/* @ts-expect-error figureRotation was returns in setup */}

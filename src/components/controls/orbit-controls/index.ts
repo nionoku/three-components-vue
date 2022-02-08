@@ -1,4 +1,5 @@
-import { EMITTER_KEY, RendererComponent } from '@/components/core/renderer';
+import { CameraComponent } from '@/components/cameras/camera';
+import { EMITTER_KEY } from '@/components/core/renderer';
 import { Component } from '@/components/super/component';
 import { RenderAction, RendererEventMap } from '@/types/events/renderer';
 import { Camera } from 'three';
@@ -9,14 +10,14 @@ import { InjectReactive } from 'vue-property-decorator';
 
 @Options({})
 export default class OrbitControls extends Component<ThreeOrbitControls> {
-  declare public $parent: RendererComponent
+  declare public $parent: CameraComponent
 
   @InjectReactive(EMITTER_KEY)
   protected $$emitter: TinyEmitter<keyof RendererEventMap> | null = null;
 
   public created(): void {
-    if (!this.$parent.isRenderer) {
-      throw new Error('OrbitControls must be child of renderer');
+    if (!this.$parent.isCamera) {
+      throw new Error('OrbitControls must be child of Camera');
     }
 
     this.$$emitter?.on<RenderAction>(

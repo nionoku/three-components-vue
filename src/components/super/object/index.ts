@@ -84,42 +84,43 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   @Prop({ type: Function, default: null })
   public readonly whenWheelGlobal!: PropsImpl['whenWheelGlobal'];
 
-  @Watch('rotation')
-  protected whenRotation(value: Props['rotation']): void {
+  @Watch('rotation', { deep: true })
+  protected whenRotation(value: PropsImpl['rotation']): void {
     const eulurValue = new Euler(
-      value.x ?? this.target?.rotation?.x,
-      value.y ?? this.target?.rotation?.y,
-      value.z ?? this.target?.rotation?.z,
+      value?.x ?? this.target?.rotation?.x,
+      value?.y ?? this.target?.rotation?.y,
+      value?.z ?? this.target?.rotation?.z,
     );
     this.target?.rotation.set(eulurValue.x, eulurValue.y, eulurValue.z);
     this.target?.updateMatrixWorld();
   }
 
-  @Watch('position')
-  protected whenTranslate(value: Props['position']): void {
+  @Watch('position', { deep: true })
+  protected whenTranslate(value: PropsImpl['position']): void {
     const vectorValue = new Vector3(
-      value.x ?? this.target?.position.x,
-      value.y ?? this.target?.position.y,
-      value.z ?? this.target?.position.z,
+      value?.x ?? this.target?.position.x,
+      value?.y ?? this.target?.position.y,
+      value?.z ?? this.target?.position.z,
     );
+
     this.target?.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
     this.target?.updateMatrixWorld();
   }
 
-  @Watch('scale')
-  protected whenScale(value: Props['scale']): void {
+  @Watch('scale', { deep: true })
+  protected whenScale(value: PropsImpl['scale']): void {
     const vectorValue = new Vector3(
-      value.x ?? this.target?.position.x,
-      value.y ?? this.target?.position.y,
-      value.z ?? this.target?.position.z,
+      value?.x ?? this.target?.position.x,
+      value?.y ?? this.target?.position.y,
+      value?.z ?? this.target?.position.z,
     );
     this.target?.scale.set(vectorValue.x, vectorValue.y, vectorValue.z);
     this.target?.updateMatrixWorld();
   }
 
-  @Watch('lookAt')
-  protected whenLookAt(value: Props['lookAt']): void {
-    const vectorValue = new Vector3(value.x, value.y, value.z);
+  @Watch('lookAt', { deep: true })
+  protected whenLookAt(value: PropsImpl['lookAt']): void {
+    const vectorValue = new Vector3(value?.x, value?.y, value?.z);
     this.target?.lookAt(vectorValue);
     this.target?.updateMatrixWorld();
   }

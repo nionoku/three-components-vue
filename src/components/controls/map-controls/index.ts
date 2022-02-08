@@ -1,3 +1,4 @@
+import { CameraComponent } from '@/components/cameras/camera';
 import { EMITTER_KEY, RendererComponent } from '@/components/core/renderer';
 import { Component } from '@/components/super/component';
 import { RenderAction, RendererEventMap } from '@/types/events/renderer';
@@ -9,14 +10,14 @@ import { InjectReactive } from 'vue-property-decorator';
 
 @Options({})
 export default class MapControls extends Component<ThreeMapControls> {
-  declare public $parent: RendererComponent
+  declare public $parent: CameraComponent
 
   @InjectReactive(EMITTER_KEY)
   protected $$emitter: TinyEmitter<keyof RendererEventMap> | null = null;
 
   public created(): void {
-    if (!this.$parent.isRenderer) {
-      throw new Error('MapControls must be child of renderer');
+    if (!this.$parent.isCamera) {
+      throw new Error('MapControls must be child of Camera');
     }
 
     this.$$emitter?.on<RenderAction>(

@@ -17,8 +17,10 @@ const Template = (args: any) => ({
     return (
       <div style={{ width: '500px', height: '300px', border: '1px dashed black' }}>
         <Renderer width={500} height={300}>
-          <PerspectiveCamera position={{ x: 1.5, y: 4, z: 4 }} lookAt={{ x: 0, y: 0, z: 0 }} />
-          <OrbitControls />
+          <PerspectiveCamera position={{ x: 1.5, y: 4, z: 4 }} lookAt={{ x: 0, y: 0, z: 0 }}>
+            <OrbitControls />
+          </PerspectiveCamera>
+
           <Scene background={'#F0F0F0'}>
             <Mesh
               rotation={{ x: 0, y: 10, z: 0 }}

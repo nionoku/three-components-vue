@@ -213,7 +213,6 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     const actionIsFunction = typeof action === 'function';
 
     if (actionIsFunction) {
-      console.log(event, action, prevAction);
       // disable listener before unmount
       onBeforeUnmount(() => this.$$emitter?.off(event, action));
 
