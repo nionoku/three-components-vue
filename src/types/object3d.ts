@@ -1,6 +1,6 @@
 import { Object3D } from 'three';
 import { ComponentPublicInstance } from 'vue';
-import { IntersectionEventHandler, IntersectionGlobalEventHandler } from './events';
+import { IntersectionEventHandler, IntersectionGlobalEventHandler } from './events/intersection';
 import { Vec3 } from './vector';
 
 export interface ObjectComponent extends

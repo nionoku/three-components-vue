@@ -1,8 +1,6 @@
 import {
   BasicMaterial, BoxGeometry, Mesh, OrbitControls, PerspectiveCamera, Renderer, Scene,
 } from '@/components';
-import { Vec3 } from '@/types/vector';
-import { Ref, ref } from 'vue';
 
 export default {
   title: 'Actions/Click',
@@ -25,7 +23,7 @@ const Template = (args: any) => ({
             <Mesh
               rotation={{ x: 0, y: 10, z: 0 }}
               whenClick={(_uuids, _intersections, target) => alert(`Click by blue box, target: ${target?.object.uuid}`)}
-              whenClickGlobal={(_uuids, _intersections) => alert('Click globally, listen by blue box')}
+              whenClickGlobal={() => alert('Click globally, listen by blue box')}
             >
               <BoxGeometry />
               <BasicMaterial color={'cadetblue'} wireframe={false} />

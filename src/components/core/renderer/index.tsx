@@ -1,5 +1,5 @@
 import { Options } from 'vue-class-component';
-import { Prop } from 'vue-property-decorator';
+import { Prop, ProvideReactive, Watch } from 'vue-property-decorator';
 import {
   WebGLRendererParameters,
   WebGLRenderer,
@@ -8,14 +8,16 @@ import {
 } from 'three';
 import WebGL from 'three/examples/jsm/capabilities/WebGL';
 import { PowerPreference } from '@/types/renderer';
-import { ComponentPublicInstance } from 'vue';
+import { ComponentPublicInstance, onBeforeUnmount } from 'vue';
 import { useLooper } from '@/handlers/useLooper';
 import { Component } from '@/components/super/component';
 import { Handler } from '@/types/handler';
 import { usePointerEventHandlers } from '@/handlers/useEventListeners';
-import { EVENTS } from '@/types/events';
+import { ComponentEvents } from '@/types/events';
+import { RenderAction, RenderActionArguments, RendererEventMap } from '@/types/events/renderer';
+import { TinyEmitter } from 'tiny-emitter';
 
-type RenderAction = (time: number, renderer: WebGLRenderer, camera: Camera, scene: Scene) => void
+export const EMITTER_KEY = Symbol('emitter');
 
 interface Props extends Pick<WebGLRendererParameters, 'alpha' | 'antialias' | 'powerPreference'> {
   width: number
@@ -32,8 +34,6 @@ export interface RendererComponent extends ComponentPublicInstance {
   setCamera(camera: Camera): void
   startRendering(): void
   cancelRendering(): void
-  addOnBeforeRender(action: RenderAction): void
-  removeOnBeforeRender(action: RenderAction): void
 }
 
 interface PropsImpl extends Omit<Props, 'whenBeforeRender'> {
@@ -44,7 +44,10 @@ interface PropsImpl extends Omit<Props, 'whenBeforeRender'> {
 export default class Renderer extends Component<WebGLRenderer, Partial<Props>> implements
     PropsImpl,
     RendererComponent {
-  public declare $parent: ComponentPublicInstance;
+  declare public $parent: ComponentPublicInstance;
+
+  @ProvideReactive(EMITTER_KEY)
+  protected $$emitter: TinyEmitter<ComponentEvents> | null = null;
 
   @Prop({ type: Number, default: 100 })
   public readonly width!: PropsImpl['width'];
@@ -80,7 +83,17 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
 
   protected $$pointerEventListener: Handler | null = null
 
-  protected $$whenBeforeRender: Array<RenderAction> | null = null
+  @Watch('whenBeforeRender', { immediate: true })
+  protected whenGlobalMouseWheelActionChanged(
+    action: PropsImpl['whenBeforeRender'],
+    prev: PropsImpl['whenBeforeRender'],
+  ): void {
+    this.subscribeToEvent('beforerender', action, prev);
+  }
+
+  public beforeCreate(): void {
+    this.$$emitter = new TinyEmitter();
+  }
 
   public created(): void {
     if (!WebGL.isWebGLAvailable()) {
@@ -88,10 +101,6 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     }
 
     this.$$target = this.createTarget();
-    this.$$whenBeforeRender = [];
-
-    this.cleanupEvents();
-    this.subscribeToEvents();
   }
 
   public mounted(): void {
@@ -108,7 +117,9 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
   }
 
   public beforeDestroy(): void {
+    this.stopListeners();
     this.cancelRendering();
+
     this.$$target?.domElement.remove();
     this.$$target?.dispose();
   }
@@ -131,10 +142,15 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     }
 
     if (!this.$$camera) {
-      throw new Error('Can not start rendering. Camera is nuu');
+      throw new Error('Can not start rendering. Camera is null');
+    }
+
+    if (!this.$$emitter) {
+      throw new Error('Can not start rendering. Event emitter is null');
     }
 
     this.$$pointerEventListener = usePointerEventHandlers(
+      this.$$emitter,
       this.$$target.domElement,
       this.$$camera,
       this.$$scene,
@@ -152,10 +168,9 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
         throw new Error('Can not render scene. Camera is null');
       }
 
-      this.$$whenBeforeRender?.forEach((it) => {
-        // @ts-expect-error target, scene and camera not null
-        it(time, this.$$target, this.$$camera, this.$$scene);
-      });
+      this.$$emitter?.emit<RenderActionArguments>(
+        'beforerender', time, this.$$target, this.$$camera, this.$$scene,
+      );
       this.$$target.render(this.$$scene, this.$$camera);
     });
     this.$$looper.start();
@@ -167,12 +182,9 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     this.$$looper = null;
   }
 
-  public addOnBeforeRender(action: RenderAction): void {
-    this.$$whenBeforeRender?.push(action);
-  }
-
-  public removeOnBeforeRender(action: RenderAction): void {
-    this.$$whenBeforeRender?.splice(this.$$whenBeforeRender.indexOf(action), 1);
+  public stopListeners(): void {
+    this.$$pointerEventListener?.cancel();
+    this.$$pointerEventListener = null;
   }
 
   protected createTarget(): WebGLRenderer {
@@ -188,18 +200,32 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     return renderer;
   }
 
-  protected subscribeToEvents(): void {
-    if (!this.$$whenBeforeRender) {
-      throw new Error('$$whenBeforeRender not ready');
+  private subscribeToEvent(
+    event: keyof RendererEventMap,
+    action: RenderAction | null,
+    prevAction?: RenderAction | null,
+  ): void {
+    // disable previus action
+    if (prevAction) {
+      this.$$emitter?.off(event, prevAction);
     }
 
-    if (typeof this.whenBeforeRender === 'function') {
-      this.$$whenBeforeRender.push(this.whenBeforeRender);
-    }
-  }
+    const actionIsFunction = typeof action === 'function';
 
-  protected cleanupEvents(): void {
-    // clean all events before mount
-    EVENTS.forEach((it) => this.$$emitter?.off(it));
+    if (actionIsFunction) {
+      console.log(event, action, prevAction);
+      // disable listener before unmount
+      onBeforeUnmount(() => this.$$emitter?.off(event, action));
+
+      this.$$emitter?.on<RenderAction>(
+        event, (...args: RenderActionArguments) => {
+          if (!actionIsFunction) {
+            return undefined;
+          }
+
+          return action(...args);
+        },
+      );
+    }
   }
 }

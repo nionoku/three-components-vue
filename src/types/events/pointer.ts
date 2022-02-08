@@ -1,4 +1,4 @@
-export type MouseEventMap = keyof Pick<GlobalEventHandlersEventMap,
+export type PointerEventMap = Pick<GlobalEventHandlersEventMap,
 'mouseup'
 | 'mousedown'
 | 'mousemove'
@@ -7,7 +7,7 @@ export type MouseEventMap = keyof Pick<GlobalEventHandlersEventMap,
 | 'wheel'
 >
 
-export const POINTER_EVENTS: Array<MouseEventMap> = [
+export const POINTER_EVENTS: Array<keyof PointerEventMap> = [
   'mouseup',
   'mousedown',
   'mousemove',

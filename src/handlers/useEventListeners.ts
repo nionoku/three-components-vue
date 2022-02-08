@@ -1,15 +1,15 @@
-import { IntersectionGlobalEventHandlerArguments } from '@/types/events';
-import { POINTER_EVENTS, MouseEventMap } from '@/types/events/mouse';
+import { IntersectionGlobalEventHandlerArguments } from '@/types/events/intersection';
+import { POINTER_EVENTS, PointerEventMap } from '@/types/events/pointer';
 import { Handler } from '@/types/handler';
 import {
   Camera, Object3D, Raycaster, Vector2,
 } from 'three';
-import Emitter from 'tiny-emitter/instance';
+import { TinyEmitter } from 'tiny-emitter';
 
 type TypedEventListener<E extends Event> = (event: E) => void
 
 interface TypedMouseEvent extends Omit<MouseEvent, 'type'> {
-  type: MouseEventMap
+  type: keyof PointerEventMap
 }
 
 class PointerEventHandlers implements Handler {
@@ -17,7 +17,9 @@ class PointerEventHandlers implements Handler {
 
   protected raycaster = new Raycaster()
 
-  protected listeners: Partial<Record<MouseEventMap, TypedEventListener<TypedMouseEvent>>> = {};
+  protected listeners: Partial<
+    Record<keyof PointerEventMap, TypedEventListener<TypedMouseEvent>>
+  > = {};
 
   protected mouseEventListener = ({ clientX, clientY, type }: TypedMouseEvent) => {
     const {
@@ -33,7 +35,7 @@ class PointerEventHandlers implements Handler {
     const intersects = this.raycaster.intersectObjects(this.targetsContainer.children);
 
     if (intersects.length > 0) {
-      Emitter.emit<MouseEventMap, IntersectionGlobalEventHandlerArguments>(
+      this.emitter.emit<IntersectionGlobalEventHandlerArguments>(
         type, intersects.map((it) => it.object.uuid), intersects,
       );
     }
@@ -41,6 +43,7 @@ class PointerEventHandlers implements Handler {
 
   // eslint-disable-next-line no-useless-constructor
   constructor(
+    protected emitter: TinyEmitter<keyof PointerEventMap>,
     protected rootElement: HTMLCanvasElement,
     protected camera: Camera,
     /** like a scene */
@@ -49,7 +52,7 @@ class PointerEventHandlers implements Handler {
 
   public start(): void {
     POINTER_EVENTS.forEach((it) => {
-      const key = it as MouseEventMap;
+      const key = it as keyof PointerEventMap;
 
       this.listeners[key] = this.mouseEventListener;
     });
@@ -68,9 +71,10 @@ class PointerEventHandlers implements Handler {
 }
 
 export function usePointerEventHandlers(
+  emitter: TinyEmitter<keyof PointerEventMap>,
   rootElement: HTMLCanvasElement,
   camera: Camera,
   targetsContainer: Object3D,
 ): Handler {
-  return new PointerEventHandlers(rootElement, camera, targetsContainer);
+  return new PointerEventHandlers(emitter, rootElement, camera, targetsContainer);
 }

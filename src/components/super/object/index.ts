@@ -1,12 +1,15 @@
 // eslint-disable-next-line max-classes-per-file
-import { Prop, Watch } from 'vue-property-decorator';
+import { InjectReactive, Prop, Watch } from 'vue-property-decorator';
 import { Object3D } from 'three';
 import {
   Shadowable, SupportsPointerEvents, Transformatable,
 } from '@/types/object3d';
-import { MouseEventMap } from '@/types/events/mouse';
-import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/types/events';
+import { PointerEventMap } from '@/types/events/pointer';
 import { onBeforeUnmount } from 'vue';
+import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/types/events/intersection';
+import { EMITTER_KEY } from '@/components/core/renderer';
+import { TinyEmitter } from 'tiny-emitter';
+import { ComponentEvents } from '@/types/events';
 import { Component } from '../component';
 
 interface Props extends
@@ -24,6 +27,9 @@ interface PropsImpl extends
 export abstract class ObjectComponent<T extends Object3D, P = Record<string, unknown>>
   extends Component<T, P & Partial<Props>>
   implements PropsImpl {
+  @InjectReactive(EMITTER_KEY)
+  protected $$emitter: TinyEmitter<ComponentEvents> | null = null;
+
   @Prop({ type: Boolean, default: false })
   public readonly castShadow!: PropsImpl['castShadow'];
 
@@ -240,12 +246,14 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   }
 
   private subscribeToEvent(
-    event: MouseEventMap,
+    event: keyof PointerEventMap,
     action: IntersectionEventHandler | null,
     prevAction?: IntersectionEventHandler | null,
     // listen all event by type on canvas
     global = false,
   ): void {
+    console.log(this.$$emitter);
+
     // disable previus action
     if (prevAction) {
       this.$$emitter?.off(event, prevAction);
@@ -257,7 +265,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       // disable listener before unmount
       onBeforeUnmount(() => this.$$emitter?.off(event, action));
 
-      this.$$emitter?.on<MouseEventMap, IntersectionGlobalEventHandler>(
+      this.$$emitter?.on<IntersectionGlobalEventHandler>(
         event, (uuids, intersecteds) => {
           if (!actionIsFunction) {
             return undefined;
