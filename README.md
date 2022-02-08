@@ -1,24 +1,36 @@
 # three-components-vue
 
-## Project setup
+### 🖼️ Draw Three.js scenes simple using Vue.js
+
+## Install
 ```
-npm install
+npm i three-components-vue three
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Usage (npm)
 
-### Compiles and minifies for production
-```
-npm run build
-```
+JSX-like style
 
-### Lints and fixes files
 ```
-npm run lint
+render() {
+  return (
+    <div style={{ width: '500px', height: '300px' }}>
+      <Renderer
+        width={500} height={300}
+        whenBeforeRender={() => {
+          this.figureRotation.y += 0.01;
+        }}
+      >
+        <PerspectiveCamera position={{ x: 2, y: 1.5, z: 1 }} />
+        <Scene background={'#F0F0F0'}>
+          <DirectionalLight position={{ x: 2, y: 3.5, z: 2 }} intensity={0.9} helper />
+          <Mesh rotation={this.figureRotation}>
+            <BoxGeometry />
+            <StandartMaterial color={'darkviolet'} />
+          </Mesh>
+        </Scene>
+      </Renderer>
+    </div>
+  )
+);
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
