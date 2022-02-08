@@ -1,5 +1,5 @@
-import { IntersectionEventHandlerArguments } from '@/types/events';
-import { DEFAULT_POINTER_EVENTS_KEYS, MouseEventMap } from '@/types/events/mouse';
+import { IntersectionGlobalEventHandlerArguments } from '@/types/events';
+import { POINTER_EVENTS, MouseEventMap } from '@/types/events/mouse';
 import { Handler } from '@/types/handler';
 import {
   Camera, Object3D, Raycaster, Vector2,
@@ -33,7 +33,7 @@ class PointerEventHandlers implements Handler {
     const intersects = this.raycaster.intersectObjects(this.targetsContainer.children);
 
     if (intersects.length > 0) {
-      Emitter.emit<MouseEventMap, IntersectionEventHandlerArguments>(
+      Emitter.emit<MouseEventMap, IntersectionGlobalEventHandlerArguments>(
         type, intersects.map((it) => it.object.uuid), intersects,
       );
     }
@@ -48,7 +48,7 @@ class PointerEventHandlers implements Handler {
   ) {}
 
   public start(): void {
-    DEFAULT_POINTER_EVENTS_KEYS.forEach((it) => {
+    POINTER_EVENTS.forEach((it) => {
       const key = it as MouseEventMap;
 
       this.listeners[key] = this.mouseEventListener;

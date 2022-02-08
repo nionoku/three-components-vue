@@ -7,7 +7,7 @@ export type MouseEventMap = keyof Pick<GlobalEventHandlersEventMap,
 | 'wheel'
 >
 
-export const DEFAULT_POINTER_EVENTS_KEYS: Array<MouseEventMap> = [
+export const POINTER_EVENTS: Array<MouseEventMap> = [
   'mouseup',
   'mousedown',
   'mousemove',

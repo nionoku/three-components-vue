@@ -13,6 +13,7 @@ import { useLooper } from '@/handlers/useLooper';
 import { Component } from '@/components/super/component';
 import { Handler } from '@/types/handler';
 import { usePointerEventHandlers } from '@/handlers/useEventListeners';
+import { EVENTS } from '@/types/events';
 
 type RenderAction = (time: number, renderer: WebGLRenderer, camera: Camera, scene: Scene) => void
 
@@ -89,6 +90,7 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     this.$$target = this.createTarget();
     this.$$whenBeforeRender = [];
 
+    this.cleanupEvents();
     this.subscribeToEvents();
   }
 
@@ -194,5 +196,10 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
     if (typeof this.whenBeforeRender === 'function') {
       this.$$whenBeforeRender.push(this.whenBeforeRender);
     }
+  }
+
+  protected cleanupEvents(): void {
+    // clean all events before mount
+    EVENTS.forEach((it) => this.$$emitter?.off(it));
   }
 }

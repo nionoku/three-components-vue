@@ -1,12 +1,11 @@
 // eslint-disable-next-line max-classes-per-file
 import { Prop, Watch } from 'vue-property-decorator';
 import { Object3D } from 'three';
-import Emitter from 'tiny-emitter/instance';
 import {
   Shadowable, SupportsPointerEvents, Transformatable,
 } from '@/types/object3d';
 import { MouseEventMap } from '@/types/events/mouse';
-import { IntersectionEventHandler } from '@/types/events';
+import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/types/events';
 import { onBeforeUnmount } from 'vue';
 import { Component } from '../component';
 
@@ -60,6 +59,24 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
 
   @Prop({ type: Function, default: null })
   public readonly whenWheel!: PropsImpl['whenWheel'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenClickGlobal!: PropsImpl['whenClickGlobal'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenDblClickGlobal!: PropsImpl['whenDblClickGlobal'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenMouseDownGlobal!: PropsImpl['whenMouseDownGlobal'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenMouseUpGlobal!: PropsImpl['whenMouseUpGlobal'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenMouseMoveGlobal!: PropsImpl['whenMouseMoveGlobal'];
+
+  @Prop({ type: Function, default: null })
+  public readonly whenWheelGlobal!: PropsImpl['whenWheelGlobal'];
 
   @Watch('rotation', { deep: true })
   protected whenRotation(value: Props['rotation']): void {
@@ -145,6 +162,54 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     this.subscribeToEvent('wheel', action, prev);
   }
 
+  @Watch('whenClickGlobal', { immediate: true })
+  protected whenGlobalClickActionChanged(
+    action: PropsImpl['whenClickGlobal'],
+    prev: PropsImpl['whenClickGlobal'],
+  ): void {
+    this.subscribeToEvent('click', action, prev, true);
+  }
+
+  @Watch('whenDblClickGlobal', { immediate: true })
+  protected whenGlobalDblClickActionChanged(
+    action: PropsImpl['whenDblClickGlobal'],
+    prev: PropsImpl['whenDblClickGlobal'],
+  ): void {
+    this.subscribeToEvent('dblclick', action, prev, true);
+  }
+
+  @Watch('whenMouseDownGlobal', { immediate: true })
+  protected whenGlobalMouseDownActionChanged(
+    action: PropsImpl['whenMouseDownGlobal'],
+    prev: PropsImpl['whenMouseDownGlobal'],
+  ): void {
+    this.subscribeToEvent('mousedown', action, prev, true);
+  }
+
+  @Watch('whenMouseUpGlobal', { immediate: true })
+  protected whenGlobalMouseUpActionChanged(
+    action: PropsImpl['whenMouseUpGlobal'],
+    prev: PropsImpl['whenMouseUpGlobal'],
+  ): void {
+    this.subscribeToEvent('mouseup', action, prev, true);
+  }
+
+  @Watch('whenMouseMoveGlobal', { immediate: true })
+  protected whenGlobalMouseMoveActionChanged(
+    action: PropsImpl['whenMouseMoveGlobal'],
+    prev: PropsImpl['whenMouseMoveGlobal'],
+  ): void {
+    this.subscribeToEvent('mousemove', action, prev, true);
+  }
+
+  @Watch('whenWheelGlobal', { immediate: true })
+  protected whenGlobalMouseWheelActionChanged(
+    action: PropsImpl['whenWheelGlobal'],
+    prev: PropsImpl['whenWheelGlobal'],
+  ): void {
+    this.subscribeToEvent('wheel', action, prev, true);
+  }
+
   public beforeDestroy(): void {
     this.$$target?.removeFromParent();
   }
@@ -178,23 +243,41 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     event: MouseEventMap,
     action: IntersectionEventHandler | null,
     prevAction?: IntersectionEventHandler | null,
+    // listen all event by type on canvas
+    global = false,
   ): void {
     // disable previus action
     if (prevAction) {
-      Emitter.off(event, prevAction);
+      this.$$emitter?.off(event, prevAction);
     }
 
-    // disable listener before unmount
-    onBeforeUnmount(() => {
-      if (action) {
-        Emitter.off(event, action);
-      }
-    });
+    const actionIsFunction = typeof action === 'function';
 
-    Emitter.on<MouseEventMap, IntersectionEventHandler>(event, (uuids, intersecteds) => {
-      if (this.$$target?.uuid === uuids[0] && typeof action === 'function') {
-        action(uuids, intersecteds);
-      }
-    });
+    if (actionIsFunction) {
+      // disable listener before unmount
+      onBeforeUnmount(() => this.$$emitter?.off(event, action));
+
+      this.$$emitter?.on<MouseEventMap, IntersectionGlobalEventHandler>(
+        event, (uuids, intersecteds) => {
+          if (!actionIsFunction) {
+            return undefined;
+          }
+
+          const intersectedTarget = this.target?.uuid === intersecteds[0].object.uuid
+            ? intersecteds[0]
+            : null;
+
+          if (!global && intersectedTarget) {
+            return action(uuids, intersecteds, intersectedTarget);
+          }
+
+          if (global) {
+            return action(uuids, intersecteds, intersectedTarget);
+          }
+
+          return undefined;
+        },
+      );
+    }
   }
 }

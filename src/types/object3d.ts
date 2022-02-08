@@ -1,6 +1,6 @@
 import { Object3D } from 'three';
 import { ComponentPublicInstance } from 'vue';
-import { IntersectionEventHandlerArguments } from './events';
+import { IntersectionEventHandler, IntersectionGlobalEventHandler } from './events';
 import { Vec3 } from './vector';
 
 export interface ObjectComponent extends
@@ -17,11 +17,21 @@ export interface Transformatable {
 
 export type Shadowable = Pick<Object3D, 'castShadow' | 'receiveShadow'>
 
-export interface SupportsPointerEvents<V = (...args: IntersectionEventHandlerArguments) => void> {
+export interface SupportsPointerEvents<
+    V = IntersectionEventHandler,
+    VG = IntersectionGlobalEventHandler
+> {
   whenClick: V
   whenMouseMove: V
   whenMouseUp: V
   whenMouseDown: V
   whenDblClick: V
   whenWheel: V
+  // listen all mouse actions on canvas
+  whenClickGlobal: VG
+  whenMouseMoveGlobal: VG
+  whenMouseUpGlobal: VG
+  whenMouseDownGlobal: VG
+  whenDblClickGlobal: VG
+  whenWheelGlobal: VG
 }
