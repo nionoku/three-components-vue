@@ -12,7 +12,7 @@ import { ComponentPublicInstance, onBeforeUnmount } from 'vue';
 import { useLooper } from '@/handlers/useLooper';
 import { Component } from '@/components/super/component';
 import { Handler } from '@/types/handler';
-import { usePointerEventHandlers } from '@/handlers/useEventListeners';
+import { usePointerEventsHandler } from '@/handlers/usePointerEventsHandler';
 import { ComponentEvents } from '@/types/events';
 import { RenderAction, RenderActionArguments, RendererEventMap } from '@/types/events/renderer';
 import { TinyEmitter } from 'tiny-emitter';
@@ -149,7 +149,7 @@ export default class Renderer extends Component<WebGLRenderer, Partial<Props>> i
       throw new Error('Can not start rendering. Event emitter is null');
     }
 
-    this.$$pointerEventListener = usePointerEventHandlers(
+    this.$$pointerEventListener = usePointerEventsHandler(
       this.$$emitter,
       this.$$target.domElement,
       this.$$camera,

@@ -70,7 +70,7 @@ class PointerEventHandlers implements Handler {
   }
 }
 
-export function usePointerEventHandlers(
+export function usePointerEventsHandler(
   emitter: TinyEmitter<keyof PointerEventMap>,
   rootElement: HTMLCanvasElement,
   camera: Camera,
