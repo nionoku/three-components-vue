@@ -9,6 +9,9 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials"
   ],
+  "staticDirs": [
+    '../assets'
+  ],
   "framework": "@storybook/vue3",
   webpackFinal: async (config) => {
     config.resolve.alias = {

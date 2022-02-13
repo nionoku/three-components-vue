@@ -86,22 +86,31 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
 
   @Watch('rotation', { deep: true })
   protected whenRotation(value: PropsImpl['rotation']): void {
-    const eulurValue = new Euler(
-      value?.x ?? this.target?.rotation?.x,
-      value?.y ?? this.target?.rotation?.y,
-      value?.z ?? this.target?.rotation?.z,
-    );
+    const eulurValue = (() => {
+      if (typeof value === 'number') { return new Euler(value, value, value); }
+
+      return new Euler(
+        value?.x ?? this.target?.position.x,
+        value?.y ?? this.target?.position.y,
+        value?.z ?? this.target?.position.z,
+      );
+    })();
+
     this.target?.rotation.set(eulurValue.x, eulurValue.y, eulurValue.z);
     this.target?.updateMatrixWorld();
   }
 
   @Watch('position', { deep: true })
   protected whenTranslate(value: PropsImpl['position']): void {
-    const vectorValue = new Vector3(
-      value?.x ?? this.target?.position.x,
-      value?.y ?? this.target?.position.y,
-      value?.z ?? this.target?.position.z,
-    );
+    const vectorValue = (() => {
+      if (typeof value === 'number') { return new Vector3(value, value, value); }
+
+      return new Vector3(
+        value?.x ?? this.target?.position.x,
+        value?.y ?? this.target?.position.y,
+        value?.z ?? this.target?.position.z,
+      );
+    })();
 
     this.target?.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
     this.target?.updateMatrixWorld();
@@ -109,18 +118,28 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
 
   @Watch('scale', { deep: true })
   protected whenScale(value: PropsImpl['scale']): void {
-    const vectorValue = new Vector3(
-      value?.x ?? this.target?.position.x,
-      value?.y ?? this.target?.position.y,
-      value?.z ?? this.target?.position.z,
-    );
+    const vectorValue = (() => {
+      if (typeof value === 'number') { return new Vector3(value, value, value); }
+
+      return new Vector3(
+        value?.x ?? this.target?.position.x,
+        value?.y ?? this.target?.position.y,
+        value?.z ?? this.target?.position.z,
+      );
+    })();
+
     this.target?.scale.set(vectorValue.x, vectorValue.y, vectorValue.z);
     this.target?.updateMatrixWorld();
   }
 
   @Watch('lookAt', { deep: true })
   protected whenLookAt(value: PropsImpl['lookAt']): void {
-    const vectorValue = new Vector3(value?.x, value?.y, value?.z);
+    const vectorValue = (() => {
+      if (typeof value === 'number') { return new Vector3(value, value, value); }
+
+      return new Vector3(value?.x, value?.y, value?.z);
+    })();
+
     this.target?.lookAt(vectorValue);
     this.target?.updateMatrixWorld();
   }
