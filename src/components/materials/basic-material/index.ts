@@ -61,6 +61,15 @@ export default class BasicMaterial
   @Prop({ type: String, default: 'round' })
   public readonly wireframeLinejoin!: PropsImpl['wireframeLinejoin']
 
+  public created(): void {
+    if (!this.$parent.isMesh) {
+      throw new Error('Material must be child of Mesh');
+    }
+
+    this.$$target = this.createTarget();
+    this.$parent.setMaterial(this.$$target);
+  }
+
   protected createTarget(): MeshBasicMaterial {
     const geometry = new MeshBasicMaterial({
       color: this.color,

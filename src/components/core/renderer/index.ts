@@ -218,14 +218,12 @@ export default class Renderer
     // disable listener when unmounted
     onUnmounted(() => this.$$emitter?.off(event, action));
     // subscribe to rendeder events
-    this.$$emitter?.on<RenderAction>(
-      event, (...args: RenderActionArguments) => {
-        if (!action) {
-          return;
-        }
+    this.$$emitter?.on<RenderAction>(event, (...args: RenderActionArguments) => {
+      if (!action) {
+        return;
+      }
 
-        action(...args);
-      },
-    );
+      action(...args);
+    });
   }
 }

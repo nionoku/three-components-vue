@@ -32,7 +32,6 @@ export default class Scene extends ObjectComponent<ThreeScene, Props>
     }
 
     this.$$target = this.createTarget();
-    this.applyTransforms();
     this.$parent.setScene(this.$$target);
   }
 
@@ -41,6 +40,7 @@ export default class Scene extends ObjectComponent<ThreeScene, Props>
   }
 
   public beforeUnmount(): void {
+    this.$parent.cancelRendering();
     this.$$target?.removeFromParent();
   }
 

@@ -4,6 +4,7 @@ import {
 import { Options } from 'vue-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import { nextTick } from 'vue';
 import { Geometry } from '../geometry';
 
 interface Props {
@@ -44,28 +45,30 @@ export default class STLBufferGeometry
   public readonly isBufferGeometry: STLBufferGeometryComponent['isBufferGeometry'] = true;
 
   @Watch('path', { immediate: true })
-  protected async whenPathChanged(value: string): Promise<void> {
-    try {
-      if (!this.$parent.isMesh) {
-        throw new Error('STLBufferGeometry must be child of Mesh');
-      }
+  protected whenPathChanged(value: string): void {
+    nextTick(async () => {
+      try {
+        if (!this.$parent.isMesh) {
+          throw new Error('STLBufferGeometry must be child of Mesh');
+        }
 
-      if (!value) {
-        throw new Error('STLBufferGeometry must take in "path"');
-      }
+        if (!value) {
+          throw new Error('STLBufferGeometry must take in "path"');
+        }
 
-      this.beforeDestroy();
-      this.$$target = await this.createTarget(value);
-      this.whenLoad?.(this.$$target);
-      this.$parent.setGeometry(this.$$target);
-    } catch (err) {
-      this.whenError?.(err as ErrorEvent);
-    }
+        this.beforeDestroy();
+        this.$$target = await this.createTarget(value);
+        this.whenLoad?.(this.$$target);
+        this.$parent.setGeometry(this.$$target);
+      } catch (err) {
+        this.whenError?.(err as ErrorEvent);
+      }
+    });
   }
 
-  protected createTarget(path: string): Promise<ThreeBufferGeometry> {
+  protected async createTarget(path: string): Promise<ThreeBufferGeometry> {
     const loader = new STLLoader(this.manager);
-    const geometry = loader.loadAsync(path, this.whenProgress || undefined);
+    const geometry = await loader.loadAsync(path, this.whenProgress || undefined);
     return geometry;
   }
 

@@ -101,6 +101,15 @@ export default class StandartMaterial
   @Prop({ type: Boolean, default: false })
   public readonly flatShading!: PropsImpl['flatShading']
 
+  public created(): void {
+    if (!this.$parent.isMesh) {
+      throw new Error('Material must be child of Mesh');
+    }
+
+    this.$$target = this.createTarget();
+    this.$parent.setMaterial(this.$$target);
+  }
+
   protected createTarget(): MeshStandardMaterial {
     const material = new MeshStandardMaterial({
       roughness: this.roughness,

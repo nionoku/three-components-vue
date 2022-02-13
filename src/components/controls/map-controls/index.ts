@@ -20,15 +20,13 @@ export default class MapControls extends Component<ThreeMapControls> {
       throw new Error('MapControls must be child of Camera');
     }
 
-    this.$$emitter?.on<RenderAction>(
-      'beforerender', (time, renderer, camera) => {
-        if (!this.$$target) {
-          this.$$target = this.createTarget(camera, renderer.domElement);
-        }
+    this.$$emitter?.on<RenderAction>('beforerender', (time, renderer, camera) => {
+      if (!this.$$target) {
+        this.$$target = this.createTarget(camera, renderer.domElement);
+      }
 
-        this.$$target.update();
-      },
-    );
+      this.$$target.update();
+    });
   }
 
   public beforeDestroy(): void {

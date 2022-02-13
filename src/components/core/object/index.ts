@@ -3,7 +3,7 @@ import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/type
 import { PointerEventMap } from '@/types/events/pointer';
 import { Euler, Object3D, Vector3 } from 'three';
 import { TinyEmitter } from 'tiny-emitter';
-import { onUnmounted } from 'vue';
+import { nextTick, onBeforeMount, onUnmounted } from 'vue';
 import { InjectReactive, Prop, Watch } from 'vue-property-decorator';
 import { Component } from '../component';
 import { EMITTER_KEY } from '../renderer';
@@ -89,64 +89,70 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
 
   @Watch('rotation', { deep: true, immediate: true })
   protected whenRotate(value: PropsImpl['rotate']): void {
-    const eulurValue = (() => {
-      if (typeof value === 'number') { return new Euler(value, value, value); }
+    nextTick(() => {
+      const eulurValue = (() => {
+        if (typeof value === 'number') { return new Euler(value, value, value); }
 
-      return new Euler(
-        value?.x ?? this.target?.position.x,
-        value?.y ?? this.target?.position.y,
-        value?.z ?? this.target?.position.z,
-      );
-    })();
+        return new Euler(
+          value?.x ?? this.$$target?.position.x,
+          value?.y ?? this.$$target?.position.y,
+          value?.z ?? this.$$target?.position.z,
+        );
+      })();
 
-    this.target?.rotation.set(eulurValue.x, eulurValue.y, eulurValue.z);
-    this.target?.updateMatrixWorld();
+      this.$$target?.rotation.set(eulurValue.x, eulurValue.y, eulurValue.z);
+      this.$$target?.updateMatrixWorld();
+    });
   }
 
   @Watch('position', { deep: true, immediate: true })
   protected whenTranslate(value: PropsImpl['position']): void {
-    const vectorValue = (() => {
-      if (typeof value === 'number') { return new Vector3(value, value, value); }
+    nextTick(() => {
+      const vectorValue = (() => {
+        if (typeof value === 'number') { return new Vector3(value, value, value); }
 
-      return new Vector3(
-        value?.x ?? this.target?.position.x,
-        value?.y ?? this.target?.position.y,
-        value?.z ?? this.target?.position.z,
-      );
-    })();
+        return new Vector3(
+            value?.x ?? this.$$target?.position.x,
+            value?.y ?? this.$$target?.position.y,
+            value?.z ?? this.$$target?.position.z,
+        );
+      })();
 
-    console.log(this, value);
-
-    this.target?.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
-    this.target?.updateMatrixWorld();
+      this.$$target?.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
+      this.$$target?.updateMatrixWorld();
+    });
   }
 
   @Watch('scale', { deep: true, immediate: true })
   protected whenScale(value: PropsImpl['scale']): void {
-    const vectorValue = (() => {
-      if (typeof value === 'number') { return new Vector3(value, value, value); }
+    nextTick(() => {
+      const vectorValue = (() => {
+        if (typeof value === 'number') { return new Vector3(value, value, value); }
 
-      return new Vector3(
-        value?.x ?? this.target?.position.x,
-        value?.y ?? this.target?.position.y,
-        value?.z ?? this.target?.position.z,
-      );
-    })();
+        return new Vector3(
+          value?.x ?? this.$$target?.position.x,
+          value?.y ?? this.$$target?.position.y,
+          value?.z ?? this.$$target?.position.z,
+        );
+      })();
 
-    this.target?.scale.set(vectorValue.x, vectorValue.y, vectorValue.z);
-    this.target?.updateMatrixWorld();
+      this.$$target?.scale.set(vectorValue.x, vectorValue.y, vectorValue.z);
+      this.$$target?.updateMatrixWorld();
+    });
   }
 
   @Watch('lookAt', { deep: true, immediate: true })
   protected whenLookAt(value: PropsImpl['lookAt']): void {
-    const vectorValue = (() => {
-      if (typeof value === 'number') { return new Vector3(value, value, value); }
+    nextTick(() => {
+      const vectorValue = (() => {
+        if (typeof value === 'number') { return new Vector3(value, value, value); }
 
-      return new Vector3(value?.x, value?.y, value?.z);
-    })();
+        return new Vector3(value?.x, value?.y, value?.z);
+      })();
 
-    this.target?.lookAt(vectorValue);
-    this.target?.updateMatrixWorld();
+      this.$$target?.lookAt(vectorValue);
+      this.$$target?.updateMatrixWorld();
+    });
   }
 
   @Watch('whenClick', { immediate: true })
@@ -272,25 +278,6 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     return this.$$target;
   }
 
-  /** Must be called after create target */
-  protected applyTransforms(): void {
-    if (this.scale) {
-      this.whenScale(this.scale);
-    }
-
-    if (this.position) {
-      this.whenTranslate(this.position);
-    }
-
-    if (this.lookAt) {
-      this.whenLookAt(this.lookAt);
-    }
-
-    if (this.rotate) {
-      this.whenRotate(this.rotate);
-    }
-  }
-
   private subscribeToPointerEvent(
     event: keyof PointerEventMap,
     action: IntersectionEventHandler | null,
@@ -309,20 +296,18 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     // disable listener when unmounted
     onUnmounted(() => this.$$emitter?.off(event, action));
     // subscribe to pointer events
-    this.$$emitter?.on<IntersectionGlobalEventHandler>(
-      event, (uuids, intersecteds) => {
-        if (!action) {
-          return;
-        }
+    this.$$emitter?.on<IntersectionGlobalEventHandler>(event, (uuids, intersecteds) => {
+      if (!action) {
+        return;
+      }
 
-        const intersectedTarget = this.target?.uuid === intersecteds[0].object.uuid
-          ? intersecteds[0]
-          : null;
+      const intersectedTarget = this.$$target?.uuid === intersecteds[0].object.uuid
+        ? intersecteds[0]
+        : null;
 
-        if (globalEvent || (!globalEvent && intersectedTarget)) {
-          action(uuids, intersecteds, intersectedTarget);
-        }
-      },
-    );
+      if (globalEvent || (!globalEvent && intersectedTarget)) {
+        action(uuids, intersecteds, intersectedTarget);
+      }
+    });
   }
 }

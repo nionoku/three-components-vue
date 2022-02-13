@@ -58,7 +58,7 @@ class PointerEventHandlers implements Handler {
     });
 
     Object.entries(this.listeners).forEach(([key, listener]) => {
-      this.rootElement.addEventListener(key, (event) => listener(event as TypedMouseEvent));
+      this.rootElement.addEventListener(key, (event) => listener?.(event as TypedMouseEvent));
     });
   }
 

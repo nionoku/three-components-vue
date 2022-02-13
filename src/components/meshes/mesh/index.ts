@@ -23,12 +23,7 @@ export default class Mesh extends ObjectComponent<ThreeMesh> implements MeshComp
     }
 
     this.$$target = this.createTarget();
-    this.applyTransforms();
     this.$parent.add(this.$$target);
-  }
-
-  mounted() {
-    console.log(this.$$target?.position, this.$$target?.rotation);
   }
 
   public beforeDestroy(): void {

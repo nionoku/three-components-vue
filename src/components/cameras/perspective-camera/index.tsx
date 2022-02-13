@@ -1,6 +1,7 @@
 import { Options } from 'vue-class-component';
 import { PerspectiveCamera as ThreePerspectiveCamera } from 'three';
 import { Prop } from 'vue-property-decorator';
+import { RenderAction, RendererEventMap } from '@/types/events/renderer';
 import Camera from '../camera';
 
 type Props = Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>
@@ -33,9 +34,11 @@ export default class PerspectiveCamera
     }
 
     this.$$target = this.createTarget();
-    this.$$target.updateProjectionMatrix();
-    this.applyTransforms();
     this.$parent.setCamera(this.$$target);
+
+    this.$$emitter?.on<RenderAction>('beforerender', () => {
+        this.$$target?.updateProjectionMatrix();
+    });
   }
 
   protected createTarget(): ThreePerspectiveCamera {
