@@ -1,6 +1,6 @@
 import { CameraComponent } from '@/components/cameras/camera';
-import { EMITTER_KEY } from '@/components/_core/renderer';
-import { Component } from '@/components/super/component';
+import { EMITTER_KEY } from '@/components/core/renderer';
+import { Component } from '@/components/core/component';
 import { RenderAction, RendererEventMap } from '@/types/events/renderer';
 import { Camera } from 'three';
 import { OrbitControls as ThreeOrbitControls } from 'three/examples/jsm/controls/OrbitControls';

@@ -23,6 +23,15 @@ export default class AmbientLight
 
   public readonly isAmbientLight: AmbientLightComponent['isAmbientLight'] = true
 
+  public created(): void {
+    if (!this.$parent.isObject3D) {
+      throw new Error('AmbientLight must be child of Object3D');
+    }
+
+    this.$$target = this.createTarget();
+    this.$parent.add(this.$$target);
+  }
+
   protected createTarget(): ThreeAmbientLight {
     const light = new ThreeAmbientLight(this.color, this.intensity);
     return light;

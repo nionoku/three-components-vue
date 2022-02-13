@@ -1,6 +1,3 @@
-import {
-  ComponentPublicInstance,
-} from 'vue';
 import { Options } from 'vue-class-component';
 import { PerspectiveCamera as ThreePerspectiveCamera } from 'three';
 import { Prop } from 'vue-property-decorator';
@@ -8,10 +5,7 @@ import Camera from '../camera';
 
 type Props = Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>
 
-export interface PerspectiveCameraComponent extends
-  ComponentPublicInstance,
-  Pick<ThreePerspectiveCamera, 'isPerspectiveCamera'>
-{}
+export type PerspectiveCameraComponent = Pick<ThreePerspectiveCamera, 'isPerspectiveCamera'>
 
 type PropsImpl = Props
 
@@ -32,6 +26,17 @@ export default class PerspectiveCamera
   public readonly far!: PropsImpl['far'];
 
   public isPerspectiveCamera: PerspectiveCameraComponent['isPerspectiveCamera'] = true
+
+  public created(): void {
+    if (!this.$parent.isRenderer) {
+      throw new Error('Camera must be child of renderer');
+    }
+
+    this.$$target = this.createTarget();
+    this.$$target.updateProjectionMatrix();
+    this.applyTransforms();
+    this.$parent.setCamera(this.$$target);
+  }
 
   protected createTarget(): ThreePerspectiveCamera {
     const camera = new ThreePerspectiveCamera(this.fov, this.aspect, this.near, this.far);

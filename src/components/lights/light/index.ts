@@ -1,7 +1,7 @@
 import { ColorRepresentation, Light as ThreeLight, Object3D } from 'three';
 import { ObjectComponent as ParentObjectComponent } from '@/types/object3d';
-import { ObjectComponent } from '@/components/super/object';
 import { Prop } from 'vue-property-decorator';
+import { ObjectComponent } from '@/components/core/object';
 
 interface LightHelperArguments {
   size: number,
@@ -21,29 +21,14 @@ export abstract class BaseLight<L extends ThreeLight, P = Record<string, unknown
   implements PropsImpl, LightComponent {
   declare public $parent: ParentObjectComponent
 
-  @Prop({ type: [Object, Boolean], default: false })
-  public readonly helper!: PropsImpl['helper']
+  protected abstract createLightHelper(): Object3D
 
   protected $$helper: Object3D | null = null
 
-  protected abstract createLightHelper(): Object3D
+  @Prop({ type: Boolean, default: false })
+  public readonly helper!: PropsImpl['helper']
 
   public readonly isLight: LightComponent['isLight'] = true
-
-  public created(): void {
-    if (!this.$parent.isObject3D) {
-      throw new Error('Light must be child of Object3D');
-    }
-
-    this.$$target = this.prepareTarget();
-    this.$parent.add(this.$$target);
-
-    // add helper to parent
-    if (this.helper) {
-      this.$$helper = this.createLightHelper();
-      this.$parent.add(this.$$helper);
-    }
-  }
 
   public beforeDestroy(): void {
     this.$$target?.removeFromParent();

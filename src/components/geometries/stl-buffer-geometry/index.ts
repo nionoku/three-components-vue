@@ -4,7 +4,7 @@ import {
 import { Options } from 'vue-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
-import { AsyncGeometry } from '../geometry/async';
+import { Geometry } from '../geometry';
 
 interface Props {
   path: string
@@ -24,7 +24,7 @@ export type STLBufferGeometryComponent = Pick<ThreeBufferGeometry, 'isBufferGeom
 
 @Options({})
 export default class STLBufferGeometry
-  extends AsyncGeometry<ThreeBufferGeometry, Partial<Props>>
+  extends Geometry<ThreeBufferGeometry, Partial<Props>>
   implements STLBufferGeometryComponent, PropsImpl {
   @Prop({ type: String, required: true })
   public readonly path!: PropsImpl['path'];

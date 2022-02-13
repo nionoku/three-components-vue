@@ -1,18 +1,16 @@
 import { ComponentEvents } from '@/types/events';
 import { TinyEmitter } from 'tiny-emitter';
-import { ComponentPublicInstance } from 'vue';
 import { Vue } from 'vue-class-component';
 
 export abstract class Component<T, P = Record<string, unknown>>
-  extends Vue
-  implements ComponentPublicInstance {
+  extends Vue {
   declare public $props: P
 
-  protected abstract $$emitter: TinyEmitter<ComponentEvents> | null
+  protected abstract createTarget<A extends never>(...args: A): T | Promise<T>
 
-  protected abstract $$target: T | null
+  protected $$emitter: TinyEmitter<ComponentEvents> | null = null
 
-  protected abstract createTarget<A extends Array<unknown>>(...args: A): T | Promise<T>
+  protected $$target: T | null = null
 
   public render(): never {
     return (this.$slots?.default?.() ?? []) as never;

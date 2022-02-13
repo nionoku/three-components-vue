@@ -4,7 +4,7 @@ import {
 } from 'three';
 import { ComponentPublicInstance } from 'vue';
 import { ObjectComponent as ParentObjectComponent } from '@/types/object3d';
-import { ObjectComponent } from '@/components/super/object';
+import { ObjectComponent } from '@/components/core/object';
 
 export interface MeshComponent extends ComponentPublicInstance, Pick<ThreeMesh, 'isMesh'> {
   setGeometry(geometry: BufferGeometry): void
@@ -22,8 +22,13 @@ export default class Mesh extends ObjectComponent<ThreeMesh> implements MeshComp
       throw new Error('Mesh must be child of Object3D');
     }
 
-    this.$$target = this.prepareTarget();
+    this.$$target = this.createTarget();
+    this.applyTransforms();
     this.$parent.add(this.$$target);
+  }
+
+  mounted() {
+    console.log(this.$$target?.position, this.$$target?.rotation);
   }
 
   public beforeDestroy(): void {

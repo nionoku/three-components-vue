@@ -29,6 +29,15 @@ export default class BoxGeometry extends BufferGeometry<Partial<Props>> implemen
   @Prop({ type: Number, default: 1 })
   public readonly depthSegments!: PropsImpl['depthSegments'];
 
+  public created(): void {
+    if (!this.$parent.isMesh) {
+      throw new Error('Box geometry must be child of Mesh');
+    }
+
+    this.$$target = this.createTarget();
+    this.$parent.setGeometry(this.$$target);
+  }
+
   protected createTarget(): ThreeBoxGeometry {
     const geometry = new ThreeBoxGeometry(
       this.width, this.height, this.depth,

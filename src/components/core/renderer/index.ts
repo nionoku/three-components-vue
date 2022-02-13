@@ -8,7 +8,7 @@ import {
 } from 'three';
 import WebGL from 'three/examples/jsm/capabilities/WebGL';
 import { TinyEmitter } from 'tiny-emitter';
-import { onUnmounted } from 'vue';
+import { ComponentPublicInstance, onUnmounted } from 'vue';
 import { Options } from 'vue-class-component';
 import { Prop, ProvideReactive, Watch } from 'vue-property-decorator';
 import { Component } from '../component';
@@ -34,7 +34,7 @@ interface PropsImpl extends Required<Omit<Props, 'whenBeforeRender'>> {
   whenBeforeRender: RenderAction | null
 }
 
-interface RendererComponent {
+export interface RendererComponent extends ComponentPublicInstance {
   isRenderer: true
   setScene(scene: Scene): void
   setCamera(camera: Camera): void
@@ -91,6 +91,10 @@ export default class Renderer
     prev: PropsImpl['whenBeforeRender'],
   ): void {
     this.subscribeToRenderEvent('beforerender', action, prev);
+  }
+
+  public beforeCreate(): void {
+    this.$$emitter = new TinyEmitter();
   }
 
   public created(): void {

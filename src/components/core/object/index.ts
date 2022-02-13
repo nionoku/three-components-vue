@@ -1,4 +1,3 @@
-import { EMITTER_KEY } from '@/components/_core/renderer';
 import { ComponentEvents } from '@/types/events';
 import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/types/events/intersection';
 import { PointerEventMap } from '@/types/events/pointer';
@@ -7,6 +6,7 @@ import { TinyEmitter } from 'tiny-emitter';
 import { onUnmounted } from 'vue';
 import { InjectReactive, Prop, Watch } from 'vue-property-decorator';
 import { Component } from '../component';
+import { EMITTER_KEY } from '../renderer';
 import { Shadowable } from './_shadowable';
 import { SupportsPointerEvents } from './_supportsPointerEvents';
 import { Transformable } from './_transformable';
@@ -114,6 +114,8 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
         value?.z ?? this.target?.position.z,
       );
     })();
+
+    console.log(this, value);
 
     this.target?.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
     this.target?.updateMatrixWorld();
@@ -248,7 +250,9 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     this.$$target?.removeFromParent();
   }
 
-  public add(...objects: Array<Object3D>): ReturnType<IObjectComponent['add']> {
+  public add(
+    ...objects: Parameters<IObjectComponent['add']>
+  ): ReturnType<IObjectComponent['add']> {
     if (!this.$$target) {
       throw new Error('Can not add objects to this object. This object is null');
     }
@@ -257,13 +261,34 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     return this.$$target;
   }
 
-  public remove(...objects: Array<Object3D>): ReturnType<IObjectComponent['add']> {
+  public remove(
+    ...objects: Parameters<IObjectComponent['remove']>
+  ): ReturnType<IObjectComponent['remove']> {
     if (!this.$$target) {
       throw new Error('Can not remove objects from this object. This object is null');
     }
 
     this.$$target?.remove(...objects);
     return this.$$target;
+  }
+
+  /** Must be called after create target */
+  protected applyTransforms(): void {
+    if (this.scale) {
+      this.whenScale(this.scale);
+    }
+
+    if (this.position) {
+      this.whenTranslate(this.position);
+    }
+
+    if (this.lookAt) {
+      this.whenLookAt(this.lookAt);
+    }
+
+    if (this.rotate) {
+      this.whenRotate(this.rotate);
+    }
   }
 
   private subscribeToPointerEvent(

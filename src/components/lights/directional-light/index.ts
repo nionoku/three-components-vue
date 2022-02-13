@@ -29,6 +29,21 @@ export default class DirectionalLight
 
   public readonly isDirectionalLight: DirectionalLightComponent['isDirectionalLight'] = true
 
+  public created(): void {
+    if (!this.$parent.isObject3D) {
+      throw new Error('DirectionalLight must be child of Object3D');
+    }
+
+    this.$$target = this.createTarget();
+    this.$parent.add(this.$$target);
+
+    // add helper to parent
+    if (this.helper) {
+      this.$$helper = this.createLightHelper();
+      this.$parent.add(this.$$helper);
+    }
+  }
+
   protected createTarget(): ThreeDirectionalLight {
     const light = new ThreeDirectionalLight(this.color, this.intensity);
     // TODO (2022.02.05): Impl target prop

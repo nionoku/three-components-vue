@@ -1,12 +1,12 @@
 import { CameraComponent } from '@/components/cameras/camera';
-import { EMITTER_KEY, RendererComponent } from '@/components/_core/renderer';
-import { Component } from '@/components/super/component';
+import { EMITTER_KEY } from '@/components/core/renderer';
+import { Component } from '@/components/core/component';
 import { RenderAction, RendererEventMap } from '@/types/events/renderer';
-import { Camera } from 'three';
 import { MapControls as ThreeMapControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TinyEmitter } from 'tiny-emitter';
 import { Options } from 'vue-class-component';
 import { InjectReactive } from 'vue-property-decorator';
+import { Camera } from 'three';
 
 @Options({})
 export default class MapControls extends Component<ThreeMapControls> {
@@ -35,7 +35,10 @@ export default class MapControls extends Component<ThreeMapControls> {
     this.$$target?.dispose();
   }
 
-  protected createTarget(camera: Camera, canvas: HTMLCanvasElement): ThreeMapControls {
+  protected createTarget(
+    camera: Camera,
+    canvas: HTMLCanvasElement,
+  ): ThreeMapControls {
     const controls = new ThreeMapControls(camera, canvas);
     return controls;
   }

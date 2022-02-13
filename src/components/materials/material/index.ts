@@ -11,7 +11,7 @@ import {
   OneMinusSrcAlphaFactor,
   SrcAlphaFactor,
 } from 'three';
-import { Component } from '@/components/super/component';
+import { Component } from '@/components/core/component';
 import { Prop } from 'vue-property-decorator';
 
 type Props = MaterialParameters
