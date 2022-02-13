@@ -1,10 +1,9 @@
 import { ComponentEvents } from '@/types/events';
-import { EventDispatcher } from 'three';
 import { TinyEmitter } from 'tiny-emitter';
 import { ComponentPublicInstance } from 'vue';
 import { Vue } from 'vue-class-component';
 
-export abstract class Component<T extends EventDispatcher, P = Record<string, unknown>>
+export abstract class Component<T, P = Record<string, unknown>>
   extends Vue
   implements ComponentPublicInstance {
   declare public $props: P

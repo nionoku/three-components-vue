@@ -278,25 +278,26 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       this.$$emitter?.off(event, prevAction);
     }
 
-    if (action) {
-      // disable listener when unmounted
-      onUnmounted(() => this.$$emitter?.off(event, action));
-
-      this.$$emitter?.on<IntersectionGlobalEventHandler>(
-        event, (uuids, intersecteds) => {
-          if (!action) {
-            return;
-          }
-
-          const intersectedTarget = this.target?.uuid === intersecteds[0].object.uuid
-            ? intersecteds[0]
-            : null;
-
-          if (globalEvent || (!globalEvent && intersectedTarget)) {
-            action(uuids, intersecteds, intersectedTarget);
-          }
-        },
-      );
+    if (!action) {
+      return;
     }
+    // disable listener when unmounted
+    onUnmounted(() => this.$$emitter?.off(event, action));
+    // subscribe to pointer events
+    this.$$emitter?.on<IntersectionGlobalEventHandler>(
+      event, (uuids, intersecteds) => {
+        if (!action) {
+          return;
+        }
+
+        const intersectedTarget = this.target?.uuid === intersecteds[0].object.uuid
+          ? intersecteds[0]
+          : null;
+
+        if (globalEvent || (!globalEvent && intersectedTarget)) {
+          action(uuids, intersecteds, intersectedTarget);
+        }
+      },
+    );
   }
 }
