@@ -1,5 +1,5 @@
 import { CameraComponent } from '@/components/cameras/camera';
-import { EMITTER_KEY, RendererComponent } from '@/components/core/renderer';
+import { EMITTER_KEY, RendererComponent } from '@/components/_core/renderer';
 import { Component } from '@/components/super/component';
 import { RenderAction, RendererEventMap } from '@/types/events/renderer';
 import { Camera } from 'three';

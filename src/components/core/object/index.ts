@@ -1,34 +1,34 @@
-// eslint-disable-next-line max-classes-per-file
-import { InjectReactive, Prop, Watch } from 'vue-property-decorator';
-import { Euler, Object3D, Vector3 } from 'three';
-import {
-  Shadowable, SupportsPointerEvents, Transformatable,
-} from '@/types/object3d';
-import { PointerEventMap } from '@/types/events/pointer';
-import { onBeforeUnmount } from 'vue';
-import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/types/events/intersection';
 import { EMITTER_KEY } from '@/components/_core/renderer';
-import { TinyEmitter } from 'tiny-emitter';
 import { ComponentEvents } from '@/types/events';
+import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/types/events/intersection';
+import { PointerEventMap } from '@/types/events/pointer';
+import { Euler, Object3D, Vector3 } from 'three';
+import { TinyEmitter } from 'tiny-emitter';
+import { onUnmounted } from 'vue';
+import { InjectReactive, Prop, Watch } from 'vue-property-decorator';
 import { Component } from '../component';
+import { Shadowable } from './_shadowable';
+import { SupportsPointerEvents } from './_supportsPointerEvents';
+import { Transformable } from './_transformable';
 
 interface Props extends
-  Transformatable,
-  Shadowable,
-  SupportsPointerEvents
+  Partial<Transformable>,
+  Partial<Shadowable>,
+  Partial<SupportsPointerEvents>
 {}
 
 interface PropsImpl extends
-  Omit<Props, keyof Transformatable | keyof SupportsPointerEvents>,
-  Nullable<Transformatable>,
+  Omit<Required<Props>, keyof Transformable | keyof SupportsPointerEvents>,
+  Nullable<Transformable>,
   Nullable<SupportsPointerEvents>
 {}
 
+type IObjectComponent = Pick<Object3D, 'isObject3D' | 'add' | 'remove'>
+
 export abstract class ObjectComponent<T extends Object3D, P = Record<string, unknown>>
-  extends Component<T, P & Partial<Props>>
-  implements PropsImpl {
-  @InjectReactive(EMITTER_KEY)
-  protected $$emitter: TinyEmitter<ComponentEvents> | null = null;
+  extends Component<T, P & Props>
+  implements IObjectComponent, PropsImpl {
+  public readonly isObject3D: IObjectComponent['isObject3D'] = true;
 
   @Prop({ type: Boolean, default: false })
   public readonly castShadow!: PropsImpl['castShadow'];
@@ -40,7 +40,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   public readonly position!: PropsImpl['position'];
 
   @Prop({ type: Object, default: null })
-  public readonly rotation!: PropsImpl['rotation'];
+  public readonly rotate!: PropsImpl['rotate'];
 
   @Prop({ type: Object, default: null })
   public readonly lookAt!: PropsImpl['lookAt'];
@@ -84,8 +84,11 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   @Prop({ type: Function, default: null })
   public readonly whenWheelGlobal!: PropsImpl['whenWheelGlobal'];
 
-  @Watch('rotation', { deep: true })
-  protected whenRotation(value: PropsImpl['rotation']): void {
+  @InjectReactive(EMITTER_KEY)
+  protected $$emitter: TinyEmitter<ComponentEvents> | null = null;
+
+  @Watch('rotation', { deep: true, immediate: true })
+  protected whenRotate(value: PropsImpl['rotate']): void {
     const eulurValue = (() => {
       if (typeof value === 'number') { return new Euler(value, value, value); }
 
@@ -100,7 +103,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     this.target?.updateMatrixWorld();
   }
 
-  @Watch('position', { deep: true })
+  @Watch('position', { deep: true, immediate: true })
   protected whenTranslate(value: PropsImpl['position']): void {
     const vectorValue = (() => {
       if (typeof value === 'number') { return new Vector3(value, value, value); }
@@ -116,7 +119,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     this.target?.updateMatrixWorld();
   }
 
-  @Watch('scale', { deep: true })
+  @Watch('scale', { deep: true, immediate: true })
   protected whenScale(value: PropsImpl['scale']): void {
     const vectorValue = (() => {
       if (typeof value === 'number') { return new Vector3(value, value, value); }
@@ -132,7 +135,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     this.target?.updateMatrixWorld();
   }
 
-  @Watch('lookAt', { deep: true })
+  @Watch('lookAt', { deep: true, immediate: true })
   protected whenLookAt(value: PropsImpl['lookAt']): void {
     const vectorValue = (() => {
       if (typeof value === 'number') { return new Vector3(value, value, value); }
@@ -149,7 +152,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenClick'],
     prev: PropsImpl['whenClick'],
   ): void {
-    this.subscribeToEvent('click', action, prev);
+    this.subscribeToPointerEvent('click', action, prev);
   }
 
   @Watch('whenDblClick', { immediate: true })
@@ -157,7 +160,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenDblClick'],
     prev: PropsImpl['whenDblClick'],
   ): void {
-    this.subscribeToEvent('dblclick', action, prev);
+    this.subscribeToPointerEvent('dblclick', action, prev);
   }
 
   @Watch('whenMouseDown', { immediate: true })
@@ -165,7 +168,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenMouseDown'],
     prev: PropsImpl['whenMouseDown'],
   ): void {
-    this.subscribeToEvent('mousedown', action, prev);
+    this.subscribeToPointerEvent('mousedown', action, prev);
   }
 
   @Watch('whenMouseUp', { immediate: true })
@@ -173,7 +176,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenMouseUp'],
     prev: PropsImpl['whenMouseUp'],
   ): void {
-    this.subscribeToEvent('mouseup', action, prev);
+    this.subscribeToPointerEvent('mouseup', action, prev);
   }
 
   @Watch('whenMouseMove', { immediate: true })
@@ -181,7 +184,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenMouseMove'],
     prev: PropsImpl['whenMouseMove'],
   ): void {
-    this.subscribeToEvent('mousemove', action, prev);
+    this.subscribeToPointerEvent('mousemove', action, prev);
   }
 
   @Watch('whenWheel', { immediate: true })
@@ -189,7 +192,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenWheel'],
     prev: PropsImpl['whenWheel'],
   ): void {
-    this.subscribeToEvent('wheel', action, prev);
+    this.subscribeToPointerEvent('wheel', action, prev);
   }
 
   @Watch('whenClickGlobal', { immediate: true })
@@ -197,7 +200,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenClickGlobal'],
     prev: PropsImpl['whenClickGlobal'],
   ): void {
-    this.subscribeToEvent('click', action, prev, true);
+    this.subscribeToPointerEvent('click', action, prev, true);
   }
 
   @Watch('whenDblClickGlobal', { immediate: true })
@@ -205,7 +208,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenDblClickGlobal'],
     prev: PropsImpl['whenDblClickGlobal'],
   ): void {
-    this.subscribeToEvent('dblclick', action, prev, true);
+    this.subscribeToPointerEvent('dblclick', action, prev, true);
   }
 
   @Watch('whenMouseDownGlobal', { immediate: true })
@@ -213,7 +216,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenMouseDownGlobal'],
     prev: PropsImpl['whenMouseDownGlobal'],
   ): void {
-    this.subscribeToEvent('mousedown', action, prev, true);
+    this.subscribeToPointerEvent('mousedown', action, prev, true);
   }
 
   @Watch('whenMouseUpGlobal', { immediate: true })
@@ -221,7 +224,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenMouseUpGlobal'],
     prev: PropsImpl['whenMouseUpGlobal'],
   ): void {
-    this.subscribeToEvent('mouseup', action, prev, true);
+    this.subscribeToPointerEvent('mouseup', action, prev, true);
   }
 
   @Watch('whenMouseMoveGlobal', { immediate: true })
@@ -229,7 +232,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenMouseMoveGlobal'],
     prev: PropsImpl['whenMouseMoveGlobal'],
   ): void {
-    this.subscribeToEvent('mousemove', action, prev, true);
+    this.subscribeToPointerEvent('mousemove', action, prev, true);
   }
 
   @Watch('whenWheelGlobal', { immediate: true })
@@ -237,75 +240,61 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
     action: PropsImpl['whenWheelGlobal'],
     prev: PropsImpl['whenWheelGlobal'],
   ): void {
-    this.subscribeToEvent('wheel', action, prev, true);
+    this.subscribeToPointerEvent('wheel', action, prev, true);
   }
 
-  public beforeDestroy(): void {
+  public unmounted(): void {
+    this.$$target?.remove();
     this.$$target?.removeFromParent();
   }
 
-  protected prepareTarget(): T {
-    this.$$target = this.createTarget();
-    this.applyTransforms();
+  public add(...objects: Array<Object3D>): ReturnType<IObjectComponent['add']> {
+    if (!this.$$target) {
+      throw new Error('Can not add objects to this object. This object is null');
+    }
 
+    this.$$target?.add(...objects);
     return this.$$target;
   }
 
-  protected applyTransforms(): void {
-    if (this.scale) {
-      this.whenScale(this.scale);
+  public remove(...objects: Array<Object3D>): ReturnType<IObjectComponent['add']> {
+    if (!this.$$target) {
+      throw new Error('Can not remove objects from this object. This object is null');
     }
 
-    if (this.position) {
-      this.whenTranslate(this.position);
-    }
-
-    if (this.lookAt) {
-      this.whenLookAt(this.lookAt);
-    }
-
-    if (this.rotation) {
-      this.whenRotation(this.rotation);
-    }
+    this.$$target?.remove(...objects);
+    return this.$$target;
   }
 
-  private subscribeToEvent(
+  private subscribeToPointerEvent(
     event: keyof PointerEventMap,
     action: IntersectionEventHandler | null,
     prevAction?: IntersectionEventHandler | null,
     // listen all event by type on canvas
-    global = false,
+    globalEvent = false,
   ): void {
     // disable previus action
     if (prevAction) {
       this.$$emitter?.off(event, prevAction);
     }
 
-    const actionIsFunction = typeof action === 'function';
-
-    if (actionIsFunction) {
-      // disable listener before unmount
-      onBeforeUnmount(() => this.$$emitter?.off(event, action));
+    if (action) {
+      // disable listener when unmounted
+      onUnmounted(() => this.$$emitter?.off(event, action));
 
       this.$$emitter?.on<IntersectionGlobalEventHandler>(
         event, (uuids, intersecteds) => {
-          if (!actionIsFunction) {
-            return undefined;
+          if (!action) {
+            return;
           }
 
           const intersectedTarget = this.target?.uuid === intersecteds[0].object.uuid
             ? intersecteds[0]
             : null;
 
-          if (!global && intersectedTarget) {
-            return action(uuids, intersecteds, intersectedTarget);
+          if (globalEvent || (!globalEvent && intersectedTarget)) {
+            action(uuids, intersecteds, intersectedTarget);
           }
-
-          if (global) {
-            return action(uuids, intersecteds, intersectedTarget);
-          }
-
-          return undefined;
         },
       );
     }

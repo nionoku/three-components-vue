@@ -1,4 +1,4 @@
-export * from './core';
+export * from './_core';
 export * from './geometries';
 export * from './materials';
 export * from './meshes';

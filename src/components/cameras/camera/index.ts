@@ -1,4 +1,4 @@
-import { RendererComponent } from '@/components/core/renderer';
+import { RendererComponent } from '@/components/_core/renderer';
 import { ObjectComponent } from '@/components/super/object';
 import { Camera as ThreeCamera } from 'three';
 import { ComponentPublicInstance } from 'vue';
