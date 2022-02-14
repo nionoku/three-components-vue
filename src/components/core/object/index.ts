@@ -3,7 +3,7 @@ import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/type
 import { PointerEventMap } from '@/types/events/pointer';
 import { Euler, Object3D, Vector3 } from 'three';
 import { TinyEmitter } from 'tiny-emitter';
-import { nextTick, onBeforeMount, onUnmounted } from 'vue';
+import { nextTick, onUnmounted } from 'vue';
 import { InjectReactive, Prop, Watch } from 'vue-property-decorator';
 import { Component } from '../component';
 import { EMITTER_KEY } from '../renderer';
@@ -87,21 +87,20 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   @InjectReactive(EMITTER_KEY)
   protected $$emitter: TinyEmitter<ComponentEvents> | null = null;
 
-  @Watch('rotation', { deep: true, immediate: true })
+  @Watch('rotate', { deep: true, immediate: true })
   protected whenRotate(value: PropsImpl['rotate']): void {
     nextTick(() => {
       const eulurValue = (() => {
         if (typeof value === 'number') { return new Euler(value, value, value); }
 
         return new Euler(
-          value?.x ?? this.$$target?.position.x,
-          value?.y ?? this.$$target?.position.y,
-          value?.z ?? this.$$target?.position.z,
+          value?.x ?? this.$$target?.rotation.x,
+          value?.y ?? this.$$target?.rotation.y,
+          value?.z ?? this.$$target?.rotation.z,
         );
       })();
 
       this.$$target?.rotation.set(eulurValue.x, eulurValue.y, eulurValue.z);
-      this.$$target?.updateMatrixWorld();
     });
   }
 
@@ -119,7 +118,6 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       })();
 
       this.$$target?.position.set(vectorValue.x, vectorValue.y, vectorValue.z);
-      this.$$target?.updateMatrixWorld();
     });
   }
 
@@ -130,14 +128,13 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
         if (typeof value === 'number') { return new Vector3(value, value, value); }
 
         return new Vector3(
-          value?.x ?? this.$$target?.position.x,
-          value?.y ?? this.$$target?.position.y,
-          value?.z ?? this.$$target?.position.z,
+          value?.x ?? this.$$target?.scale.x,
+          value?.y ?? this.$$target?.scale.y,
+          value?.z ?? this.$$target?.scale.z,
         );
       })();
 
       this.$$target?.scale.set(vectorValue.x, vectorValue.y, vectorValue.z);
-      this.$$target?.updateMatrixWorld();
     });
   }
 
@@ -151,7 +148,6 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
       })();
 
       this.$$target?.lookAt(vectorValue);
-      this.$$target?.updateMatrixWorld();
     });
   }
 

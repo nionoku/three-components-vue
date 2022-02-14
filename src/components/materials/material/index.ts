@@ -155,15 +155,6 @@ export abstract class BaseMaterial<M extends ThreeMaterial, P = Record<string, u
   @Prop({ type: Number, default: null })
   public readonly format!: PropsImpl['format']
 
-  // public created(): void {
-  //   if (!this.$parent.isMesh) {
-  //     throw new Error('Material must be child of Mesh');
-  //   }
-
-  //   this.$$target = this.createTarget();
-  //   this.$parent.setMaterial(this.$$target);
-  // }
-
   public beforeDestroy(): void {
     this.$$target?.dispose();
   }
