@@ -32,7 +32,9 @@ class PointerEventHandlers implements Handler {
 
     this.raycaster.setFromCamera(this.pointerPosition, this.camera);
 
-    const intersects = this.raycaster.intersectObjects(this.targetsContainer.children);
+    const intersects = this.raycaster.intersectObjects(
+      [this.targetsContainer, ...this.targetsContainer.children],
+    );
 
     if (intersects.length > 0) {
       this.emitter.emit<IntersectionGlobalEventHandlerArguments>(

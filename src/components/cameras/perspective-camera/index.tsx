@@ -1,7 +1,6 @@
 import { Options } from 'vue-class-component';
 import { PerspectiveCamera as ThreePerspectiveCamera } from 'three';
-import { Prop } from 'vue-property-decorator';
-import { RenderAction } from '@/types/events/renderer';
+import { Prop, Watch } from 'vue-property-decorator';
 import Camera from '../camera';
 
 type Props = Pick<ThreePerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>
@@ -28,6 +27,42 @@ export default class PerspectiveCamera
 
   public isPerspectiveCamera: PerspectiveCameraComponent['isPerspectiveCamera'] = true
 
+  @Watch('aspect', { deep: true })
+  protected whenAspectChanged(value: PropsImpl['aspect']): void {
+    if (!this.$$target) {
+      return;
+    }
+
+    this.$$target.aspect = value;
+  }
+
+  @Watch('fov', { deep: true })
+  protected whenFovChanged(value: PropsImpl['fov']): void {
+    if (!this.$$target) {
+      return;
+    }
+
+    this.$$target.fov = value;
+  }
+
+  @Watch('near', { deep: true })
+  protected whenNearChanged(value: PropsImpl['near']): void {
+    if (!this.$$target) {
+      return;
+    }
+
+    this.$$target.near = value;
+  }
+
+  @Watch('far', { deep: true })
+  protected whenFarChanged(value: PropsImpl['far']): void {
+    if (!this.$$target) {
+      return;
+    }
+
+    this.$$target.far = value;
+  }
+
   public created(): void {
     if (!this.$parent.isRenderer) {
       throw new Error('Camera must be child of renderer');
@@ -35,10 +70,6 @@ export default class PerspectiveCamera
 
     this.$$target = this.createTarget();
     this.$parent.setCamera(this.$$target);
-
-    this.$$emitter?.on<RenderAction>('beforerender', () => {
-      this.$$target?.updateProjectionMatrix();
-    });
   }
 
   protected createTarget(): ThreePerspectiveCamera {

@@ -8,6 +8,7 @@ import {
   Scene,
   STLBufferGeometry,
 } from '@/components';
+import { ref } from 'vue';
 
 export default {
   title: 'Actions/Click',
@@ -24,7 +25,7 @@ const Template = (args: any) => ({
     return (
       <div style={{ width: '500px', height: '300px', border: '1px dashed black' }}>
         <Renderer width={500} height={300}>
-          <PerspectiveCamera position={4} lookAt={0}>
+          <PerspectiveCamera position={4} lookAt={0} aspect={500 / 300}>
             <OrbitControls />
           </PerspectiveCamera>
 
