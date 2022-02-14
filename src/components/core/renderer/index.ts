@@ -27,6 +27,7 @@ interface Props extends Partial<Pick<WebGLRendererParameters, 'antialias' | 'alp
   pixelRatio?: number
   powerPreference?: PowerPreference
   fps?: number
+  singleFrame?: boolean
   whenBeforeRender?: RenderAction
 }
 
@@ -71,6 +72,9 @@ export default class Renderer
 
   @Prop({ type: Function, default: null })
   public readonly whenBeforeRender!: PropsImpl['whenBeforeRender'];
+
+  @Prop({ type: Boolean, default: false })
+  public readonly singleFrame!: PropsImpl['singleFrame'];
 
   @ProvideReactive(EMITTER_KEY)
   protected $$emitter: TinyEmitter<ComponentEventMap> | null = null;
@@ -151,6 +155,7 @@ export default class Renderer
       throw new Error('Can not start rendering. Event emitter is null');
     }
 
+    // init event listeners and render looper
     this.$$pointerEventListener = usePointerEventsHandler(
       this.$$emitter,
       this.$$target.domElement,
