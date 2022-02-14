@@ -34,6 +34,7 @@ export default class PerspectiveCamera
     }
 
     this.$$target.aspect = value;
+    this.$$target.updateProjectionMatrix();
   }
 
   @Watch('fov', { deep: true })
@@ -43,6 +44,7 @@ export default class PerspectiveCamera
     }
 
     this.$$target.fov = value;
+    this.$$target.updateProjectionMatrix();
   }
 
   @Watch('near', { deep: true })
@@ -52,6 +54,7 @@ export default class PerspectiveCamera
     }
 
     this.$$target.near = value;
+    this.$$target.updateProjectionMatrix();
   }
 
   @Watch('far', { deep: true })
@@ -61,6 +64,7 @@ export default class PerspectiveCamera
     }
 
     this.$$target.far = value;
+    this.$$target.updateProjectionMatrix();
   }
 
   public created(): void {

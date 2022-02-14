@@ -1,6 +1,6 @@
-import { ComponentEvents } from '@/types/events';
+import { ComponentEventMap } from '@/types/events';
 import { IntersectionEventHandler, IntersectionGlobalEventHandler } from '@/types/events/intersection';
-import { PointerEventMap } from '@/types/events/pointer';
+import { PointerEvents } from '@/types/events/pointer';
 import { Euler, Object3D, Vector3 } from 'three';
 import { TinyEmitter } from 'tiny-emitter';
 import { nextTick, onUnmounted } from 'vue';
@@ -85,7 +85,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   public readonly whenWheelGlobal!: PropsImpl['whenWheelGlobal'];
 
   @InjectReactive(EMITTER_KEY)
-  protected $$emitter: TinyEmitter<ComponentEvents> | null = null;
+  protected $$emitter: TinyEmitter<ComponentEventMap> | null = null;
 
   @Watch('rotate', { deep: true, immediate: true })
   protected whenRotate(value: PropsImpl['rotate']): void {
@@ -275,7 +275,7 @@ export abstract class ObjectComponent<T extends Object3D, P = Record<string, unk
   }
 
   private subscribeToPointerEvent(
-    event: keyof PointerEventMap,
+    event: keyof PointerEvents,
     action: IntersectionEventHandler | null,
     prevAction?: IntersectionEventHandler | null,
     // listen all event by type on canvas

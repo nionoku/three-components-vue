@@ -1,4 +1,4 @@
-import { ComponentEvents } from '@/types/events';
+import { ComponentEventMap } from '@/types/events';
 import { TinyEmitter } from 'tiny-emitter';
 import { Vue } from 'vue-class-component';
 
@@ -8,7 +8,7 @@ export abstract class Component<T, P = Record<string, unknown>>
 
   protected abstract createTarget<A extends never>(...args: A): T | Promise<T>
 
-  protected $$emitter: TinyEmitter<ComponentEvents> | null = null
+  protected $$emitter: TinyEmitter<ComponentEventMap> | null = null
 
   protected $$target: T | null = null
 

@@ -1,7 +1,7 @@
 import { CameraComponent } from '@/components/cameras/camera';
 import { EMITTER_KEY } from '@/components/core/renderer';
 import { Component } from '@/components/core/component';
-import { RenderAction, RendererEventMap } from '@/types/events/renderer';
+import { RenderAction, RendererEvents } from '@/types/events/renderer';
 import { Camera } from 'three';
 import { OrbitControls as ThreeOrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TinyEmitter } from 'tiny-emitter';
@@ -13,7 +13,7 @@ export default class OrbitControls extends Component<ThreeOrbitControls> {
   declare public $parent: CameraComponent
 
   @InjectReactive(EMITTER_KEY)
-  protected $$emitter: TinyEmitter<keyof RendererEventMap> | null = null;
+  protected $$emitter: TinyEmitter<keyof RendererEvents> | null = null;
 
   public created(): void {
     if (!this.$parent.isCamera) {

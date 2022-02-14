@@ -1,7 +1,7 @@
 import { useLooper } from '@/handlers/useLooper';
 import { usePointerEventsHandler } from '@/handlers/usePointerEventsHandler';
-import { ComponentEvents } from '@/types/events';
-import { RenderAction, RenderActionArguments, RendererEventMap } from '@/types/events/renderer';
+import { ComponentEventMap } from '@/types/events';
+import { RenderAction, RenderActionArguments, RendererEvents } from '@/types/events/renderer';
 import { Handler } from '@/types/handler';
 import {
   Camera, Scene, WebGLRenderer, WebGLRendererParameters,
@@ -73,7 +73,7 @@ export default class Renderer
   public readonly whenBeforeRender!: PropsImpl['whenBeforeRender'];
 
   @ProvideReactive(EMITTER_KEY)
-  protected $$emitter: TinyEmitter<ComponentEvents> | null = null;
+  protected $$emitter: TinyEmitter<ComponentEventMap> | null = null;
 
   protected $$scene: Scene | null = null
 
@@ -203,7 +203,7 @@ export default class Renderer
   }
 
   private subscribeToRenderEvent(
-    event: keyof RendererEventMap,
+    event: keyof RendererEvents,
     action: RenderAction | null,
     prevAction?: RenderAction | null,
   ): void {
