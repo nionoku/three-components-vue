@@ -1,11 +1,13 @@
 import {
   BasicMaterial,
   BoxGeometry,
+  MaterialsGroup,
   Mesh,
   OrbitControls,
   PerspectiveCamera,
   Renderer,
   Scene,
+  StandartMaterial,
   STLBufferGeometry,
 } from '@/components';
 import { ref } from 'vue';
@@ -18,7 +20,18 @@ export default {
 const Template = (args: any) => ({
   // The story's `args` need to be mapped into the template through the `setup()` method
   setup() {
-    return { ...args };
+    const colors = ['red', 'blue', 'green', 'yellow', 'grey', 'cadetblue'];
+    const index = ref(0);
+    const index1 = ref(0);
+    const index2 = ref(0);
+    setInterval(() => {
+      index.value = Math.floor(Math.random() * colors.length);
+      index1.value = Math.floor(Math.random() * colors.length);
+      index2.value = Math.floor(Math.random() * colors.length);
+    }, 500);
+    return {
+      ...args, colors, index, index1, index2,
+    };
   },
   // Then, the spread values can be accessed directly in the template
   render() {
@@ -37,12 +50,26 @@ const Template = (args: any) => ({
               whenClickGlobal={() => alert('Click globally, listen by blue box')}
             >
               <STLBufferGeometry path='/robot.stl' />
-              <BasicMaterial color={'cadetblue'} wireframe={true} />
+              <BasicMaterial color={'cadetblue'} parameters={{ wireframe: true }} />
             </Mesh>
 
             <Mesh position={{ x: -2, y: 0, z: 0 }}>
               <BoxGeometry />
-              <BasicMaterial color={'darkviolet'} wireframe={false} />
+              <MaterialsGroup>
+                <BasicMaterial
+                  color={this.colors[this.index]}
+                  parameters={{ opacity: 0.5, transparent: true }}
+                />
+                <BasicMaterial
+                  color={this.colors[this.index1]}
+                  groups={[4, 5]}
+                />
+                <StandartMaterial
+                  color={this.colors[this.index2]}
+                  groups={[2, 3]}
+                  parameters={{ wireframe: true }}
+                />
+              </MaterialsGroup>
             </Mesh>
           </Scene>
         </Renderer>
