@@ -1,5 +1,6 @@
 import { useParentRenderer } from '@/composes/parent-renderer';
-import { PerspectiveCamera } from 'three';
+import { useTransforms, useTransformsProps } from '@/composes/transform';
+import { PerspectiveCamera, Vector3 } from 'three';
 import {
   defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
@@ -13,6 +14,7 @@ export type PerspectiveCameraComponent = Pick<PerspectiveCamera, 'isPerspectiveC
 
 export default defineComponent({
   props: {
+    ...useTransformsProps,
     parameters: {
       type: Object as PropType<Props['paramaters']>,
       default: null,
@@ -21,13 +23,10 @@ export default defineComponent({
   setup(props, { expose }) {
     const camera = new PerspectiveCamera(
       props.parameters?.fov,
-      // props.parameters?.aspect,
-      400 / 300,
+      props.parameters?.aspect,
       props.parameters?.near,
       props.parameters?.far,
     );
-    camera.position.set(-2, -2, -2);
-    camera.lookAt(0, 0, 0);
     // watch for parameters changed
     const parametersWatcherCanceler = watch(
       () => props.parameters,
@@ -56,9 +55,30 @@ export default defineComponent({
     const { renderer } = useParentRenderer({ invalidTypeMessage: 'PerspectiveCamera must be child of renderer' });
     renderer.setCamera(camera);
 
+    // supports transforms
+    const {
+      applyPosition, applyRotation, applyLookAt,
+    } = useTransforms(camera);
+    const positionWatcherCanceler = watch(() => props.position, applyPosition, {
+      deep: true,
+      immediate: true,
+    });
+    const rotationWatcherCanceler = watch(() => props.rotation, applyRotation, {
+      deep: true,
+      immediate: true,
+    });
+    const lookAtWatcherCanceler = watch(() => props.lookAt, applyLookAt, {
+      deep: true,
+      immediate: true,
+    });
+
     onBeforeUnmount(() => {
       // cancel watch for parameters changed
       parametersWatcherCanceler();
+
+      positionWatcherCanceler();
+      rotationWatcherCanceler();
+      lookAtWatcherCanceler();
     });
 
     const exposed: PerspectiveCameraComponent = {

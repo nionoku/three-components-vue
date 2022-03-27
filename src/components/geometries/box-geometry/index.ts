@@ -1,7 +1,7 @@
-import { useParentMesh } from '@/composes/parent-mesh';
+import { useGeometry } from '@/composes/geometry';
 import { BoxGeometry } from 'three';
 import {
-  defineComponent, onBeforeUnmount, PropType, watch,
+  defineComponent, PropType, watch,
 } from 'vue';
 
 const createBoxGeometry = (parameters: Partial<BoxGeometry['parameters']>) => {
@@ -25,22 +25,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    let geometry: BoxGeometry = createBoxGeometry(props.parameters);
-
-    const { mesh: parent } = useParentMesh({ invalidTypeMessage: 'BoxGeometry must be child of Mesh' });
-    parent.setGeometry(geometry);
+    const {
+      geometry,
+      geometryParametersChangedCallback,
+    } = useGeometry(() => createBoxGeometry(props.parameters));
 
     // watch by parameters changed
-    watch(() => props.parameters, (value) => {
-      geometry.dispose();
-      geometry = createBoxGeometry(value);
-
-      parent.setGeometry(geometry);
-    }, { deep: true });
-
-    onBeforeUnmount(() => {
-      geometry.dispose();
-    });
+    watch(() => props.parameters, geometryParametersChangedCallback, { deep: true });
   },
   render() {
     return this.$slots?.default?.() || [];

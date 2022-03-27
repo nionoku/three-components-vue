@@ -1,11 +1,14 @@
-import { useParentMesh } from '@/composes/parent-mesh';
-import { MeshBasicMaterial, MeshBasicMaterialParameters } from 'three';
+import { useMaterial } from '@/composes/material';
 import {
-  defineComponent, onBeforeUnmount, PropType, watch,
+  MeshBasicMaterial, MeshBasicMaterialParameters,
+} from 'three';
+import {
+  defineComponent, PropType, watch,
 } from 'vue';
 
-const createBasicMaterial = (parameters: Partial<MeshBasicMaterialParameters>) => {
+const createMaterial = (parameters: Partial<MeshBasicMaterialParameters>) => {
   const material = new MeshBasicMaterial(parameters);
+
   return material;
 };
 
@@ -17,22 +20,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    let material: MeshBasicMaterial = createBasicMaterial(props.parameters);
-
-    const { mesh: parent } = useParentMesh({ invalidTypeMessage: 'BasicMaterial must be child of Mesh' });
-    parent.setMaterial(material);
+    const {
+      material,
+      materialParametersChangedCallback,
+    } = useMaterial(() => createMaterial(props.parameters));
 
     // watch by parameters changed
-    watch(() => props.parameters, (value) => {
-      material.dispose();
-      material = createBasicMaterial(value);
-
-      parent.setMaterial(material);
-    }, { deep: true });
-
-    onBeforeUnmount(() => {
-      material.dispose();
-    });
+    watch(() => props.parameters, materialParametersChangedCallback, { deep: true });
   },
   render() {
     return this.$slots?.default?.() || [];
