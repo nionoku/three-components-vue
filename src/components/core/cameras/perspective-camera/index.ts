@@ -1,6 +1,7 @@
+import { CameraComponent } from '@/components/core/cameras/camera';
 import { useParentRenderer } from '@/composes/parent-renderer';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
-import { PerspectiveCamera, Vector3 } from 'three';
+import { PerspectiveCamera } from 'three';
 import {
   defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
@@ -10,7 +11,7 @@ interface Props {
   paramaters?: Partial<Pick<PerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>>
 }
 
-export type PerspectiveCameraComponent = Pick<PerspectiveCamera, 'isPerspectiveCamera'>
+export type PerspectiveCameraComponent = CameraComponent & Pick<PerspectiveCamera, 'isPerspectiveCamera'>
 
 export default defineComponent({
   props: {
@@ -82,7 +83,9 @@ export default defineComponent({
     });
 
     const exposed: PerspectiveCameraComponent = {
+      isCamera: true,
       isPerspectiveCamera: true,
+      camera,
     };
     // expose public instances
     expose(exposed);
