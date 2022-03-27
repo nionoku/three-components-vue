@@ -13,9 +13,8 @@ import {
   Camera,
   XRAnimationLoopCallback,
 } from 'three';
-import Emitter from 'tiny-emitter/instance';
-import { BeforeRenderArguments, RenderEvents } from '@/types/events/render';
 import { Handler } from '@/types/handler';
+import { RenderEmitter } from '@/utils/emitter';
 
 interface Props {
   paramaters?: Partial<Pick<WebGLRenderer, 'pixelRatio'>>
@@ -28,6 +27,7 @@ interface Props {
 
 export interface RendererComponent {
   isRenderer: true
+  autoplay: Required<Props['autoplay']>
   setScene(scene: Scene): void
   setCamera(camera: Camera): void
 }
@@ -109,21 +109,26 @@ export default defineComponent({
           throw new Error('Can not render scene. Camera is null');
         }
 
-        Emitter.emit<RenderEvents, BeforeRenderArguments>('before-render', {
-          time, delta, renderer, scene, camera,
+        RenderEmitter.dispatchEvent({
+          type: 'before-render',
+          time,
+          delta,
+          renderer,
+          scene,
+          camera,
         });
         renderer.render(scene, camera);
       });
 
       // subscribe on render events
-      Emitter.on<RenderEvents>('start-rendering', startRendering);
-      Emitter.on<RenderEvents>('cancel-rendering', cancelRendering);
+      RenderEmitter.addEventListener('start-rendering', startRendering);
+      RenderEmitter.addEventListener('cancel-rendering', cancelRendering);
       // emit renderer ready event
-      Emitter.emit<RenderEvents>('renderer-ready');
+      RenderEmitter.dispatchEvent({ type: 'renderer-ready' });
     });
     onBeforeUnmount(() => {
       // cancel rendering
-      Emitter.emit<RenderEvents>('cancel-rendering');
+      RenderEmitter.dispatchEvent({ type: 'cancel-rendering' });
 
       renderer?.dispose();
       renderer?.domElement?.remove();
@@ -131,6 +136,7 @@ export default defineComponent({
 
     const exposed: RendererComponent = {
       isRenderer: true,
+      autoplay: props.autoplay,
       setScene(_scene: Scene) {
         scene = _scene;
       },

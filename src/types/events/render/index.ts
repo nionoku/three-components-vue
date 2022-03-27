@@ -1,12 +1,13 @@
-import { WebGLRenderer, Scene, Camera } from 'three';
+import {
+  WebGLRenderer, Scene, Camera, BaseEvent,
+} from 'three';
 
-export type RenderEvents =
-  'start-rendering'
-    | 'cancel-rendering'
-    | 'before-render'
-    | 'renderer-ready'
+export interface RenderEventsType {
+  type: 'start-rendering' | 'cancel-rendering' | 'before-render' | 'renderer-ready'
+}
 
-export interface BeforeRenderArguments {
+export interface BeforeRenderEvent extends RenderEventsType, BaseEvent {
+  type: 'before-render'
   delta: number
   time: number
   renderer: WebGLRenderer
@@ -14,4 +15,8 @@ export interface BeforeRenderArguments {
   camera: Camera
 }
 
-export type BeforeRenderHandler = (args: BeforeRenderArguments) => void
+export interface SetupRenderEvent extends RenderEventsType, BaseEvent {
+  type: 'start-rendering' | 'cancel-rendering' | 'renderer-ready'
+}
+
+export type RenderEvents = BeforeRenderEvent | SetupRenderEvent
