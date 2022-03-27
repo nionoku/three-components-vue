@@ -15,6 +15,8 @@ import {
 } from 'three';
 import { Handler } from '@/types/handler';
 import { RenderEmitter } from '@/utils/emitter';
+import { useBeforeRender, useBeforeRenderEmits } from '@/composes/before-render-emit';
+import { useParentCanvas } from '@/composes/parent-canvas';
 
 interface Props {
   paramaters?: Partial<Pick<WebGLRenderer, 'pixelRatio'>>
@@ -73,7 +75,10 @@ export default defineComponent({
       default: true,
     },
   },
-  setup(props, { expose }) {
+  emits: {
+    ...useBeforeRenderEmits(),
+  },
+  setup(props, { emit, expose }) {
     let renderer: WebGLRenderer | null = null;
     let scene: Scene | null = null;
     let camera: Camera | null = null;
@@ -81,12 +86,8 @@ export default defineComponent({
     // create renderer instance
     onMounted(() => {
       // TODO (2022.03.26): Add chech supports webgl
-      const canvas: HTMLCanvasElement = getCurrentInstance()?.parent?.proxy?.$el;
+      const { canvas } = useParentCanvas({ invalidTypeMessage: 'Parent of renderer must be canvas' });
       // TODO (2022.03.26): Watch canvas resize
-
-      if (!(canvas instanceof HTMLCanvasElement)) {
-        throw new Error('Parent of renderer must be canvas');
-      }
 
       renderer = useRenderer({
         canvas,
@@ -126,9 +127,19 @@ export default defineComponent({
       // emit renderer ready event
       RenderEmitter.dispatchEvent({ type: 'renderer-ready' });
     });
+
+    const {
+      subscribeToBeforeRender,
+      unsubscribeFromBeforeRender,
+    } = useBeforeRender(emit);
+    // subscribe to before render event
+    subscribeToBeforeRender();
+
     onBeforeUnmount(() => {
       // cancel rendering
       RenderEmitter.dispatchEvent({ type: 'cancel-rendering' });
+      // unsubscribe from before render event
+      unsubscribeFromBeforeRender();
 
       renderer?.dispose();
       renderer?.domElement?.remove();

@@ -1,5 +1,5 @@
 import { Component, ref } from 'vue';
-import { Renderer, Scene } from '@/components';
+import { PerspectiveCamera, Renderer, Scene } from '@/components';
 
 export default {
   title: 'Actions/Click',
@@ -8,7 +8,7 @@ export default {
 
 const Template = () => ({
   setup() {
-    const background = ref(0x000000);
+    const background = ref(0xF0F0F0);
 
     return {
       background,
@@ -16,9 +16,12 @@ const Template = () => ({
   },
   render() {
     return (
-      <canvas width={300} height={300}>
+      <canvas width={400} height={300}>
         <Renderer>
-          <Scene />
+          <PerspectiveCamera />
+          <Scene
+            parameters={{ background: this.background }}
+          />
         </Renderer>
       </canvas>
     );

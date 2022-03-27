@@ -1,12 +1,12 @@
 import {
-  defineComponent, getCurrentInstance, onBeforeUnmount, PropType, watch,
+  defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
-import { RendererComponent } from '@/components/core/renderer';
 import {
   Color, ColorRepresentation, Scene,
 } from 'three';
 import { RenderEmitter } from '@/utils/emitter';
 import { Object3DComponent } from '@/types/object3d';
+import { useParentRenderer } from '@/composes/parent-renderer';
 
 interface Props {
   paramaters?: {
@@ -16,19 +16,6 @@ interface Props {
 
 export type SceneComponent = Pick<Scene, 'isScene'> & Object3DComponent
 
-function useParentRenderer(): { renderer: RendererComponent } {
-  const instance = getCurrentInstance();
-  const renderer = instance?.parent?.exposed as RendererComponent;
-
-  if (!renderer.isRenderer) {
-    throw new Error('Scene must be child of renderer');
-  }
-
-  return {
-    renderer,
-  };
-}
-
 export default defineComponent({
   props: {
     parameters: {
@@ -36,7 +23,7 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props, { expose }) {
+  setup(props, { expose, emit }) {
     function background(bg = props.parameters?.background): Required<Scene['background']> {
       if (typeof bg === 'string' || typeof bg === 'number') {
         return new Color(bg);
@@ -53,7 +40,7 @@ export default defineComponent({
     })();
 
     // watch for parameters changed
-    const parametersWatcherCanceler = watch(
+    const unsubscribeParametersWatch = watch(
       () => props.parameters,
       (value, prev) => {
         if (value?.background && value.background !== prev?.background) {
@@ -63,7 +50,7 @@ export default defineComponent({
       { deep: true },
     );
 
-    const { renderer } = useParentRenderer();
+    const { renderer } = useParentRenderer({ invalidTypeMessage: 'Scene must be child of renderer' });
     // subscribe on renderer ready event for start rendering
     RenderEmitter.addEventListener('renderer-ready', () => {
       if (renderer.autoplay) {
@@ -78,9 +65,9 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       // cancel watch for parameters changed
-      parametersWatcherCanceler();
+      unsubscribeParametersWatch();
 
-      scene?.removeFromParent();
+      scene.removeFromParent();
     });
 
     const exposed: SceneComponent = {
