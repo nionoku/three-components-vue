@@ -23,7 +23,7 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props, { expose, emit }) {
+  setup(props, { expose }) {
     function background(bg = props.parameters?.background): Required<Scene['background']> {
       if (typeof bg === 'string' || typeof bg === 'number') {
         return new Color(bg);
@@ -73,8 +73,8 @@ export default defineComponent({
     const exposed: SceneComponent = {
       isScene: true,
       isObject3D: true,
-      add: scene.add,
-      remove: scene.remove,
+      add: (objects) => scene.add(objects),
+      remove: (objects) => scene.remove(objects),
     };
     // expose public instances
     expose(exposed);

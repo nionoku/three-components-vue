@@ -21,10 +21,13 @@ export default defineComponent({
   setup(props, { expose }) {
     const camera = new PerspectiveCamera(
       props.parameters?.fov,
-      props.parameters?.aspect,
+      // props.parameters?.aspect,
+      400 / 300,
       props.parameters?.near,
       props.parameters?.far,
     );
+    camera.position.set(-2, -2, -2);
+    camera.lookAt(0, 0, 0);
     // watch for parameters changed
     const parametersWatcherCanceler = watch(
       () => props.parameters,

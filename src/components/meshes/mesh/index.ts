@@ -1,4 +1,5 @@
 import { useParentObject3D } from '@/composes/parent-object3d';
+import render from '@/composes/render';
 import { BufferGeometry, Material, Mesh } from 'three';
 import { defineComponent, onBeforeUnmount } from 'vue';
 
@@ -8,6 +9,7 @@ export interface MeshComponent extends Pick<Mesh, 'isMesh'> {
 }
 
 export default defineComponent({
+  extends: render,
   setup(props, { expose }) {
     const mesh = new Mesh();
 
