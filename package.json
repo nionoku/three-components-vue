@@ -1,0 +1,55 @@
+{
+  "name": "@nionoku/three-components-vue",
+  "version": "0.0.1",
+  "main": "lib/index.common.js",
+  "module": "lib/index.umd.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "deploy": "npm run bundle && npm publish",
+    "bundle": "npm run lint && npm run generate:bundle && npm run generate:declarations",
+    "generate:bundle": "vue-cli-service build --mode production --target lib --dest lib --name index src/index.ts",
+    "generate:declarations": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "lint": "vue-cli-service lint"
+  },
+  "author": "nionoku <nionoku@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nionoku/three-components-vue.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "core-js": "^3.8.3",
+    "three": "^0.139.0",
+    "tiny-emitter": "^2.1.0",
+    "vue": "^3.2.13"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.8",
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/builder-webpack5": "^6.4.19",
+    "@storybook/manager-webpack5": "^6.4.19",
+    "@storybook/vue3": "^6.4.19",
+    "@types/three": "^0.138.0",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "@vue/eslint-config-airbnb": "^6.0.0",
+    "@vue/eslint-config-typescript": "^9.1.0",
+    "babel-loader": "^8.2.4",
+    "eslint": "^7.32.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-vue": "^8.0.3",
+    "eslint-plugin-vuejs-accessibility": "^1.1.0",
+    "typescript": "~4.5.5",
+    "vue-loader": "^16.8.3"
+  }
+}
