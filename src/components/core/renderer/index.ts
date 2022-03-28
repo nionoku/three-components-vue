@@ -14,9 +14,9 @@ import {
 } from 'three';
 import { Handler } from '@/types/handler';
 import { RenderEmitter } from '@/utils/emitter';
-import {
-  useBeforeRender, useBeforeRenderEmits, useParentCanvas, useRenderWithDefaultSlot,
-} from '@/composes';
+import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
+import { useBeforeRender, useBeforeRenderEmits } from '@/composes/events';
+import { useParentCanvas } from '@/composes/parent/canvas';
 
 interface Props {
   paramaters?: Partial<Pick<WebGLRenderer, 'pixelRatio'>>

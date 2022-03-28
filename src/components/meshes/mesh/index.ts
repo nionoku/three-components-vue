@@ -1,6 +1,6 @@
-import {
-  useParentObject3D, useRenderWithDefaultSlot, useTransforms, useTransformsProps,
-} from '@/composes';
+import { useParentObject3D } from '@/composes/parent/object3d';
+import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
+import { useTransforms, useTransformsProps } from '@/composes/transform';
 import { BufferGeometry, Material, Mesh } from 'three';
 import { defineComponent, onBeforeUnmount, watch } from 'vue';
 

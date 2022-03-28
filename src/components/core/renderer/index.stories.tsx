@@ -2,7 +2,6 @@ import { Component, ref } from 'vue';
 import {
   BasicMaterial,
   BoxGeometry,
-  MapControls,
   PerspectiveCamera,
   Renderer,
   Scene,
@@ -36,7 +35,7 @@ const Template = () => ({
       <div>
         <canvas width={400} height={300}>
           <Renderer>
-            <PerspectiveCamera position={{ y: 2 }} rotation={{ x: Math.PI / 2 }}>
+            <PerspectiveCamera position={0.1}>
               <OrbitControls />
             </PerspectiveCamera>
             <Scene parameters={{ background: this.background }}>

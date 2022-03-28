@@ -1,7 +1,7 @@
 import { CameraComponent } from '@/components/core/cameras/camera';
-import {
-  useParentRenderer, useRenderWithDefaultSlot, useTransforms, useTransformsProps,
-} from '@/composes';
+import { useParentRenderer } from '@/composes/parent/renderer';
+import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
+import { useTransforms, useTransformsProps } from '@/composes/transform';
 import { PerspectiveCamera } from 'three';
 import {
   defineComponent, onBeforeUnmount, PropType, watch,

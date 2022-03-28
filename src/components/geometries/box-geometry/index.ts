@@ -1,4 +1,5 @@
-import { useGeometry, useRenderWithDefaultSlot } from '@/composes';
+import { useGeometry } from '@/composes/geometry';
+import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { BoxGeometry } from 'three';
 import {
   defineComponent, PropType, watch,

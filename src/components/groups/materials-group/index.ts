@@ -1,4 +1,5 @@
-import { useParentMesh, useRenderWithDefaultSlot } from '@/composes';
+import { useParentMesh } from '@/composes/parent/mesh';
+import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { Material } from 'three';
 import { defineComponent } from 'vue';
 

@@ -1,4 +1,5 @@
-import { useMaterial, useRenderWithDefaultSlot } from '@/composes';
+import { useMaterial } from '@/composes/material';
+import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import {
   MeshBasicMaterial, MeshBasicMaterialParameters,
 } from 'three';

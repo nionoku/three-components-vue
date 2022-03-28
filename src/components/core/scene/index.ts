@@ -6,7 +6,8 @@ import {
 } from 'three';
 import { RenderEmitter } from '@/utils/emitter';
 import { Object3DComponent } from '@/types/object3d';
-import { useParentRenderer, useRenderWithDefaultSlot } from '@/composes';
+import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
+import { useParentRenderer } from '@/composes/parent/renderer';
 
 interface Props {
   paramaters?: {
