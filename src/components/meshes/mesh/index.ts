@@ -1,3 +1,4 @@
+import { PointerEventsEmit, usePointerEvents, usePointerEventsEmits } from '@/composes/events/pointer';
 import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
@@ -14,7 +15,10 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
   },
-  setup(props, { expose }) {
+  emits: {
+    ...usePointerEventsEmits,
+  },
+  setup(props, { emit, expose }) {
     const mesh = new Mesh();
 
     const { object3D } = useParentObject3D({ invalidTypeMessage: 'Mesh must be child of Object3D' });
@@ -40,14 +44,22 @@ export default defineComponent({
       deep: true,
       immediate: true,
     });
+    // supports pointer events
+    const {
+      subscribeToPointerEvents,
+      unsubscribeFromPointerEvents,
+    } = usePointerEvents(mesh, emit as PointerEventsEmit);
+    subscribeToPointerEvents();
 
     onBeforeUnmount(() => {
-      mesh.removeFromParent();
+      unsubscribeFromPointerEvents();
 
       positionWatcherCanceler();
       rotationWatcherCanceler();
       scaleWatcherCanceler();
       lookAtWatcherCanceler();
+
+      mesh.removeFromParent();
     });
 
     const exposed: MeshComponent = {

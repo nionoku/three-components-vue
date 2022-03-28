@@ -1,6 +1,6 @@
-import { useBeforeRenderEmits, useBeforeRender } from "@/composes/events/before-render";
+import { useBeforeRenderEmits, useBeforeRender } from '@/composes/events/before-render';
 
 export {
   useBeforeRender,
-  useBeforeRenderEmits
-}
+  useBeforeRenderEmits,
+};

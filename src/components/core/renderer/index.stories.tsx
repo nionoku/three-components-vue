@@ -36,10 +36,14 @@ const Template = () => ({
         <canvas width={400} height={300}>
           <Renderer>
             <PerspectiveCamera position={0.1}>
-              <OrbitControls />
+              <OrbitControls screenSpacePanning={true} />
             </PerspectiveCamera>
             <Scene parameters={{ background: this.background }}>
-              <Mesh rotation={{ z: Math.PI / 5 }}>
+              <Mesh
+                rotation={{ z: Math.PI / 5 }}
+                onClick={({ intersects }) => console.log('Клик по кубу', intersects)}
+                onClickGlobal={({ intersects }) => console.log('Клик мимо куба', intersects)}
+              >
                 <BoxGeometry parameters={{ width: this.boxWidth }} />
                 <MaterialsGroup>
                   <BasicMaterial parameters={{ color: this.boxColor }} />

@@ -17,6 +17,7 @@ import { RenderEmitter } from '@/utils/emitter';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useBeforeRender, useBeforeRenderEmits } from '@/composes/events';
 import { useParentCanvas } from '@/composes/parent/canvas';
+import { useInitPointerEvents } from '@/composes/events/pointer';
 
 interface Props {
   paramaters?: Partial<Pick<WebGLRenderer, 'pixelRatio'>>
@@ -77,7 +78,7 @@ export default defineComponent({
     },
   },
   emits: {
-    ...useBeforeRenderEmits(),
+    ...useBeforeRenderEmits,
   },
   setup(props, { emit, expose }) {
     let renderer: WebGLRenderer | null = null;
@@ -127,6 +128,23 @@ export default defineComponent({
       RenderEmitter.addEventListener('cancel-rendering', cancelRendering);
       // emit renderer ready event
       RenderEmitter.dispatchEvent({ type: 'renderer-ready' });
+
+      if (!scene) {
+        throw new Error('Can not prepare render. Scene is null');
+      }
+
+      if (!camera) {
+        throw new Error('Can not prepare render. Camera is null');
+      }
+
+      const {
+        subscribeToDomPointerEvents,
+        unsubscribeFromDomPointerEvents,
+      } = useInitPointerEvents(canvas, camera, scene);
+      // subscribe to pointer events
+      subscribeToDomPointerEvents();
+
+      onBeforeUnmount(() => unsubscribeFromDomPointerEvents());
     });
 
     const {

@@ -2,8 +2,10 @@ import {
   WebGLRenderer, Scene, Camera, BaseEvent,
 } from 'three';
 
+type RenderEvent = 'start-rendering' | 'cancel-rendering' | 'before-render' | 'renderer-ready'
+
 export interface RenderEventsType {
-  type: 'start-rendering' | 'cancel-rendering' | 'before-render' | 'renderer-ready'
+  type: RenderEvent
 }
 
 export interface BeforeRenderEvent extends RenderEventsType, BaseEvent {

@@ -5,13 +5,11 @@ interface BeforeRenderEmits {
   beforeRender(ctx: BeforeRenderEvent): boolean
 }
 
-export function useBeforeRenderEmits(): BeforeRenderEmits {
-  return {
-    beforeRender(ctx: BeforeRenderEvent) {
-      return true;
-    },
-  };
-}
+export const useBeforeRenderEmits: BeforeRenderEmits = {
+  beforeRender(ctx: BeforeRenderEvent) {
+    return true;
+  },
+};
 
 export function useBeforeRender(
   emit: (event: keyof BeforeRenderEmits, ctx: BeforeRenderEvent) => void,
