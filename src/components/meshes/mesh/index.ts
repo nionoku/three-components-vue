@@ -1,22 +1,24 @@
-import { useParentObject3D } from '@/composes/parent-object3d';
-import { useTransforms, useTransformsProps } from '@/composes/transform';
+import {
+  useParentObject3D, useRenderWithDefaultSlot, useTransforms, useTransformsProps,
+} from '@/composes';
 import { BufferGeometry, Material, Mesh } from 'three';
 import { defineComponent, onBeforeUnmount, watch } from 'vue';
 
 export interface MeshComponent extends Pick<Mesh, 'isMesh'> {
   setGeometry(geometry: BufferGeometry): void
-  setMaterial(material: Material): void
+  setMaterial(material: Material | Array<Material>): void
 }
 
 export default defineComponent({
+  extends: useRenderWithDefaultSlot,
   props: {
     ...useTransformsProps,
   },
   setup(props, { expose }) {
     const mesh = new Mesh();
 
-    const { object3D: parent } = useParentObject3D({ invalidTypeMessage: 'Mesh must be child of Object3D' });
-    parent.add(mesh);
+    const { object3D } = useParentObject3D({ invalidTypeMessage: 'Mesh must be child of Object3D' });
+    object3D.add(mesh);
 
     // supports transforms
     const {
@@ -59,8 +61,5 @@ export default defineComponent({
     };
     // expose public instances
     expose(exposed);
-  },
-  render() {
-    return this.$slots?.default?.() || [];
   },
 });

@@ -7,7 +7,7 @@ export function useParentRenderer(
   const instance = getCurrentInstance();
   const renderer = instance?.parent?.exposed as RendererComponent;
 
-  if (!renderer.isRenderer) {
+  if (!renderer?.isRenderer) {
     throw new Error(options?.invalidTypeMessage || 'Parent is not renderer');
   }
 

@@ -6,7 +6,7 @@ import {
 } from 'three';
 import { RenderEmitter } from '@/utils/emitter';
 import { Object3DComponent } from '@/types/object3d';
-import { useParentRenderer } from '@/composes/parent-renderer';
+import { useParentRenderer, useRenderWithDefaultSlot } from '@/composes';
 
 interface Props {
   paramaters?: {
@@ -17,6 +17,7 @@ interface Props {
 export type SceneComponent = Pick<Scene, 'isScene'> & Object3DComponent
 
 export default defineComponent({
+  extends: useRenderWithDefaultSlot,
   props: {
     parameters: {
       type: Object as PropType<Props['paramaters']>,
@@ -78,8 +79,5 @@ export default defineComponent({
     };
     // expose public instances
     expose(exposed);
-  },
-  render() {
-    return this.$slots?.default?.() || [];
   },
 });

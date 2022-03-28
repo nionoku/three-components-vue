@@ -1,8 +1,15 @@
 import { Component, ref } from 'vue';
 import {
-  BasicMaterial, BoxGeometry, MapControls, PerspectiveCamera, Renderer, Scene,
+  BasicMaterial,
+  BoxGeometry,
+  MapControls,
+  PerspectiveCamera,
+  Renderer,
+  Scene,
+  Mesh,
+  OrbitControls,
 } from '@/components';
-import { Mesh } from '@/components/meshes';
+import { MaterialsGroup } from '@/components/groups';
 
 export default {
   title: 'Actions/Click',
@@ -15,8 +22,8 @@ const Template = () => ({
     const boxColor = ref(0x000);
     const boxWidth = ref(1);
 
-    setInterval(() => { boxWidth.value += 0.01; }, 50);
-    setInterval(() => { boxColor.value += 1; }, 50);
+    // setInterval(() => { boxWidth.value += 0.01; }, 50);
+    setInterval(() => { boxColor.value += 10; }, 50);
 
     return {
       boxWidth,
@@ -30,12 +37,19 @@ const Template = () => ({
         <canvas width={400} height={300}>
           <Renderer>
             <PerspectiveCamera position={{ y: 2 }} rotation={{ x: Math.PI / 2 }}>
-              <MapControls />
+              <OrbitControls />
             </PerspectiveCamera>
             <Scene parameters={{ background: this.background }}>
               <Mesh rotation={{ z: Math.PI / 5 }}>
                 <BoxGeometry parameters={{ width: this.boxWidth }} />
-                <BasicMaterial parameters={{ color: this.boxColor }} />
+                <MaterialsGroup>
+                  <BasicMaterial parameters={{ color: this.boxColor }} />
+                  <BasicMaterial parameters={{ color: 'blue' }} />
+                  <BasicMaterial parameters={{ color: 'green' }} />
+                  <BasicMaterial parameters={{ color: 'white' }} />
+                  <BasicMaterial parameters={{ color: 'aqua' }} />
+                  <BasicMaterial parameters={{ color: 'teal' }} />
+                </MaterialsGroup>
               </Mesh>
             </Scene>
           </Renderer>

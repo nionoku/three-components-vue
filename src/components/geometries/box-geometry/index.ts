@@ -1,4 +1,4 @@
-import { useGeometry } from '@/composes/geometry';
+import { useGeometry, useRenderWithDefaultSlot } from '@/composes';
 import { BoxGeometry } from 'three';
 import {
   defineComponent, PropType, watch,
@@ -18,6 +18,7 @@ const createBoxGeometry = (parameters: Partial<BoxGeometry['parameters']>) => {
 };
 
 export default defineComponent({
+  extends: useRenderWithDefaultSlot,
   props: {
     parameters: {
       type: Object as PropType<Partial<BoxGeometry['parameters']>>,
@@ -32,8 +33,5 @@ export default defineComponent({
 
     // watch by parameters changed
     watch(() => props.parameters, geometryParametersChangedCallback, { deep: true });
-  },
-  render() {
-    return this.$slots?.default?.() || [];
   },
 });

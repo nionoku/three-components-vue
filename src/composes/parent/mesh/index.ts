@@ -7,7 +7,7 @@ export function useParentMesh(
   const instance = getCurrentInstance();
   const mesh = instance?.parent?.exposed as MeshComponent;
 
-  if (!mesh.isMesh) {
+  if (!mesh?.isMesh) {
     throw new Error(options?.invalidTypeMessage || 'Parent is not Mesh');
   }
 

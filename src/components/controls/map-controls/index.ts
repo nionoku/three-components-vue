@@ -1,4 +1,4 @@
-import { useParentCamera } from '@/composes/parent-camera';
+import { useParentCamera } from '@/composes';
 import { RenderEmitter } from '@/utils/emitter';
 import { MapControls } from 'three/examples/jsm/controls/OrbitControls';
 import { defineComponent } from 'vue';

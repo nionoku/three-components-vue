@@ -7,7 +7,7 @@ export function useParentCamera(
   const instance = getCurrentInstance();
   const camera = instance?.parent?.exposed as CameraComponent;
 
-  if (!camera.isCamera) {
+  if (!camera?.isCamera) {
     throw new Error(options?.invalidTypeMessage || 'Parent is not Camera');
   }
 

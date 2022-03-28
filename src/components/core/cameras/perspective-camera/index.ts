@@ -1,6 +1,7 @@
 import { CameraComponent } from '@/components/core/cameras/camera';
-import { useParentRenderer } from '@/composes/parent-renderer';
-import { useTransforms, useTransformsProps } from '@/composes/transform';
+import {
+  useParentRenderer, useRenderWithDefaultSlot, useTransforms, useTransformsProps,
+} from '@/composes';
 import { PerspectiveCamera } from 'three';
 import {
   defineComponent, onBeforeUnmount, PropType, watch,
@@ -14,6 +15,7 @@ interface Props {
 export type PerspectiveCameraComponent = CameraComponent & Pick<PerspectiveCamera, 'isPerspectiveCamera'>
 
 export default defineComponent({
+  extends: useRenderWithDefaultSlot,
   props: {
     ...useTransformsProps,
     parameters: {
@@ -89,8 +91,5 @@ export default defineComponent({
     };
     // expose public instances
     expose(exposed);
-  },
-  render() {
-    return this.$slots?.default?.() || [];
   },
 });

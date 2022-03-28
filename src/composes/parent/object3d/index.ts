@@ -7,7 +7,7 @@ export function useParentObject3D(
   const instance = getCurrentInstance();
   const object3D = instance?.parent?.exposed as Object3DComponent;
 
-  if (!object3D.isObject3D) {
+  if (!object3D?.isObject3D) {
     throw new Error(options?.invalidTypeMessage || 'Parent is not Object3D');
   }
 

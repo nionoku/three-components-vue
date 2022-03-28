@@ -1,6 +1,5 @@
 import {
   defineComponent,
-  getCurrentInstance,
   onBeforeUnmount,
   onMounted,
   PropType,
@@ -15,8 +14,9 @@ import {
 } from 'three';
 import { Handler } from '@/types/handler';
 import { RenderEmitter } from '@/utils/emitter';
-import { useBeforeRender, useBeforeRenderEmits } from '@/composes/before-render-emit';
-import { useParentCanvas } from '@/composes/parent-canvas';
+import {
+  useBeforeRender, useBeforeRenderEmits, useParentCanvas, useRenderWithDefaultSlot,
+} from '@/composes';
 
 interface Props {
   paramaters?: Partial<Pick<WebGLRenderer, 'pixelRatio'>>
@@ -65,6 +65,7 @@ function useLooper(
 }
 
 export default defineComponent({
+  extends: useRenderWithDefaultSlot,
   props: {
     parameters: {
       type: Object as PropType<Props['paramaters']>,
@@ -157,8 +158,5 @@ export default defineComponent({
     };
     // expose public instances
     expose(exposed);
-  },
-  render() {
-    return this.$slots?.default?.() || [];
   },
 });

@@ -1,4 +1,4 @@
-import { useMaterial } from '@/composes/material';
+import { useMaterial, useRenderWithDefaultSlot } from '@/composes';
 import {
   MeshBasicMaterial, MeshBasicMaterialParameters,
 } from 'three';
@@ -13,6 +13,7 @@ const createMaterial = (parameters: Partial<MeshBasicMaterialParameters>) => {
 };
 
 export default defineComponent({
+  extends: useRenderWithDefaultSlot,
   props: {
     parameters: {
       type: Object as PropType<MeshBasicMaterialParameters>,
@@ -27,8 +28,5 @@ export default defineComponent({
 
     // watch by parameters changed
     watch(() => props.parameters, materialParametersChangedCallback, { deep: true });
-  },
-  render() {
-    return this.$slots?.default?.() || [];
   },
 });

@@ -1,4 +1,4 @@
-import { useParentMesh } from '@/composes/parent-mesh';
+import { useParentMesh } from '@/composes/parent/mesh';
 import { BufferGeometry } from 'three';
 import { onBeforeUnmount } from 'vue';
 
