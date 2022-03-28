@@ -7,9 +7,9 @@ import {
   Scene,
   Mesh,
   OrbitControls,
+  GridHelper,
 } from '@/components';
 import { MaterialsGroup } from '@/components/groups';
-import DragControls from '@/components/controls/drag-controls';
 
 export default {
   title: 'Actions/Click',
@@ -38,10 +38,11 @@ const Template = () => ({
       <div>
         <canvas width={400} height={300}>
           <Renderer>
-            <PerspectiveCamera position={{ y: -6 }} lookAt={0}>
+            <PerspectiveCamera position={{ x: -6 }} lookAt={0}>
               <OrbitControls />
             </PerspectiveCamera>
             <Scene parameters={{ background: this.background }}>
+              <GridHelper />
               <Mesh
                 // rotation={{ z: Math.PI / 5 }}
                 onClick={({ intersects }) => console.log('Клик по кубу', intersects)}
