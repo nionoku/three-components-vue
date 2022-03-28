@@ -9,6 +9,7 @@ import {
   OrbitControls,
 } from '@/components';
 import { MaterialsGroup } from '@/components/groups';
+import DragControls from '@/components/controls/drag-controls';
 
 export default {
   title: 'Actions/Click',
@@ -20,6 +21,7 @@ const Template = () => ({
     const background = ref(0xF0F0F0);
     const boxColor = ref(0x000);
     const boxWidth = ref(1);
+    const orbitControlsEnabled = ref(true);
 
     // setInterval(() => { boxWidth.value += 0.01; }, 50);
     setInterval(() => { boxColor.value += 10; }, 50);
@@ -28,6 +30,7 @@ const Template = () => ({
       boxWidth,
       boxColor,
       background,
+      orbitControlsEnabled,
     };
   },
   render() {
@@ -35,12 +38,12 @@ const Template = () => ({
       <div>
         <canvas width={400} height={300}>
           <Renderer>
-            <PerspectiveCamera position={0.1}>
-              <OrbitControls screenSpacePanning={true} />
+            <PerspectiveCamera position={{ y: -6 }} lookAt={0}>
+              <OrbitControls />
             </PerspectiveCamera>
             <Scene parameters={{ background: this.background }}>
               <Mesh
-                rotation={{ z: Math.PI / 5 }}
+                // rotation={{ z: Math.PI / 5 }}
                 onClick={({ intersects }) => console.log('Клик по кубу', intersects)}
                 onClickGlobal={({ intersects }) => console.log('Клик мимо куба', intersects)}
               >
@@ -53,6 +56,10 @@ const Template = () => ({
                   <BasicMaterial parameters={{ color: 'aqua' }} />
                   <BasicMaterial parameters={{ color: 'teal' }} />
                 </MaterialsGroup>
+              </Mesh>
+              <Mesh position={{ x: 2 }}>
+                <BoxGeometry />
+                <BasicMaterial parameters={{ color: 'orange' }} />
               </Mesh>
             </Scene>
           </Renderer>
