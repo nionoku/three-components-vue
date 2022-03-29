@@ -2,20 +2,42 @@ import {
   defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
 import {
-  Color, ColorRepresentation, Scene,
+  Color, ColorRepresentation, FogBase, FogExp2, Scene,
 } from 'three';
 import { RenderEmitter } from '@/utils/emitter';
 import { Object3DComponent } from '@/types/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useParentRenderer } from '@/composes/parent/renderer';
 
+interface FogDescription {
+  color?: ColorRepresentation,
+  density?: number
+}
 interface Props {
   paramaters?: {
-    background?: Scene['background'] | ColorRepresentation
+    background?: ColorRepresentation
+    fog?: ColorRepresentation | FogDescription
   }
 }
 
 export type SceneComponent = Pick<Scene, 'isScene'> & Object3DComponent
+
+function makeFog(
+  fog: ColorRepresentation | FogDescription,
+  fallbackColor?: ColorRepresentation,
+): FogBase {
+  const [color, density] = typeof fog === 'string' || typeof fog === 'number' || fog instanceof Color
+    ? [
+      new Color(fog || fallbackColor),
+      undefined,
+    ]
+    : [
+      new Color(fog.color || fallbackColor),
+      fog.density,
+    ];
+
+  return new FogExp2(color.getHex(), density);
+}
 
 export default defineComponent({
   extends: useRenderWithDefaultSlot,
@@ -26,30 +48,21 @@ export default defineComponent({
     },
   },
   setup(props, { expose }) {
-    function background(bg = props.parameters?.background): Required<Scene['background']> {
-      if (typeof bg === 'string' || typeof bg === 'number') {
-        return new Color(bg);
-      }
-
-      return bg || new Color('white');
-    }
-
-    const scene: Scene = (() => {
-      const target = new Scene();
-      target.background = background();
-
-      return target;
-    })();
+    const scene: Scene = new Scene();
 
     // watch for parameters changed
     const unsubscribeParametersWatch = watch(
       () => props.parameters,
-      (value, prev) => {
-        if (value?.background && value.background !== prev?.background) {
-          scene.background = background();
+      (value) => {
+        if (value?.background) {
+          scene.background = new Color(value.background);
+        }
+
+        if (value?.fog) {
+          scene.fog = makeFog(value.fog, value.background);
         }
       },
-      { deep: true },
+      { deep: true, immediate: true },
     );
 
     const { renderer } = useParentRenderer({ invalidTypeMessage: 'Scene must be child of renderer' });

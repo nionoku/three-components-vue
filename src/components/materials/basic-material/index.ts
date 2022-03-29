@@ -8,7 +8,7 @@ import {
 } from 'vue';
 
 const createMaterial = (parameters: Partial<MeshBasicMaterialParameters>) => {
-  const material = new MeshBasicMaterial(parameters);
+  const material = new MeshBasicMaterial({ ...parameters });
 
   return material;
 };

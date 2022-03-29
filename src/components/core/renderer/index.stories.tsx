@@ -40,7 +40,10 @@ const Template = () => ({
           <PerspectiveCamera position={{ x: -6 }} lookAt={0}>
             <OrbitControls />
           </PerspectiveCamera>
-          <Scene parameters={{ background: this.background }}>
+          <Scene parameters={{
+            background: this.background,
+            fog: { color: this.background, density: 0.1 },
+          }}>
             {/* <GridHelper parameters={{ divisions: 100 }} /> */}
             <Mesh
               onClick={({ intersects }) => console.log('Клик по кубу', intersects)}
