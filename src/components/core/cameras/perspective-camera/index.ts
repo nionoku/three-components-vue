@@ -2,6 +2,7 @@ import { CameraComponent } from '@/components/core/cameras/camera';
 import { useParentRenderer } from '@/composes/parent/renderer';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
+import { ResizeEmitter } from '@/utils/emitter';
 import { PerspectiveCamera } from 'three';
 import {
   defineComponent, onBeforeUnmount, PropType, watch,
@@ -9,7 +10,7 @@ import {
 
 interface Props {
   // TODO (2022.03.27): Remove aspect? or watch by resize canvas
-  paramaters?: Partial<Pick<PerspectiveCamera, 'aspect' | 'fov' | 'near' | 'far'>>
+  paramaters?: Partial<Pick<PerspectiveCamera, 'fov' | 'near' | 'far'>>
 }
 
 export type PerspectiveCameraComponent = CameraComponent & Pick<PerspectiveCamera, 'isPerspectiveCamera'>
@@ -26,7 +27,7 @@ export default defineComponent({
   setup(props, { expose }) {
     const camera = new PerspectiveCamera(
       props.parameters?.fov,
-      props.parameters?.aspect,
+      undefined,
       props.parameters?.near,
       props.parameters?.far,
     );
@@ -34,10 +35,6 @@ export default defineComponent({
     const parametersWatcherCanceler = watch(
       () => props.parameters,
       (value) => {
-        if (value?.aspect) {
-          camera.aspect = value.aspect;
-        }
-
         if (value?.fov) {
           camera.fov = value.fov;
         }
@@ -73,6 +70,11 @@ export default defineComponent({
     const lookAtWatcherCanceler = watch(() => props.lookAt, applyLookAt, {
       deep: true,
       immediate: true,
+    });
+    // supports resize
+    ResizeEmitter.addEventListener('resize', ({ rect }) => {
+      camera.aspect = rect.width / rect.height;
+      camera.updateProjectionMatrix();
     });
 
     onBeforeUnmount(() => {

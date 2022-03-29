@@ -13,11 +13,12 @@ import {
   XRAnimationLoopCallback,
 } from 'three';
 import { Handler } from '@/types/handler';
-import { RenderEmitter } from '@/utils/emitter';
+import { RenderEmitter, ResizeEmitter } from '@/utils/emitter';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useBeforeRender, useBeforeRenderEmits } from '@/composes/events';
-import { useParentCanvas } from '@/composes/parent/canvas';
+import { useParentHtmlElement } from '@/composes/parent/html-element';
 import { useInitPointerEvents } from '@/composes/events/pointer';
+import WebGL from 'three/examples/jsm/capabilities/WebGL';
 
 interface Props {
   paramaters?: Partial<Pick<WebGLRenderer, 'pixelRatio'>>
@@ -36,7 +37,7 @@ export interface RendererComponent {
 }
 
 function useRenderer(parameters: Props['paramaters']): WebGLRenderer {
-  const renderer = new WebGLRenderer(parameters);
+  const renderer = new WebGLRenderer({ ...parameters });
 
   if (parameters?.pixelRatio) {
     renderer.setPixelRatio(parameters.pixelRatio);
@@ -71,8 +72,8 @@ function useResizeWatcher(
   const resizeObserver = new ResizeObserver(onResize);
 
   return {
-    observe: resizeObserver.observe,
-    disconnect: resizeObserver.disconnect,
+    observe: (element: HTMLElement) => resizeObserver.observe(element),
+    disconnect: () => resizeObserver.disconnect(),
   };
 }
 
@@ -92,7 +93,12 @@ export default defineComponent({
     ...useBeforeRenderEmits,
   },
   setup(props, { emit, expose }) {
-    let renderer: WebGLRenderer | null = null;
+    // check supports webgl
+    if (!WebGL.isWebGLAvailable()) {
+      throw new Error('This browser does not support WebGL');
+    }
+
+    const renderer: WebGLRenderer = useRenderer(props.parameters);
     let scene: Scene | null = null;
     let camera: Camera | null = null;
 
@@ -100,8 +106,22 @@ export default defineComponent({
       observe: subscribeToCanvasResizeEvent,
       disconnect: unsubscribeFromCanvasResizeEvent,
     } = useResizeWatcher(([{ contentRect }]) => {
-      renderer?.setViewport(0, 0, contentRect.width, contentRect.height);
-      // TODO (2022.03.29): Dispatch resize event to camera
+      if (!scene) {
+        throw new Error('Can not render scene after resize. Scene is null');
+      }
+
+      if (!camera) {
+        throw new Error('Can not render scene after resize. Camera is null');
+      }
+      // dispath resize emit
+      ResizeEmitter.dispatchEvent({
+        type: 'resize',
+        rect: contentRect,
+      });
+      // resize scene
+      renderer.setSize(contentRect.width, contentRect.height);
+      // render scene after resize
+      renderer.render(scene, camera);
     });
 
     const {
@@ -114,12 +134,7 @@ export default defineComponent({
     // create renderer instance
     onMounted(() => {
       // TODO (2022.03.26): Add chech supports webgl
-      const { canvas } = useParentCanvas({ invalidTypeMessage: 'Parent of renderer must be canvas' });
-
-      renderer = useRenderer({
-        canvas,
-        ...props.parameters,
-      });
+      const { element } = useParentHtmlElement({ invalidTypeMessage: 'Parent of renderer must be canvas' });
 
       const {
         start: startRendering,
@@ -149,10 +164,12 @@ export default defineComponent({
       });
 
       // subscribe to canvas resize listener
-      subscribeToCanvasResizeEvent(canvas);
+      subscribeToCanvasResizeEvent(element);
       // subscribe on render events
       RenderEmitter.addEventListener('start-rendering', startRendering);
       RenderEmitter.addEventListener('cancel-rendering', cancelRendering);
+      // append canvas in html
+      element.appendChild(renderer.domElement);
       // emit renderer ready event
       RenderEmitter.dispatchEvent({ type: 'renderer-ready' });
 
@@ -167,11 +184,12 @@ export default defineComponent({
       const {
         subscribe: subscribeToDomPointerEvents,
         unsubscribe: unsubscribeFromDomPointerEvents,
-      } = useInitPointerEvents(canvas, camera, scene);
+      } = useInitPointerEvents(renderer.domElement, camera, scene);
       // subscribe to pointer events
       subscribeToDomPointerEvents();
 
       onBeforeUnmount(() => {
+        // unsubscribe from dom events
         unsubscribeFromDomPointerEvents();
       });
     });
@@ -184,8 +202,8 @@ export default defineComponent({
       // unsubscribe from canvas resize listener
       unsubscribeFromCanvasResizeEvent();
 
-      renderer?.dispose();
-      renderer?.domElement?.remove();
+      renderer.dispose();
+      renderer.domElement?.remove();
     });
 
     const exposed: RendererComponent = {

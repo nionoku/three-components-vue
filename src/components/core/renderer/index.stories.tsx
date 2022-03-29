@@ -35,35 +35,33 @@ const Template = () => ({
   },
   render() {
     return (
-      <div>
-        <canvas width={500} height={300}>
-          <Renderer>
-            <PerspectiveCamera position={{ x: -6 }} lookAt={0} parameters={{ aspect: 500 / 300 }}>
-              <OrbitControls />
-            </PerspectiveCamera>
-            <Scene parameters={{ background: this.background }}>
-              {/* <GridHelper parameters={{ divisions: 100 }} /> */}
-              <Mesh
-                onClick={({ intersects }) => console.log('Клик по кубу', intersects)}
-                onClickGlobal={({ intersects }) => console.log('Клик мимо куба', intersects)}
-              >
-                <BoxGeometry parameters={{ width: this.boxWidth }} />
-                <MaterialsGroup>
-                  <BasicMaterial parameters={{ color: this.boxColor }} />
-                  <BasicMaterial parameters={{ color: 'blue' }} />
-                  <BasicMaterial parameters={{ color: 'green' }} />
-                  <BasicMaterial parameters={{ color: 'white' }} />
-                  <BasicMaterial parameters={{ color: 'aqua' }} />
-                  <BasicMaterial parameters={{ color: 'teal' }} />
-                </MaterialsGroup>
-              </Mesh>
-              <Mesh position={{ x: 2 }}>
-                <BoxGeometry />
-                <BasicMaterial parameters={{ color: 'orange' }} />
-              </Mesh>
-            </Scene>
-          </Renderer>
-        </canvas>
+      <div style={{ width: '100%', height: '500px' }}>
+        <Renderer>
+          <PerspectiveCamera position={{ x: -6 }} lookAt={0}>
+            <OrbitControls />
+          </PerspectiveCamera>
+          <Scene parameters={{ background: this.background }}>
+            {/* <GridHelper parameters={{ divisions: 100 }} /> */}
+            <Mesh
+              onClick={({ intersects }) => console.log('Клик по кубу', intersects)}
+              onClickGlobal={({ intersects }) => console.log('Клик мимо куба', intersects)}
+            >
+              <BoxGeometry parameters={{ width: this.boxWidth }} />
+              <MaterialsGroup>
+                <BasicMaterial parameters={{ color: this.boxColor }} />
+                <BasicMaterial parameters={{ color: 'blue' }} />
+                <BasicMaterial parameters={{ color: 'green' }} />
+                <BasicMaterial parameters={{ color: 'white' }} />
+                <BasicMaterial parameters={{ color: 'aqua' }} />
+                <BasicMaterial parameters={{ color: 'teal' }} />
+              </MaterialsGroup>
+            </Mesh>
+            <Mesh position={{ x: 2 }}>
+              <BoxGeometry />
+              <BasicMaterial parameters={{ color: 'orange' }} />
+            </Mesh>
+          </Scene>
+        </Renderer>
       </div>
     );
   },
