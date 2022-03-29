@@ -1,11 +1,11 @@
-import { PointerEventsEvent } from '@/types/events/pointer';
-import { RenderEvents } from '@/types/events/render';
+import { PointerEventData } from '@/types/events/pointer';
+import { RenderEventData } from '@/types/events/render';
 import { EventDispatcher } from 'three';
 
 export default new EventDispatcher();
 
-const RenderEmitter: EventDispatcher<RenderEvents> = new EventDispatcher();
-const PointerEmitter: EventDispatcher<PointerEventsEvent> = new EventDispatcher();
+const RenderEmitter: EventDispatcher<RenderEventData> = new EventDispatcher();
+const PointerEmitter: EventDispatcher<PointerEventData> = new EventDispatcher();
 
 export {
   RenderEmitter,

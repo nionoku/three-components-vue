@@ -4,11 +4,11 @@ import {
 
 type RenderEvent = 'start-rendering' | 'cancel-rendering' | 'before-render' | 'renderer-ready'
 
-export interface RenderEventsType {
+export interface RenderEventType {
   type: RenderEvent
 }
 
-export interface BeforeRenderEvent extends RenderEventsType, BaseEvent {
+export interface BeforeRenderEventData extends RenderEventType, BaseEvent {
   type: 'before-render'
   delta: number
   time: number
@@ -17,8 +17,8 @@ export interface BeforeRenderEvent extends RenderEventsType, BaseEvent {
   camera: Camera
 }
 
-export interface SetupRenderEvent extends RenderEventsType, BaseEvent {
+export interface SetupRenderEventData extends RenderEventType, BaseEvent {
   type: 'start-rendering' | 'cancel-rendering' | 'renderer-ready'
 }
 
-export type RenderEvents = BeforeRenderEvent | SetupRenderEvent
+export type RenderEventData = BeforeRenderEventData | SetupRenderEventData

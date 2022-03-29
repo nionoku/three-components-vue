@@ -1,4 +1,4 @@
-import { PointerEvent, PointerEventsEvent } from '@/types/events/pointer';
+import { PointerEvent, PointerEventData } from '@/types/events/pointer';
 import { PointerEmitter } from '@/utils/emitter';
 import {
   Camera, Object3D, Raycaster, Vec2,
@@ -8,20 +8,20 @@ type PointerEventsLocal = PointerEvent
 type PointerEventsGlobal = `${PointerEventsLocal}Global`
 type PointerEventsEmits = PointerEventsLocal | PointerEventsGlobal
 
-type PointerEventsEmitsType = Record<PointerEventsEmits, (ctx: PointerEventsEvent) => void>
-export type PointerEventsEmit = (event: PointerEventsEmits, ctx: PointerEventsEvent) => void
+type PointerEventsEmitsType = Record<PointerEventsEmits, (ctx: PointerEventData) => void>
+export type PointerEventsEmit = (event: PointerEventsEmits, ctx: PointerEventData) => void
 
 export const usePointerEventsEmits: PointerEventsEmitsType = {
-  click(intersects: PointerEventsEvent) {
+  click(intersects: PointerEventData) {
     return true;
   },
-  clickGlobal(intersects: PointerEventsEvent) {
+  clickGlobal(intersects: PointerEventData) {
     return true;
   },
-  mousemove(intersects: PointerEventsEvent) {
+  mousemove(intersects: PointerEventData) {
     return true;
   },
-  mousemoveGlobal(intersects: PointerEventsEvent) {
+  mousemoveGlobal(intersects: PointerEventData) {
     return true;
   },
 };
@@ -30,7 +30,7 @@ export function usePointerEvents(
   { uuid }: Object3D,
   emit: PointerEventsEmit,
 ) {
-  const сallback = (type: PointerEvent, ctx: PointerEventsEvent): void => {
+  const сallback = (type: PointerEvent, ctx: PointerEventData): void => {
     if (ctx.intersects?.[0]?.object?.uuid === uuid) {
       return emit(type, ctx);
     }
@@ -38,9 +38,9 @@ export function usePointerEvents(
     return emit(`${type}Global`, ctx);
   };
 
-  const callbacks: Record<PointerEvent, (ctx: PointerEventsEvent) => void> = {
-    click: (ctx: PointerEventsEvent) => сallback('click', ctx),
-    mousemove: (ctx: PointerEventsEvent) => сallback('mousemove', ctx),
+  const callbacks: Record<PointerEvent, (ctx: PointerEventData) => void> = {
+    click: (ctx: PointerEventData) => сallback('click', ctx),
+    mousemove: (ctx: PointerEventData) => сallback('mousemove', ctx),
   };
 
   return {
