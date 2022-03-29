@@ -17,10 +17,10 @@ export function useBeforeRender(
   const callback = (ctx: BeforeRenderEvent) => emit('beforeRender', ctx);
 
   return {
-    subscribeToBeforeRender() {
+    subscribe() {
       return RenderEmitter.addEventListener('before-render', callback);
     },
-    unsubscribeFromBeforeRender() {
+    unsubscribe() {
       return RenderEmitter.removeEventListener('before-render', callback);
     },
   };

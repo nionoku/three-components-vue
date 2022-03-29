@@ -44,12 +44,12 @@ export function usePointerEvents(
   };
 
   return {
-    subscribeToPointerEvents() {
+    subscribe() {
       return Object.entries(callbacks).map(
         ([event, callback]) => PointerEmitter.addEventListener(event as PointerEvent, callback),
       );
     },
-    unsubscribeFromPointerEvents() {
+    unsubscribe() {
       return Object.entries(callbacks).map(
         ([event, callback]) => PointerEmitter.removeEventListener(event as PointerEvent, callback),
       );
@@ -86,10 +86,10 @@ export function useInitPointerEvents(
   };
 
   return {
-    subscribeToDomPointerEvents() {
+    subscribe() {
       return supportsEvents.map((it) => canvas.addEventListener(it, pointerEventListener));
     },
-    unsubscribeFromDomPointerEvents() {
+    unsubscribe() {
       return supportsEvents.map((it) => canvas.removeEventListener(it, pointerEventListener));
     },
   };

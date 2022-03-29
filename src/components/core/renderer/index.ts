@@ -47,12 +47,12 @@ function useRenderer(parameters: Props['paramaters']): WebGLRenderer {
 
 function useLooper(
   looper: (calback: XRAnimationLoopCallback | null) => void,
-  whenLoop: ({ time, delta }: { time: number, delta: number }) => void,
+  onLoop: ({ time, delta }: { time: number, delta: number }) => void,
 ): Handler {
   function start() {
     const clock = new Clock(true);
 
-    looper((time) => whenLoop({ time, delta: clock.getDelta() }));
+    looper((time) => onLoop({ time, delta: clock.getDelta() }));
   }
 
   function cancel() {
@@ -62,6 +62,17 @@ function useLooper(
   return {
     start,
     cancel,
+  };
+}
+
+function useResizeWatcher(
+  onResize: ((entries: Array<ResizeObserverEntry>) => void),
+) {
+  const resizeObserver = new ResizeObserver(onResize);
+
+  return {
+    observe: resizeObserver.observe,
+    disconnect: resizeObserver.disconnect,
   };
 }
 
@@ -85,11 +96,25 @@ export default defineComponent({
     let scene: Scene | null = null;
     let camera: Camera | null = null;
 
+    const {
+      observe: subscribeToCanvasResizeEvent,
+      disconnect: unsubscribeFromCanvasResizeEvent,
+    } = useResizeWatcher(([{ contentRect }]) => {
+      renderer?.setViewport(0, 0, contentRect.width, contentRect.height);
+      // TODO (2022.03.29): Dispatch resize event to camera
+    });
+
+    const {
+      subscribe: subscribeToBeforeRender,
+      unsubscribe: unsubscribeFromBeforeRender,
+    } = useBeforeRender(emit);
+    // subscribe to before render event
+    subscribeToBeforeRender();
+
     // create renderer instance
     onMounted(() => {
       // TODO (2022.03.26): Add chech supports webgl
       const { canvas } = useParentCanvas({ invalidTypeMessage: 'Parent of renderer must be canvas' });
-      // TODO (2022.03.26): Watch canvas resize
 
       renderer = useRenderer({
         canvas,
@@ -123,6 +148,8 @@ export default defineComponent({
         renderer.render(scene, camera);
       });
 
+      // subscribe to canvas resize listener
+      subscribeToCanvasResizeEvent(canvas);
       // subscribe on render events
       RenderEmitter.addEventListener('start-rendering', startRendering);
       RenderEmitter.addEventListener('cancel-rendering', cancelRendering);
@@ -138,27 +165,24 @@ export default defineComponent({
       }
 
       const {
-        subscribeToDomPointerEvents,
-        unsubscribeFromDomPointerEvents,
+        subscribe: subscribeToDomPointerEvents,
+        unsubscribe: unsubscribeFromDomPointerEvents,
       } = useInitPointerEvents(canvas, camera, scene);
       // subscribe to pointer events
       subscribeToDomPointerEvents();
 
-      onBeforeUnmount(() => unsubscribeFromDomPointerEvents());
+      onBeforeUnmount(() => {
+        unsubscribeFromDomPointerEvents();
+      });
     });
-
-    const {
-      subscribeToBeforeRender,
-      unsubscribeFromBeforeRender,
-    } = useBeforeRender(emit);
-    // subscribe to before render event
-    subscribeToBeforeRender();
 
     onBeforeUnmount(() => {
       // cancel rendering
       RenderEmitter.dispatchEvent({ type: 'cancel-rendering' });
       // unsubscribe from before render event
       unsubscribeFromBeforeRender();
+      // unsubscribe from canvas resize listener
+      unsubscribeFromCanvasResizeEvent();
 
       renderer?.dispose();
       renderer?.domElement?.remove();

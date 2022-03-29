@@ -46,8 +46,8 @@ export default defineComponent({
     });
     // supports pointer events
     const {
-      subscribeToPointerEvents,
-      unsubscribeFromPointerEvents,
+      subscribe: subscribeToPointerEvents,
+      unsubscribe: unsubscribeFromPointerEvents,
     } = usePointerEvents(mesh, emit as PointerEventsEmit);
     subscribeToPointerEvents();
 

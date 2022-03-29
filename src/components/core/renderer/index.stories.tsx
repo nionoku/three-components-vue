@@ -36,15 +36,14 @@ const Template = () => ({
   render() {
     return (
       <div>
-        <canvas width={400} height={300}>
+        <canvas width={500} height={300}>
           <Renderer>
-            <PerspectiveCamera position={{ x: -6 }} lookAt={0}>
+            <PerspectiveCamera position={{ x: -6 }} lookAt={0} parameters={{ aspect: 500 / 300 }}>
               <OrbitControls />
             </PerspectiveCamera>
             <Scene parameters={{ background: this.background }}>
-              <GridHelper />
+              {/* <GridHelper parameters={{ divisions: 100 }} /> */}
               <Mesh
-                // rotation={{ z: Math.PI / 5 }}
                 onClick={({ intersects }) => console.log('Клик по кубу', intersects)}
                 onClickGlobal={({ intersects }) => console.log('Клик мимо куба', intersects)}
               >
