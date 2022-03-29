@@ -2,42 +2,25 @@ import {
   defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
 import {
-  Color, ColorRepresentation, FogBase, FogExp2, Scene,
+  Color, ColorRepresentation, Fog, FogBase, Scene,
 } from 'three';
 import { RenderEmitter } from '@/utils/emitter';
 import { Object3DComponent } from '@/types/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useParentRenderer } from '@/composes/parent/renderer';
 
-interface FogDescription {
-  color?: ColorRepresentation,
-  density?: number
-}
 interface Props {
   paramaters?: {
     background?: ColorRepresentation
-    fog?: ColorRepresentation | FogDescription
+    fog?: {
+      color: ColorRepresentation,
+      near: number
+      far: number
+    }
   }
 }
 
 export type SceneComponent = Pick<Scene, 'isScene'> & Object3DComponent
-
-function makeFog(
-  fog: ColorRepresentation | FogDescription,
-  fallbackColor?: ColorRepresentation,
-): FogBase {
-  const [color, density] = typeof fog === 'string' || typeof fog === 'number' || fog instanceof Color
-    ? [
-      new Color(fog || fallbackColor),
-      undefined,
-    ]
-    : [
-      new Color(fog.color || fallbackColor),
-      fog.density,
-    ];
-
-  return new FogExp2(color.getHex(), density);
-}
 
 export default defineComponent({
   extends: useRenderWithDefaultSlot,
@@ -59,7 +42,7 @@ export default defineComponent({
         }
 
         if (value?.fog) {
-          scene.fog = makeFog(value.fog, value.background);
+          scene.fog = new Fog(new Color(value.fog.color), value.fog.near, value.fog.far);
         }
       },
       { deep: true, immediate: true },

@@ -42,7 +42,7 @@ const Template = () => ({
           </PerspectiveCamera>
           <Scene parameters={{
             background: this.background,
-            fog: { color: this.background, density: 0.1 },
+            fog: { color: this.background, near: 0.1, far: 25 },
           }}>
             {/* <GridHelper parameters={{ divisions: 100 }} /> */}
             <Mesh
