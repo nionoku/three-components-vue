@@ -11,7 +11,7 @@ export function useParentMaterialGroup(
     throw new Error('Instance is null');
   }
 
-  const materialGroup = instance?.parent?.exposed as MaterialsGroupComponent;
+  const materialGroup = currentInstance?.parent?.exposed as MaterialsGroupComponent;
 
   if (!materialGroup?.isMaterialsGroup) {
     throw new Error(options?.invalidTypeMessage || 'Parent is not Material Group');
