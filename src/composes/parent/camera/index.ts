@@ -1,11 +1,17 @@
 import { CameraComponent } from '@/components/core/cameras/camera';
-import { getCurrentInstance } from 'vue';
+import { ComponentInternalInstance, getCurrentInstance } from 'vue';
 
 export function useParentCamera(
+  instance: ComponentInternalInstance | null,
   options?: { invalidTypeMessage: string },
 ): { camera: CameraComponent } {
-  const instance = getCurrentInstance();
-  const camera = instance?.parent?.exposed as CameraComponent;
+  const currentInstance = instance || getCurrentInstance();
+
+  if (!currentInstance) {
+    throw new Error('Instance is null');
+  }
+
+  const camera = currentInstance?.parent?.exposed as CameraComponent;
 
   if (!camera?.isCamera) {
     throw new Error(options?.invalidTypeMessage || 'Parent is not Camera');

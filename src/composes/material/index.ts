@@ -3,15 +3,16 @@ import { MeshComponent } from '@/components/meshes/mesh';
 import { useParentMaterialGroup } from '@/composes/parent/material-group';
 import { useParentMesh } from '@/composes/parent/mesh';
 import { Material } from 'three';
-import { onBeforeUnmount } from 'vue';
+import { ComponentInternalInstance, onBeforeUnmount } from 'vue';
 
 type MaterialParametersChangedCallback = () => void
 
 function useMesh(
   onInit: ((mesh: MeshComponent) => void),
   onParametersChanged: ((mesh: MeshComponent) => void),
+  instance: ComponentInternalInstance | null,
 ): MaterialParametersChangedCallback {
-  const { mesh } = useParentMesh({ invalidTypeMessage: 'Material must be child of Mesh' });
+  const { mesh } = useParentMesh(instance, { invalidTypeMessage: 'Material must be child of Mesh' });
   onInit(mesh);
 
   return (() => {
@@ -22,8 +23,12 @@ function useMesh(
 function useMaterialGroup(
   onInit: ((group: MaterialsGroupComponent) => void),
   onParametersChanged: ((group: MaterialsGroupComponent) => void),
+  instance: ComponentInternalInstance | null,
 ): MaterialParametersChangedCallback {
-  const { materialGroup } = useParentMaterialGroup({ invalidTypeMessage: 'Material must be child of MaterialGroup' });
+  const { materialGroup } = useParentMaterialGroup(
+    instance,
+    { invalidTypeMessage: 'Material must be child of MaterialGroup' },
+  );
   onInit(materialGroup);
 
   return (() => {
@@ -31,7 +36,10 @@ function useMaterialGroup(
   });
 }
 
-export function useMaterial<M extends Material>(materialFactory: () => M) {
+export function useMaterial<M extends Material>(
+  instance: ComponentInternalInstance | null,
+  materialFactory: () => M,
+) {
   let material = materialFactory();
   const usingMesh = (() => {
     try {
@@ -43,6 +51,7 @@ export function useMaterial<M extends Material>(materialFactory: () => M) {
 
           mesh.setMaterial(material);
         },
+        instance,
       );
     } catch (err) {
       return null;
@@ -60,6 +69,7 @@ export function useMaterial<M extends Material>(materialFactory: () => M) {
           material.dispose();
           material = newMaterial;
         },
+        instance,
       );
     } catch (err) {
       return null;

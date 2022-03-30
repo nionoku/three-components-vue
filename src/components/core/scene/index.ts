@@ -48,7 +48,7 @@ export default defineComponent({
       { deep: true, immediate: true },
     );
 
-    const { renderer } = useParentRenderer({ invalidTypeMessage: 'Scene must be child of renderer' });
+    const { renderer } = useParentRenderer(null, { invalidTypeMessage: 'Scene must be child of renderer' });
     // subscribe on renderer ready event for start rendering
     RenderEmitter.addEventListener('renderer-ready', () => {
       if (renderer.autoplay) {

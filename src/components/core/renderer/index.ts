@@ -134,7 +134,7 @@ export default defineComponent({
     // create renderer instance
     onMounted(() => {
       // TODO (2022.03.26): Add chech supports webgl
-      const { element } = useParentHtmlElement({ invalidTypeMessage: 'Parent of renderer must be canvas' });
+      const { element } = useParentHtmlElement(null, { invalidTypeMessage: 'Parent of renderer must be canvas' });
 
       const {
         start: startRendering,

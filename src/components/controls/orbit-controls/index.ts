@@ -19,7 +19,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    useParentCamera({ invalidTypeMessage: 'OrbitControls must be child of Camera' });
+    useParentCamera(null, { invalidTypeMessage: 'OrbitControls must be child of Camera' });
 
     let controls: OrbitControls;
     RenderEmitter.addEventListener('before-render', ({ renderer: { domElement: canvas }, camera }) => {

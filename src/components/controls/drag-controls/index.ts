@@ -7,7 +7,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   extends: useRenderWithDefaultSlot,
   setup() {
-    useParentCamera({ invalidTypeMessage: 'DragControls must be child of Camera' });
+    useParentCamera(null, { invalidTypeMessage: 'DragControls must be child of Camera' });
 
     let controls: DragControls;
     RenderEmitter.addEventListener('before-render', ({ renderer: { domElement: canvas }, camera, scene }) => {

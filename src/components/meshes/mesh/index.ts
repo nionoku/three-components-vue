@@ -21,7 +21,7 @@ export default defineComponent({
   setup(props, { emit, expose }) {
     const mesh = new Mesh();
 
-    const { object3D } = useParentObject3D({ invalidTypeMessage: 'Mesh must be child of Object3D' });
+    const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });
     object3D.add(mesh);
 
     // supports transforms

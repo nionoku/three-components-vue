@@ -52,7 +52,7 @@ export default defineComponent({
       { deep: true },
     );
 
-    const { renderer } = useParentRenderer({ invalidTypeMessage: 'PerspectiveCamera must be child of renderer' });
+    const { renderer } = useParentRenderer(null, { invalidTypeMessage: 'PerspectiveCamera must be child of renderer' });
     renderer.setCamera(camera);
 
     // supports transforms

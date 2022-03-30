@@ -7,6 +7,8 @@ import {
   defineComponent, PropType, watch,
 } from 'vue';
 
+export type BasicMaterialComponent = Pick<MeshBasicMaterial, 'isMaterial'>
+
 const createMaterial = (parameters: Partial<MeshBasicMaterialParameters>) => {
   const material = new MeshBasicMaterial({ ...parameters });
 
@@ -21,13 +23,18 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props) {
+  setup(props, { expose }) {
     const {
-      material,
       materialParametersChangedCallback,
-    } = useMaterial(() => createMaterial(props.parameters));
+    } = useMaterial(null, () => createMaterial(props.parameters));
 
     // watch by parameters changed
     watch(() => props.parameters, materialParametersChangedCallback, { deep: true });
+
+    const exposed: BasicMaterialComponent = {
+      isMaterial: true,
+    };
+    // expose public instances
+    expose(exposed);
   },
 });

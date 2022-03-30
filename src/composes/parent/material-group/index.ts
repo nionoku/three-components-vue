@@ -1,10 +1,16 @@
 import { MaterialsGroupComponent } from '@/components/groups/materials-group';
-import { getCurrentInstance } from 'vue';
+import { ComponentInternalInstance, getCurrentInstance } from 'vue';
 
 export function useParentMaterialGroup(
+  instance: ComponentInternalInstance | null,
   options?: { invalidTypeMessage: string },
 ): { materialGroup: MaterialsGroupComponent } {
-  const instance = getCurrentInstance();
+  const currentInstance = instance || getCurrentInstance();
+
+  if (!currentInstance) {
+    throw new Error('Instance is null');
+  }
+
   const materialGroup = instance?.parent?.exposed as MaterialsGroupComponent;
 
   if (!materialGroup?.isMaterialsGroup) {

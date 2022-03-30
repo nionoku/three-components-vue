@@ -7,9 +7,9 @@ import {
   Scene,
   Mesh,
   OrbitControls,
-  GridHelper,
 } from '@/components';
 import { MaterialsGroup } from '@/components/groups';
+import StlGeometry from '@/components/geometries/stl-geometry';
 
 export default {
   title: 'Actions/Click',
@@ -37,12 +37,12 @@ const Template = () => ({
     return (
       <div style={{ width: '100%', height: '500px' }}>
         <Renderer>
-          <PerspectiveCamera position={{ x: -6 }} lookAt={0}>
+          <PerspectiveCamera position={{ z: 10 }} lookAt={0}>
             <OrbitControls />
           </PerspectiveCamera>
           <Scene parameters={{
             background: this.background,
-            fog: { color: this.background, near: 0.1, far: 25 },
+            // fog: { color: this.background, near: 25, far: 50 },
           }}>
             {/* <GridHelper parameters={{ divisions: 100 }} /> */}
             <Mesh
@@ -58,6 +58,10 @@ const Template = () => ({
                 <BasicMaterial parameters={{ color: 'aqua' }} />
                 <BasicMaterial parameters={{ color: 'teal' }} />
               </MaterialsGroup>
+            </Mesh>
+            <Mesh position={{ x: -2 }}>
+              <StlGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
+              <BasicMaterial parameters={{ color: 'white' }} />
             </Mesh>
             <Mesh position={{ x: 2 }}>
               <BoxGeometry />

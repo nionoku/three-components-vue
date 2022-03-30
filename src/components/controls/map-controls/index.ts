@@ -13,7 +13,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    useParentCamera({ invalidTypeMessage: 'MapControls must be child of Camera' });
+    useParentCamera(null, { invalidTypeMessage: 'MapControls must be child of Camera' });
 
     let controls: MapControls;
     RenderEmitter.addEventListener('before-render', ({ renderer: { domElement: canvas }, camera }) => {

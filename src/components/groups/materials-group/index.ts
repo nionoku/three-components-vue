@@ -12,7 +12,7 @@ export interface MaterialsGroupComponent {
 export default defineComponent({
   extends: useRenderWithDefaultSlot,
   setup(props, { expose }) {
-    const { mesh } = useParentMesh({ invalidTypeMessage: 'MaterialsGroup must be child of Mesh' });
+    const { mesh } = useParentMesh(null, { invalidTypeMessage: 'MaterialsGroup must be child of Mesh' });
     const materials: Array<Material> = [];
 
     const exposed: MaterialsGroupComponent = {

@@ -5,7 +5,9 @@ import {
   defineComponent, PropType, watch,
 } from 'vue';
 
-const createBoxGeometry = (parameters: Partial<BoxGeometry['parameters']>) => {
+export type BoxGeometryComponent = Pick<BoxGeometry, 'isBufferGeometry'>
+
+const createGeometry = (parameters: Partial<BoxGeometry['parameters']>) => {
   const geometry = new BoxGeometry(
     parameters?.width,
     parameters?.height,
@@ -26,13 +28,18 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props) {
+  setup(props, { expose }) {
     const {
-      geometry,
       geometryParametersChangedCallback,
-    } = useGeometry(() => createBoxGeometry(props.parameters));
+    } = useGeometry(null, () => createGeometry(props.parameters));
 
     // watch by parameters changed
     watch(() => props.parameters, geometryParametersChangedCallback, { deep: true });
+
+    const exposed: BoxGeometryComponent = {
+      isBufferGeometry: true,
+    };
+    // expose public instances
+    expose(exposed);
   },
 });

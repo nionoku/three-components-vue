@@ -1,12 +1,15 @@
 import { useParentMesh } from '@/composes/parent/mesh';
 import { BufferGeometry } from 'three';
-import { onBeforeUnmount } from 'vue';
+import { ComponentInternalInstance, onBeforeUnmount } from 'vue';
 
-export function useGeometry<M extends BufferGeometry>(factory: () => M) {
+export function useGeometry<M extends BufferGeometry>(
+  instance: ComponentInternalInstance | null,
+  factory: () => M,
+) {
   let geometry: M = factory();
 
-  const { mesh: parent } = useParentMesh({ invalidTypeMessage: 'Geometry must be child of Mesh' });
-  parent.setGeometry(geometry);
+  const { mesh } = useParentMesh(instance, { invalidTypeMessage: 'Geometry must be child of Mesh' });
+  mesh.setGeometry(geometry);
 
   onBeforeUnmount(() => {
     geometry.dispose();
@@ -18,7 +21,7 @@ export function useGeometry<M extends BufferGeometry>(factory: () => M) {
       geometry.dispose();
       geometry = factory();
 
-      parent.setGeometry(geometry);
+      mesh.setGeometry(geometry);
     },
   };
 }
