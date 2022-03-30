@@ -37,12 +37,12 @@ const Template = () => ({
     return (
       <div style={{ width: '100%', height: '500px' }}>
         <Renderer>
-          <PerspectiveCamera position={{ z: 10 }} lookAt={0}>
+          <PerspectiveCamera position={{ z: 15, y: 5 }} lookAt={0}>
             <OrbitControls />
           </PerspectiveCamera>
           <Scene parameters={{
             background: this.background,
-            // fog: { color: this.background, near: 25, far: 50 },
+            fog: { color: this.background, near: 25, far: 50 },
           }}>
             {/* <GridHelper parameters={{ divisions: 100 }} /> */}
             <Mesh
@@ -59,9 +59,9 @@ const Template = () => ({
                 <BasicMaterial parameters={{ color: 'teal' }} />
               </MaterialsGroup>
             </Mesh>
-            <Mesh position={{ x: -2 }}>
+            <Mesh position={{ x: -2 }} scale={0.05} rotation={{ x: -Math.PI / 2 }}>
               <StlGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
-              <BasicMaterial parameters={{ color: 'white' }} />
+              <BasicMaterial parameters={{ color: this.boxColor }} />
             </Mesh>
             <Mesh position={{ x: 2 }}>
               <BoxGeometry />

@@ -1,8 +1,10 @@
-import { useGeometry } from '@/composes/geometry';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { BufferGeometry, LoadingManager } from 'three';
-import { defineComponent, getCurrentInstance, PropType } from 'vue';
+import {
+  defineComponent, getCurrentInstance, PropType,
+} from 'vue';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import { useAsyncGeometry } from '@/composes/geometry/async';
 
 interface Props {
   path: string
@@ -36,12 +38,12 @@ export default defineComponent({
   },
   async setup(props, { emit, expose }) {
     try {
-      const instance = getCurrentInstance();
+      const { setGeometry } = useAsyncGeometry(getCurrentInstance());
       const loader = new STLLoader(props.manager);
       const geometry = await loader.loadAsync(props.path, (event) => emit('progress', event));
 
+      setGeometry(geometry);
       emit('load', geometry);
-      useGeometry(instance, () => geometry);
     } catch (err) {
       emit('error', err as ErrorEvent);
     } finally {
