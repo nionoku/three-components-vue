@@ -89,7 +89,7 @@ const Template = () => ({
               position={{ x: -2 }}
               scale={0.05}
               rotation={{ x: -Math.PI / 2 }}
-              helper
+              helper="blue"
             >
               <StlGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
               <BasicMaterial parameters={{ color: this.boxColor }} />
@@ -116,7 +116,7 @@ const Template = () => ({
               position={{ x: 3.5, z: 0.02, y: 1 }}
               scale={0.02}
               rotation={{ x: Math.PI }}
-              helper
+              helper='blue'
             >
               <ExtrudeGeometry
               svg={this.svg2}

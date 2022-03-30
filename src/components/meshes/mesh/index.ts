@@ -3,7 +3,7 @@ import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
 import {
-  BoxHelper, BufferGeometry, Color, Material, Mesh,
+  BoxHelper, BufferGeometry, Color, LineBasicMaterial, Material, Mesh,
 } from 'three';
 import {
   defineComponent, onBeforeUnmount, watch,
@@ -19,7 +19,7 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
     helper: {
-      type: Boolean,
+      type: [String, Number],
       default: undefined,
     },
   },
@@ -32,10 +32,6 @@ export default defineComponent({
 
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });
     object3D.add(mesh);
-
-    if (props.helper) {
-      object3D.add(helper);
-    }
 
     // supports transforms
     const {
@@ -57,6 +53,14 @@ export default defineComponent({
       deep: true,
       immediate: true,
     });
+    const helperWatcherCanceler = watch(() => props.helper, (value) => {
+      if (value) {
+        (helper.material as LineBasicMaterial).color.set(value);
+        object3D.add(helper);
+      } else {
+        object3D.remove(helper);
+      }
+    }, { immediate: true });
     // supports pointer events
     const {
       subscribe: subscribeToPointerEvents,
@@ -72,6 +76,8 @@ export default defineComponent({
       scaleWatcherCanceler();
       lookAtWatcherCanceler();
 
+      helperWatcherCanceler();
+
       helper?.removeFromParent();
       mesh.removeFromParent();
     });
@@ -80,7 +86,7 @@ export default defineComponent({
       isMesh: true,
       setGeometry: (geometry) => {
         mesh.geometry = geometry;
-        helper?.update(mesh);
+        helper?.setFromObject(mesh);
       },
       setMaterial: (material) => {
         mesh.material = material;
