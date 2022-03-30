@@ -98,7 +98,12 @@ const Template = () => ({
               <BoxGeometry />
               <BasicMaterial parameters={{ color: 'orange' }} />
             </Mesh>
-            <Mesh position={{ x: 3.5, z: 0.04, y: 1 }} scale={0.02} rotation={{ x: Math.PI }}>
+            <Mesh
+              position={{ x: 3.5, z: 0.04, y: 1 }}
+              scale={0.02}
+              rotation={{ x: Math.PI }}
+              onInit={() => console.log('Firefox проинициализирован')}
+            >
               <ExtrudeGeometry
                 svg={this.svg}
                 parameters={{ steps: 3, depth: 14, bevelThickness: 0.5 }}

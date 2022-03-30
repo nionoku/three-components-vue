@@ -1,3 +1,4 @@
+import { useInitEventEmits } from '@/composes/events/init';
 import { PointerEventsEmit, usePointerEvents, usePointerEventsEmits } from '@/composes/events/pointer';
 import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
@@ -25,9 +26,13 @@ export default defineComponent({
   },
   emits: {
     ...usePointerEventsEmits,
+    ...useInitEventEmits<Mesh>(),
   },
   setup(props, { emit, expose }) {
     const mesh = new Mesh();
+    // emit init action
+    emit('init', mesh);
+
     const helper = new BoxHelper(mesh);
 
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });

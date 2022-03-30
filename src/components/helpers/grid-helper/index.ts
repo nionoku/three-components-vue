@@ -1,3 +1,4 @@
+import { useInitEventEmits } from '@/composes/events/init';
 import { useGeometry } from '@/composes/geometry';
 import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
@@ -34,9 +35,15 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props) {
+  emits: {
+    ...useInitEventEmits<GridHelper>(),
+  },
+  setup(props, { emit }) {
     let gridHelper = createGridHelper(props.parameters);
-    const { object3D } = useParentObject3D({ invalidTypeMessage: 'Mesh must be child of Object3D' });
+    // emit init action
+    emit('init', gridHelper);
+
+    const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });
     object3D.add(gridHelper);
 
     // watch by parameters changed

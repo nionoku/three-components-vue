@@ -1,3 +1,4 @@
+import { useInitEventEmits } from '@/composes/events/init';
 import { useMaterial } from '@/composes/material';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import {
@@ -23,10 +24,16 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props, { expose }) {
+  emits: {
+    ...useInitEventEmits<MeshBasicMaterial>(),
+  },
+  setup(props, { emit, expose }) {
     const {
+      material,
       materialParametersChangedCallback,
     } = useMaterial(null, () => createMaterial(props.parameters));
+    // emit init action
+    emit('init', material);
 
     // watch by parameters changed
     watch(() => props.parameters, materialParametersChangedCallback, { deep: true });

@@ -8,6 +8,7 @@ import { RenderEmitter } from '@/utils/emitter';
 import { Object3DComponent } from '@/types/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useParentRenderer } from '@/composes/parent/renderer';
+import { useInitEventEmits } from '@/composes/events/init';
 
 interface Props {
   paramaters?: {
@@ -30,8 +31,13 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props, { expose }) {
+  emits: {
+    ...useInitEventEmits<Scene>(),
+  },
+  setup(props, { emit, expose }) {
     const scene: Scene = new Scene();
+    // emit init action
+    emit('init', scene);
 
     // watch for parameters changed
     const unsubscribeParametersWatch = watch(

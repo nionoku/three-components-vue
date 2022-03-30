@@ -1,3 +1,4 @@
+import { useInitEventEmits } from '@/composes/events/init';
 import { useGeometry } from '@/composes/geometry';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import {
@@ -34,7 +35,10 @@ export default defineComponent({
       default: undefined,
     },
   },
-  setup(props, { expose }) {
+  emits: {
+    ...useInitEventEmits<ExtrudeGeometry>(),
+  },
+  setup(props, { emit, expose }) {
     const shape = (() => {
       if (props.svg) {
         const svgData = new SVGLoader().parse(props.svg);
@@ -45,8 +49,11 @@ export default defineComponent({
     })();
 
     const {
+      geometry,
       geometryParametersChangedCallback,
     } = useGeometry(null, () => createGeometry(shape, props.parameters));
+    // emit init action
+    emit('init', geometry);
 
     // watch by parameters changed
     watch(() => props.parameters, geometryParametersChangedCallback, { deep: true });

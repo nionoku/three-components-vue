@@ -19,6 +19,7 @@ import { useBeforeRender, useBeforeRenderEmits } from '@/composes/events';
 import { useParentHtmlElement } from '@/composes/parent/html-element';
 import { useInitPointerEvents } from '@/composes/events/pointer';
 import WebGL from 'three/examples/jsm/capabilities/WebGL';
+import { useInitEventEmits } from '@/composes/events/init';
 
 interface Props {
   paramaters?: Partial<Pick<WebGLRenderer, 'pixelRatio'>>
@@ -91,6 +92,7 @@ export default defineComponent({
   },
   emits: {
     ...useBeforeRenderEmits,
+    ...useInitEventEmits<WebGLRenderer>(),
   },
   setup(props, { emit, expose }) {
     // check supports webgl
@@ -99,6 +101,8 @@ export default defineComponent({
     }
 
     const renderer: WebGLRenderer = useRenderer(props.parameters);
+    // emit init action
+    emit('init', renderer);
     let scene: Scene | null = null;
     let camera: Camera | null = null;
 

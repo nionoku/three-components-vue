@@ -1,3 +1,4 @@
+import { useInitEventEmits } from '@/composes/events/init';
 import { useGeometry } from '@/composes/geometry';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { BoxGeometry } from 'three';
@@ -28,10 +29,16 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props, { expose }) {
+  emits: {
+    ...useInitEventEmits<BoxGeometry>(),
+  },
+  setup(props, { emit, expose }) {
     const {
+      geometry,
       geometryParametersChangedCallback,
     } = useGeometry(null, () => createGeometry(props.parameters));
+    // emit init action
+    emit('init', geometry);
 
     // watch by parameters changed
     watch(() => props.parameters, geometryParametersChangedCallback, { deep: true });

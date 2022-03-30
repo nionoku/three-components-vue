@@ -1,9 +1,10 @@
+import { useInitEventEmits } from '@/composes/events/init';
 import { useParentCamera } from '@/composes/parent/camera';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { RenderEmitter } from '@/utils/emitter';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import {
-  defineComponent, onBeforeUnmount, watch, watchEffect,
+  defineComponent, onBeforeUnmount, watch,
 } from 'vue';
 
 export default defineComponent({
@@ -18,7 +19,10 @@ export default defineComponent({
       default: true,
     },
   },
-  setup(props) {
+  emits: {
+    ...useInitEventEmits<OrbitControls>(),
+  },
+  setup(props, { emit }) {
     useParentCamera(null, { invalidTypeMessage: 'OrbitControls must be child of Camera' });
 
     let controls: OrbitControls;
@@ -26,6 +30,7 @@ export default defineComponent({
       if (!controls) {
         controls = new OrbitControls(camera, canvas);
         controls.screenSpacePanning = props.screenSpacePanning;
+        emit('init', controls);
       }
 
       controls.update();

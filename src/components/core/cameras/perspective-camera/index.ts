@@ -1,4 +1,5 @@
 import { CameraComponent } from '@/components/core/cameras/camera';
+import { useInitEventEmits } from '@/composes/events/init';
 import { useParentRenderer } from '@/composes/parent/renderer';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
@@ -24,13 +25,18 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props, { expose }) {
+  emits: {
+    ...useInitEventEmits<PerspectiveCamera>(),
+  },
+  setup(props, { emit, expose }) {
     const camera = new PerspectiveCamera(
       props.parameters?.fov,
       undefined,
       props.parameters?.near,
       props.parameters?.far,
     );
+    // emit init action
+    emit('init', camera);
     // watch for parameters changed
     const parametersWatcherCanceler = watch(
       () => props.parameters,

@@ -1,3 +1,4 @@
+import { useInitEventEmits } from '@/composes/events/init';
 import { useParentCamera } from '@/composes/parent/camera';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { RenderEmitter } from '@/utils/emitter';
@@ -12,7 +13,10 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  emits: {
+    ...useInitEventEmits<MapControls>(),
+  },
+  setup(props, { emit }) {
     useParentCamera(null, { invalidTypeMessage: 'MapControls must be child of Camera' });
 
     let controls: MapControls;
@@ -20,6 +24,7 @@ export default defineComponent({
       if (!controls) {
         controls = new MapControls(camera, canvas);
         controls.screenSpacePanning = props.screenSpacePanning;
+        emit('init', controls);
       }
 
       controls.update();

@@ -5,6 +5,7 @@ import {
 } from 'vue';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import { useAsyncGeometry } from '@/composes/geometry/async';
+import { useInitEventEmits } from '@/composes/events/init';
 
 interface Props {
   path: string
@@ -35,6 +36,7 @@ export default defineComponent({
     load: (geometry: BufferGeometry) => true,
     progress: (event: ProgressEvent) => true,
     error: (event: ErrorEvent) => true,
+    ...useInitEventEmits<BufferGeometry>(),
   },
   async setup(props, { emit, expose }) {
     try {
@@ -44,6 +46,7 @@ export default defineComponent({
 
       setGeometry(geometry);
       emit('load', geometry);
+      emit('init', geometry);
     } catch (err) {
       emit('error', err as ErrorEvent);
     } finally {
