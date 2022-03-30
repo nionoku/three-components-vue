@@ -2,8 +2,12 @@ import { PointerEventsEmit, usePointerEvents, usePointerEventsEmits } from '@/co
 import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
-import { BufferGeometry, Material, Mesh } from 'three';
-import { defineComponent, onBeforeUnmount, watch } from 'vue';
+import {
+  BoxHelper, BufferGeometry, Color, Material, Mesh,
+} from 'three';
+import {
+  defineComponent, onBeforeUnmount, watch,
+} from 'vue';
 
 export interface MeshComponent extends Pick<Mesh, 'isMesh'> {
   setGeometry(geometry: BufferGeometry): void
@@ -14,15 +18,24 @@ export default defineComponent({
   extends: useRenderWithDefaultSlot,
   props: {
     ...useTransformsProps,
+    helper: {
+      type: Boolean,
+      default: undefined,
+    },
   },
   emits: {
     ...usePointerEventsEmits,
   },
   setup(props, { emit, expose }) {
     const mesh = new Mesh();
+    const helper = new BoxHelper(mesh);
 
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });
     object3D.add(mesh);
+
+    if (props.helper) {
+      object3D.add(helper);
+    }
 
     // supports transforms
     const {
@@ -59,6 +72,7 @@ export default defineComponent({
       scaleWatcherCanceler();
       lookAtWatcherCanceler();
 
+      helper?.removeFromParent();
       mesh.removeFromParent();
     });
 
@@ -66,6 +80,7 @@ export default defineComponent({
       isMesh: true,
       setGeometry: (geometry) => {
         mesh.geometry = geometry;
+        helper?.update(mesh);
       },
       setMaterial: (material) => {
         mesh.material = material;

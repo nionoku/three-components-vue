@@ -85,7 +85,12 @@ const Template = () => ({
                 <BasicMaterial parameters={{ color: 'teal' }} />
               </MaterialsGroup>
             </Mesh>
-            <Mesh position={{ x: -2 }} scale={0.05} rotation={{ x: -Math.PI / 2 }}>
+            <Mesh
+              position={{ x: -2 }}
+              scale={0.05}
+              rotation={{ x: -Math.PI / 2 }}
+              helper
+            >
               <StlGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
               <BasicMaterial parameters={{ color: this.boxColor }} />
             </Mesh>
@@ -107,7 +112,12 @@ const Template = () => ({
               />
               <BasicMaterial parameters={{ color: 'orange' }} />
             </Mesh>
-            <Mesh position={{ x: 3.5, z: 0.02, y: 1 }} scale={0.02} rotation={{ x: Math.PI }}>
+            <Mesh
+              position={{ x: 3.5, z: 0.02, y: 1 }}
+              scale={0.02}
+              rotation={{ x: Math.PI }}
+              helper
+            >
               <ExtrudeGeometry
               svg={this.svg2}
               parameters={{ steps: 3, depth: 12, bevelThickness: 0.5 }}
