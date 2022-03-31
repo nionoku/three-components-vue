@@ -30,10 +30,9 @@ export default defineComponent({
   },
   setup(props, { emit, expose }) {
     const mesh = new Mesh();
+    const helper = new BoxHelper(mesh);
     // emit init action
     emit('init', mesh);
-
-    const helper = new BoxHelper(mesh);
 
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });
     object3D.add(mesh);
@@ -42,22 +41,22 @@ export default defineComponent({
     const {
       applyPosition, applyRotation, applyScale, applyLookAt,
     } = useTransforms(mesh);
-    const positionWatcherCanceler = watch(() => props.position, applyPosition, {
-      deep: true,
-      immediate: true,
-    });
-    const rotationWatcherCanceler = watch(() => props.rotation, applyRotation, {
-      deep: true,
-      immediate: true,
-    });
-    const scaleWatcherCanceler = watch(() => props.scale, applyScale, {
-      deep: true,
-      immediate: true,
-    });
-    const lookAtWatcherCanceler = watch(() => props.lookAt, applyLookAt, {
-      deep: true,
-      immediate: true,
-    });
+    const positionWatcherCanceler = watch(() => props.position, (position) => {
+      applyPosition(position);
+      helper.update();
+    }, { deep: true, immediate: true });
+    const rotationWatcherCanceler = watch(() => props.rotation, (rotation) => {
+      applyRotation(rotation);
+      helper.update();
+    }, { deep: true, immediate: true });
+    const scaleWatcherCanceler = watch(() => props.scale, (scale) => {
+      applyScale(scale);
+      helper.update();
+    }, { deep: true, immediate: true });
+    const lookAtWatcherCanceler = watch(() => props.lookAt, (lookAt) => {
+      applyLookAt(lookAt);
+      helper.update();
+    }, { deep: true, immediate: true });
     const helperWatcherCanceler = watch(() => props.helper, (value) => {
       if (value) {
         (helper.material as LineBasicMaterial).color.set(value);
@@ -83,7 +82,7 @@ export default defineComponent({
 
       helperWatcherCanceler();
 
-      helper?.removeFromParent();
+      helper.removeFromParent();
       mesh.removeFromParent();
     });
 
@@ -91,7 +90,7 @@ export default defineComponent({
       isMesh: true,
       setGeometry: (geometry) => {
         mesh.geometry = geometry;
-        helper?.setFromObject(mesh);
+        helper.update();
       },
       setMaterial: (material) => {
         mesh.material = material;

@@ -66,7 +66,7 @@ const Template = () => ({
           <PerspectiveCamera position={{ z: 15, y: 5 }} lookAt={0}>
             <OrbitControls />
           </PerspectiveCamera>
-          <Scene parameters={{
+          <Scene axesHelper={1} parameters={{
             background: this.background,
             // fog: { color: this.background, near: 25, far: 50 },
           }}>
@@ -88,7 +88,7 @@ const Template = () => ({
             <Mesh
               position={{ x: -2 }}
               scale={0.05}
-              rotation={{ x: -Math.PI / 2 }}
+              rotation={{ x: Math.PI * 1.5 }}
               helper="blue"
             >
               <StlGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
@@ -103,6 +103,7 @@ const Template = () => ({
               scale={0.02}
               rotation={{ x: Math.PI }}
               onInit={() => console.log('Firefox проинициализирован')}
+              onClick={() => console.log('Клик по лисе')}
             >
               <ExtrudeGeometry
                 svg={this.svg}

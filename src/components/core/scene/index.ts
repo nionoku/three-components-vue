@@ -2,7 +2,8 @@ import {
   defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
 import {
-  Color, ColorRepresentation, Fog, FogBase, Scene,
+  AxesHelper,
+  Color, ColorRepresentation, Fog, Scene,
 } from 'three';
 import { RenderEmitter } from '@/utils/emitter';
 import { Object3DComponent } from '@/types/object3d';
@@ -19,6 +20,7 @@ interface Props {
       far: number
     }
   }
+  axesHelper?: number
 }
 
 export type SceneComponent = Pick<Scene, 'isScene'> & Object3DComponent
@@ -30,11 +32,16 @@ export default defineComponent({
       type: Object as PropType<Props['paramaters']>,
       default: null,
     },
+    axesHelper: {
+      type: Number,
+      default: undefined,
+    },
   },
   emits: {
     ...useInitEventEmits<Scene>(),
   },
   setup(props, { emit, expose }) {
+    let helper: AxesHelper | null = null;
     const scene: Scene = new Scene();
     // emit init action
     emit('init', scene);
@@ -66,11 +73,25 @@ export default defineComponent({
         RenderEmitter.dispatchEvent({ type: 'start-rendering' });
       }
     });
+    const helperWatcherCanceler = watch(() => props.axesHelper, (value) => {
+      if (value) {
+        helper = new AxesHelper(value);
+        scene.add(helper);
+      } else if (helper) {
+        scene.remove(helper);
+        helper.dispose();
+        helper = null;
+      }
+    }, { immediate: true });
 
     onBeforeUnmount(() => {
       // cancel watch for parameters changed
       unsubscribeParametersWatch();
 
+      helperWatcherCanceler();
+
+      helper?.removeFromParent();
+      helper?.dispose();
       scene.removeFromParent();
     });
 
