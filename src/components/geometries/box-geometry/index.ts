@@ -8,7 +8,7 @@ import {
 
 export type BoxGeometryComponent = Pick<BoxGeometry, 'isBufferGeometry'>
 
-const createGeometry = (parameters: Partial<BoxGeometry['parameters']>) => {
+const createGeometry = (parameters?: Partial<BoxGeometry['parameters']>) => {
   const geometry = new BoxGeometry(
     parameters?.width,
     parameters?.height,
@@ -26,17 +26,18 @@ export default defineComponent({
   props: {
     parameters: {
       type: Object as PropType<Partial<BoxGeometry['parameters']>>,
-      default: null,
+      default: undefined,
     },
   },
   emits: {
     ...useInitEventEmits<BoxGeometry>(),
   },
   setup(props, { emit, expose }) {
+    const geometryFactory = () => createGeometry({ ...props.parameters });
     const {
       geometry,
       geometryParametersChangedCallback,
-    } = useGeometry(null, () => createGeometry(props.parameters));
+    } = useGeometry(null, geometryFactory);
     // emit init action
     emit('init', geometry);
 

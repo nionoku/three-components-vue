@@ -4,7 +4,7 @@ import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
 import {
-  BoxHelper, BufferGeometry, Color, LineBasicMaterial, Material, Mesh,
+  BoxHelper, BufferGeometry, LineBasicMaterial, Material, Mesh,
 } from 'three';
 import {
   defineComponent, onBeforeUnmount, watch,

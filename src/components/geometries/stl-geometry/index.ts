@@ -18,6 +18,14 @@ interface Emits {
   error: (event: ErrorEvent) => void,
 }
 
+function useStlLoaderEmits() {
+  return {
+    load: (geometry: BufferGeometry) => true,
+    progress: (event: ProgressEvent) => true,
+    error: (event: ErrorEvent) => true,
+  };
+}
+
 export type StlGeometryComponent = Pick<BufferGeometry, 'isBufferGeometry'>
 
 export default defineComponent({
@@ -33,9 +41,7 @@ export default defineComponent({
     },
   },
   emits: {
-    load: (geometry: BufferGeometry) => true,
-    progress: (event: ProgressEvent) => true,
-    error: (event: ErrorEvent) => true,
+    ...useStlLoaderEmits(),
     ...useInitEventEmits<BufferGeometry>(),
   },
   async setup(props, { emit, expose }) {

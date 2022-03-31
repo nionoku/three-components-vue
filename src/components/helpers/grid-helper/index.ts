@@ -15,7 +15,7 @@ type GridHelperConstructorParameters = {
   color2: ColorRepresentation
 }
 
-const createGridHelper = (parameters: Partial<GridHelperConstructorParameters>) => {
+const createGridHelper = (parameters?: GridHelperConstructorParameters) => {
   const gridHelper = new GridHelper(
     parameters?.size,
     parameters?.divisions,
@@ -31,8 +31,8 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
     parameters: {
-      type: Object as PropType<Partial<GridHelperConstructorParameters>>,
-      default: null,
+      type: Object as PropType<GridHelperConstructorParameters>,
+      default: undefined,
     },
   },
   emits: {

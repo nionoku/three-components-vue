@@ -83,7 +83,7 @@ export default defineComponent({
   props: {
     parameters: {
       type: Object as PropType<Props['paramaters']>,
-      default: null,
+      default: undefined,
     },
     autoplay: {
       type: Boolean as PropType<Props['autoplay']>,

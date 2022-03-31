@@ -13,7 +13,7 @@ export type ExtrudeGeometryComponent = Pick<ExtrudeGeometry, 'isBufferGeometry'>
 
 function createGeometry(
   shape?: Shape | Array<Shape>,
-  parameters?: Partial<ExtrudeGeometryOptions>,
+  parameters?: ExtrudeGeometryOptions,
 ) {
   const geometry = new ExtrudeGeometry(shape, parameters);
   return geometry;
@@ -47,11 +47,12 @@ export default defineComponent({
 
       return props.shape;
     })();
+    const geometryFactory = () => createGeometry(shape, props.parameters);
 
     const {
       geometry,
       geometryParametersChangedCallback,
-    } = useGeometry(null, () => createGeometry(shape, props.parameters));
+    } = useGeometry(null, geometryFactory);
     // emit init action
     emit('init', geometry);
 
