@@ -30,13 +30,6 @@ export default defineComponent({
       controls.update();
     });
 
-    const spacePannignWatcherCanceler = watch(
-      () => props.screenSpacePanning,
-      (value) => { controls.screenSpacePanning = value; },
-    );
-
-    onBeforeUnmount(() => {
-      spacePannignWatcherCanceler();
-    });
+    watch(() => props.screenSpacePanning, (value) => { controls.screenSpacePanning = value; });
   },
 });

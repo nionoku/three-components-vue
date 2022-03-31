@@ -11,6 +11,8 @@ import {
 import { Group, MaterialsGroup } from '@/components/groups';
 import StlGeometry from '@/components/geometries/stl-geometry';
 import ExtrudeGeometry from '@/components/geometries/extrude-geometry';
+import { StandartMaterial } from '@/components/materials';
+import { AmbientLight } from '@/components/lights';
 
 export default {
   title: 'Actions/Click',
@@ -99,9 +101,12 @@ const Template = () => ({
               <StlGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
               <BasicMaterial parameters={{ color: this.boxColor }} />
             </Mesh>
+
+            <AmbientLight parameters={{ intensity: 0.8 }} />
+
             <Mesh position={{ x: 2 }} rotation={{ y: this.boxRotation }}>
               <BoxGeometry />
-              <BasicMaterial parameters={{ color: 'orange' }} />
+              <StandartMaterial parameters={{ color: 'orange' }} />
             </Mesh>
             <Mesh
               position={{ x: 3.5, z: 0.04, y: 1 }}

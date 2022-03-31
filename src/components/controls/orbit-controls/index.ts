@@ -36,19 +36,7 @@ export default defineComponent({
       controls.update();
     });
 
-    const spacePannignWatcherCanceler = watch(
-      () => props.screenSpacePanning,
-      (value) => { controls.screenSpacePanning = value; },
-    );
-
-    const enabledWatcherCanceler = watch(
-      () => props.enabled,
-      (value) => { controls.enabled = value; },
-    );
-
-    onBeforeUnmount(() => {
-      spacePannignWatcherCanceler();
-      enabledWatcherCanceler();
-    });
+    watch(() => props.screenSpacePanning, (value) => { controls.screenSpacePanning = value; });
+    watch(() => props.enabled, (value) => { controls.enabled = value; });
   },
 });

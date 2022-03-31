@@ -75,7 +75,7 @@ export default defineComponent({
         RenderEmitter.dispatchEvent({ type: 'start-rendering' });
       }
     });
-    const helperWatcherCanceler = watch(() => props.helper, (value) => {
+    watch(() => props.helper, (value) => {
       if (value) {
         scene.add(helper);
       } else {
@@ -86,8 +86,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       // cancel watch for parameters changed
       unsubscribeParametersWatch();
-
-      helperWatcherCanceler();
 
       helper.removeFromParent();
       helper.dispose();

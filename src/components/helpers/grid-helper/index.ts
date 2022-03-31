@@ -58,29 +58,12 @@ export default defineComponent({
     const {
       applyPosition, applyRotation, applyScale, applyLookAt,
     } = useTransforms(gridHelper);
-    const positionWatcherCanceler = watch(() => props.position, applyPosition, {
-      deep: true,
-      immediate: true,
-    });
-    const rotationWatcherCanceler = watch(() => props.rotation, applyRotation, {
-      deep: true,
-      immediate: true,
-    });
-    const scaleWatcherCanceler = watch(() => props.scale, applyScale, {
-      deep: true,
-      immediate: true,
-    });
-    const lookAtWatcherCanceler = watch(() => props.lookAt, applyLookAt, {
-      deep: true,
-      immediate: true,
-    });
+    watch(() => props.position, applyPosition, { deep: true, immediate: true });
+    watch(() => props.rotation, applyRotation, { deep: true, immediate: true });
+    watch(() => props.scale, applyScale, { deep: true, immediate: true });
+    watch(() => props.lookAt, applyLookAt, { deep: true, immediate: true });
 
     onBeforeUnmount(() => {
-      positionWatcherCanceler();
-      rotationWatcherCanceler();
-      scaleWatcherCanceler();
-      lookAtWatcherCanceler();
-
       gridHelper.removeFromParent();
     });
   },

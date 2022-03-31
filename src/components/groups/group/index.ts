@@ -40,23 +40,23 @@ export default defineComponent({
     const {
       applyPosition, applyRotation, applyScale, applyLookAt,
     } = useTransforms(group);
-    const positionWatcherCanceler = watch(() => props.position, (position) => {
+    watch(() => props.position, (position) => {
       applyPosition(position);
       updateHelper();
     }, { deep: true, immediate: true });
-    const rotationWatcherCanceler = watch(() => props.rotation, (rotation) => {
+    watch(() => props.rotation, (rotation) => {
       applyRotation(rotation);
       updateHelper();
     }, { deep: true, immediate: true });
-    const scaleWatcherCanceler = watch(() => props.scale, (scale) => {
+    watch(() => props.scale, (scale) => {
       applyScale(scale);
       updateHelper();
     }, { deep: true, immediate: true });
-    const lookAtWatcherCanceler = watch(() => props.lookAt, (lookAt) => {
+    watch(() => props.lookAt, (lookAt) => {
       applyLookAt(lookAt);
       updateHelper();
     }, { deep: true, immediate: true });
-    const helperWatcherCanceler = watch(() => props.helper, (value) => {
+    watch(() => props.helper, (value) => {
       if (value) {
         (helper.material as LineBasicMaterial).color.set(value);
         object3D.add(helper);
@@ -73,13 +73,6 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       unsubscribeFromPointerEvents();
-
-      positionWatcherCanceler();
-      rotationWatcherCanceler();
-      scaleWatcherCanceler();
-      lookAtWatcherCanceler();
-
-      helperWatcherCanceler();
 
       helper.removeFromParent();
       group.removeFromParent();
