@@ -11,6 +11,8 @@ import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useParentRenderer } from '@/composes/parent/renderer';
 import { useInitEventEmits } from '@/composes/events/init';
 
+const DEFAULT_HELPER_SIZE = 5;
+
 interface Props {
   paramaters?: {
     background?: ColorRepresentation
@@ -20,7 +22,7 @@ interface Props {
       far: number
     }
   }
-  axesHelper?: number
+  helper?: number
 }
 
 export type SceneComponent = Pick<Scene, 'isScene'> & Object3DComponent
@@ -32,16 +34,16 @@ export default defineComponent({
       type: Object as PropType<Props['paramaters']>,
       default: null,
     },
-    axesHelper: {
-      type: Number,
-      default: undefined,
+    helper: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: {
     ...useInitEventEmits<Scene>(),
   },
   setup(props, { emit, expose }) {
-    let helper: AxesHelper | null = null;
+    const helper = new AxesHelper(DEFAULT_HELPER_SIZE);
     const scene: Scene = new Scene();
     // emit init action
     emit('init', scene);
@@ -73,14 +75,11 @@ export default defineComponent({
         RenderEmitter.dispatchEvent({ type: 'start-rendering' });
       }
     });
-    const helperWatcherCanceler = watch(() => props.axesHelper, (value) => {
+    const helperWatcherCanceler = watch(() => props.helper, (value) => {
       if (value) {
-        helper = new AxesHelper(value);
         scene.add(helper);
-      } else if (helper) {
+      } else {
         scene.remove(helper);
-        helper.dispose();
-        helper = null;
       }
     }, { immediate: true });
 
@@ -90,8 +89,8 @@ export default defineComponent({
 
       helperWatcherCanceler();
 
-      helper?.removeFromParent();
-      helper?.dispose();
+      helper.removeFromParent();
+      helper.dispose();
       scene.removeFromParent();
     });
 

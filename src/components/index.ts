@@ -4,3 +4,4 @@ export * from './geometries';
 export * from './materials';
 export * from './controls';
 export * from './helpers';
+export * from './groups';

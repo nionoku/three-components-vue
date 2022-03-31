@@ -8,7 +8,7 @@ import {
   Mesh,
   OrbitControls,
 } from '@/components';
-import { MaterialsGroup } from '@/components/groups';
+import { Group, MaterialsGroup } from '@/components/groups';
 import StlGeometry from '@/components/geometries/stl-geometry';
 import ExtrudeGeometry from '@/components/geometries/extrude-geometry';
 
@@ -23,6 +23,7 @@ const Template = () => ({
     const boxColor = ref(0x000);
     const boxWidth = ref(1);
     const orbitControlsEnabled = ref(true);
+    const boxRotation = ref(Math.PI);
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="77.42" height="79.97" version="1.1" viewBox="0 0 77.42 79.97">
     <path d="m38.82 33.79c-0.064 0.964-3.47 4.289-4.661 4.289-11.02 0-12.81 6.667-12.81 6.667 0.488 5.614 4.4 10.24 9.129 12.68 0.216 0.112 0.435 0.213 0.654 0.312q0.569 0.252 1.138 0.466a17.24 17.24 0 0 0 5.043 0.973c19.32 0.906 23.06-23.1 9.119-30.07a13.38 13.38 0 0 1 9.345 2.269 19.56 19.56 0 0 0-16.98-9.917c-0.46 0-0.91 0.038-1.362 0.069a19.39 19.39 0 0 0-10.67 4.111c0.591 0.5 1.258 1.168 2.663 2.553 2.63 2.591 9.375 5.275 9.39 5.59z" />
     </svg>`;
@@ -57,16 +58,20 @@ const Template = () => ({
       svg,
       svg1,
       svg2,
+      boxRotation,
     };
   },
   render() {
     return (
       <div style={{ width: '100%', height: '500px' }}>
-        <Renderer parameters={{ antialias: true }}>
+        <Renderer
+          parameters={{ antialias: true }}
+          onBeforeRender={({ delta }) => { this.boxRotation += 1 * delta; } }
+        >
           <PerspectiveCamera position={{ z: 15, y: 5 }} lookAt={0}>
             <OrbitControls />
           </PerspectiveCamera>
-          <Scene axesHelper={1} parameters={{
+          <Scene helper parameters={{
             background: this.background,
             // fog: { color: this.background, near: 25, far: 50 },
           }}>
@@ -80,7 +85,7 @@ const Template = () => ({
                 <BasicMaterial parameters={{ color: this.boxColor }} />
                 <BasicMaterial parameters={{ color: 'blue' }} />
                 <BasicMaterial parameters={{ color: 'green' }} />
-                <BasicMaterial parameters={{ color: 'white' }} />
+                <BasicMaterial parameters={{ color: 'red' }} />
                 <BasicMaterial parameters={{ color: 'aqua' }} />
                 <BasicMaterial parameters={{ color: 'teal' }} />
               </MaterialsGroup>
@@ -94,7 +99,7 @@ const Template = () => ({
               <StlGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
               <BasicMaterial parameters={{ color: this.boxColor }} />
             </Mesh>
-            <Mesh position={{ x: 2 }}>
+            <Mesh position={{ x: 2 }} rotation={{ y: this.boxRotation }}>
               <BoxGeometry />
               <BasicMaterial parameters={{ color: 'orange' }} />
             </Mesh>
@@ -125,11 +130,21 @@ const Template = () => ({
               helper='blue'
             >
               <ExtrudeGeometry
-              svg={this.svg2}
-              parameters={{ steps: 3, depth: 12, bevelThickness: 0.5 }}
-            />
+                svg={this.svg2}
+                parameters={{ steps: 3, depth: 12, bevelThickness: 0.5 }}
+              />
               <BasicMaterial parameters={{ color: '#fa3153' }} />
             </Mesh>
+            <Group position={{ x: -4 }} helper='red'>
+              <Mesh position={{ x: 0.5, y: 0.5, z: -0.25 }}>
+                <BoxGeometry />
+                <BasicMaterial parameters={{ color: 'blue' }} />
+              </Mesh>
+              <Mesh position={{ x: -0.5, y: -0.5, z: 0.25 }}>
+                <BoxGeometry />
+                <BasicMaterial parameters={{ color: 'gray' }} />
+              </Mesh>
+            </Group>
           </Scene>
         </Renderer>
       </div>

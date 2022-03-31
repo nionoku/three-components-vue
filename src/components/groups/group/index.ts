@@ -4,16 +4,15 @@ import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
 import {
-  BoxHelper, BufferGeometry, Color, LineBasicMaterial, Material, Mesh,
+  Box3,
+  BoxHelper, Group, LineBasicMaterial, Object3D, Vector3,
 } from 'three';
 import {
   defineComponent, onBeforeUnmount, watch,
 } from 'vue';
+import { Object3DComponent } from '@/types/object3d';
 
-export interface MeshComponent extends Pick<Mesh, 'isMesh'> {
-  setGeometry(geometry: BufferGeometry): void
-  setMaterial(material: Material | Array<Material>): void
-}
+export type GroupComponent = Object3DComponent & Pick<Group, 'isGroup'>
 
 export default defineComponent({
   extends: useRenderWithDefaultSlot,
@@ -26,22 +25,22 @@ export default defineComponent({
   },
   emits: {
     ...usePointerEventsEmits,
-    ...useInitEventEmits<Mesh>(),
+    ...useInitEventEmits<Group>(),
   },
   setup(props, { emit, expose }) {
-    const mesh = new Mesh();
-    const helper = new BoxHelper(mesh);
+    const group = new Group();
+    const helper = new BoxHelper(group);
     const updateHelper = () => setTimeout(() => helper.update(), 0);
     // emit init action
-    emit('init', mesh);
+    emit('init', group);
 
-    const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });
-    object3D.add(mesh);
+    const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Group must be child of Object3D' });
+    object3D.add(group);
 
     // supports transforms
     const {
       applyPosition, applyRotation, applyScale, applyLookAt,
-    } = useTransforms(mesh);
+    } = useTransforms(group);
     const positionWatcherCanceler = watch(() => props.position, (position) => {
       applyPosition(position);
       updateHelper();
@@ -70,7 +69,7 @@ export default defineComponent({
     const {
       subscribe: subscribeToPointerEvents,
       unsubscribe: unsubscribeFromPointerEvents,
-    } = usePointerEvents(mesh, emit as PointerEventsEmit);
+    } = usePointerEvents(group, emit as PointerEventsEmit);
     subscribeToPointerEvents();
 
     onBeforeUnmount(() => {
@@ -84,17 +83,23 @@ export default defineComponent({
       helperWatcherCanceler();
 
       helper.removeFromParent();
-      mesh.removeFromParent();
+      group.removeFromParent();
     });
 
-    const exposed: MeshComponent = {
-      isMesh: true,
-      setGeometry: (geometry) => {
-        mesh.geometry = geometry;
+    const exposed: GroupComponent = {
+      isGroup: true,
+      isObject3D: true,
+      add(objects) {
+        group.add(objects);
         updateHelper();
+
+        return group;
       },
-      setMaterial: (material) => {
-        mesh.material = material;
+      remove(objects) {
+        group.remove(objects);
+        updateHelper();
+
+        return group;
       },
     };
     // expose public instances
