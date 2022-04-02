@@ -7,12 +7,14 @@ import {
   Scene,
   Mesh,
   OrbitControls,
+  Group,
+  MaterialsGroup,
+  STLGeometry,
+  ExtrudeGeometry,
+  StandartMaterial,
+  AmbientLight,
+  PlaneGeometry,
 } from '@/components';
-import { Group, MaterialsGroup } from '@/components/groups';
-import StlGeometry from '@/components/geometries/stl-geometry';
-import ExtrudeGeometry from '@/components/geometries/extrude-geometry';
-import { StandartMaterial } from '@/components/materials';
-import { AmbientLight } from '@/components/lights';
 
 export default {
   title: 'Actions/Click',
@@ -78,6 +80,10 @@ const Template = () => ({
             // fog: { color: this.background, near: 25, far: 50 },
           }}>
             {/* <GridHelper parameters={{ divisions: 100 }} /> */}
+            <Mesh position={{ y: -1 }} rotation={{ x: Math.PI * 1.5 }}>
+              <PlaneGeometry parameters={{ width: 5, height: 5 }} />
+              <BasicMaterial parameters={{ color: 0xB0B0B0 }} />
+            </Mesh>
             <Mesh
               onClick={({ intersects }) => console.log('Клик по кубу', intersects)}
               onClickGlobal={({ intersects }) => console.log('Клик мимо куба', intersects)}
@@ -98,7 +104,7 @@ const Template = () => ({
               rotation={{ x: Math.PI * 1.5 }}
               helper="blue"
             >
-              <StlGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
+              <STLGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
               <BasicMaterial parameters={{ color: this.boxColor }} />
             </Mesh>
 
