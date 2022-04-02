@@ -14,7 +14,11 @@ import {
   StandartMaterial,
   AmbientLight,
   PlaneGeometry,
+  DirectionalLight,
 } from '@/components';
+import {
+  Mesh as ThreeMesh, MeshStandardMaterial,
+} from 'three';
 
 export default {
   title: 'Actions/Click',
@@ -24,7 +28,7 @@ export default {
 const Template = () => ({
   setup() {
     const background = ref(0xF0F0F0);
-    const boxColor = ref(0x000);
+    const boxColor = ref(0x5172F1);
     const boxWidth = ref(1);
     const orbitControlsEnabled = ref(true);
     const boxRotation = ref(Math.PI);
@@ -50,6 +54,7 @@ const Template = () => ({
     <path d="m74.62 26.83c-1.684-4.052-5.1-8.427-7.775-9.81a40.27 40.27 0 0 1 3.925 11.76l7e-3 0.065c-4.382-10.92-11.81-15.33-17.88-24.92-0.307-0.485-0.614-0.971-0.913-1.484-0.171-0.293-0.308-0.557-0.427-0.8a7.053 7.053 0 0 1-0.578-1.535 0.1 0.1 0 0 0-0.088-0.1 0.138 0.138 0 0 0-0.073 0c-5e-3 0-0.013 9e-3 -0.019 0.011s-0.019 0.011-0.028 0.015l0.015-0.026c-9.735 5.7-13.04 16.25-13.34 21.53 0.452-0.031 0.9-0.069 1.362-0.069a19.56 19.56 0 0 1 16.98 9.917 13.38 13.38 0 0 0-9.345-2.269c13.94 6.97 10.2 30.97-9.119 30.07a17.24 17.24 0 0 1-5.043-0.973q-0.569-0.213-1.138-0.466c-0.219-0.1-0.438-0.2-0.654-0.312l0.027 0.017q-0.282-0.135-0.564-0.281c0.181 0.087 0.351 0.181 0.537 0.264-4.733-2.446-8.641-7.07-9.129-12.68 0 0 1.789-6.667 12.81-6.667 1.191 0 4.6-3.325 4.661-4.289-0.015-0.315-6.76-3-9.39-5.59-1.405-1.385-2.072-2.052-2.663-2.553a11.59 11.59 0 0 0-1-0.758 17.97 17.97 0 0 1-0.109-9.473 28.7 28.7 0 0 0-9.329 7.21h-0.018c-1.536-1.947-1.428-8.367-1.34-9.708a6.928 6.928 0 0 0-1.294 0.687 28.22 28.22 0 0 0-3.788 3.245 33.84 33.84 0 0 0-3.623 4.347v6e-3 -7e-3a32.73 32.73 0 0 0-5.2 11.74l-0.052 0.256c-0.073 0.341-0.4 2.073-0.447 2.445v0a45.09 45.09 0 0 0-0.572 5.403v0.2a38.76 38.76 0 0 0 76.95 6.554c0.065-0.5 0.118-0.995 0.176-1.5a39.86 39.86 0 0 0-2.514-19.47zm-3.845 1.991 7e-3 0.041z" />
     </svg>
     `;
+    const target = ref();
 
     // setInterval(() => { boxWidth.value += 0.01; }, 50);
     setInterval(() => { boxColor.value += 10; }, 50);
@@ -63,6 +68,7 @@ const Template = () => ({
       svg1,
       svg2,
       boxRotation,
+      target,
     };
   },
   render() {
@@ -70,7 +76,7 @@ const Template = () => ({
       <div style={{ width: '100%', height: '500px' }}>
         <Renderer
           parameters={{ antialias: true }}
-          onBeforeRender={({ delta }) => { this.boxRotation += 1 * delta; } }
+          // onBeforeRender={({ delta }) => { this.boxRotation += 1 * delta; } }
         >
           <PerspectiveCamera position={{ z: 15, y: 5 }} lookAt={0}>
             <OrbitControls />
@@ -103,14 +109,29 @@ const Template = () => ({
               scale={0.05}
               rotation={{ x: Math.PI * 1.5 }}
               helper="blue"
+              onInit={(mesh) => { this.target = mesh; }}
             >
               <STLGeometry path='/robot.stl' onLoad={() => console.log('Робот загружен')} />
-              <BasicMaterial parameters={{ color: this.boxColor }} />
+              <StandartMaterial parameters={{ color: this.boxColor }} />
             </Mesh>
 
             <AmbientLight parameters={{ intensity: 0.8 }} />
 
-            <Mesh position={{ x: 2 }} rotation={{ y: this.boxRotation }}>
+            <DirectionalLight
+              parameters={{ color: 'aqua', intensity: 1 }}
+              position={{ y: 6, x: -5 }}
+              target={this.target}
+              helper='#1ea7fd'
+            />
+
+            <Mesh
+              position={{ x: 2 }}
+              rotation={{ y: this.boxRotation }}
+              onMousemove={({ intersects }) => {
+                ((intersects[0].object as ThreeMesh).material as MeshStandardMaterial)
+                  .setValues({ color: 'red' });
+              }}
+            >
               <BoxGeometry />
               <StandartMaterial parameters={{ color: 'orange' }} />
             </Mesh>
