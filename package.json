@@ -4,6 +4,9 @@
   "main": "lib/index.common.js",
   "module": "lib/index.umd.min.js",
   "types": "lib/index.d.ts",
+  "files": [
+    "lib/*"
+  ],
   "scripts": {
     "deploy": "npm run bundle && npm publish",
     "bundle": "npm run lint && npm run generate:bundle && npm run generate:declarations && rm lib/demo.html",
