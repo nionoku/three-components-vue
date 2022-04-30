@@ -15,9 +15,10 @@ const DEFAULT_HELPER_SIZE = 5;
 
 interface Props {
   paramaters?: {
+    name?: string
     background?: ColorRepresentation
     fog?: {
-      color: ColorRepresentation,
+      color: ColorRepresentation
       near: number
       far: number
     }
@@ -49,7 +50,7 @@ export default defineComponent({
     emit('init', scene);
 
     // watch for parameters changed
-    const unsubscribeParametersWatch = watch(
+    watch(
       () => props.parameters,
       (value) => {
         if (value?.background) {
@@ -58,6 +59,10 @@ export default defineComponent({
 
         if (value?.fog) {
           scene.fog = new Fog(new Color(value.fog.color), value.fog.near, value.fog.far);
+        }
+
+        if (value?.name) {
+          scene.name = value.name;
         }
       },
       { deep: true, immediate: true },
@@ -84,9 +89,6 @@ export default defineComponent({
     }, { immediate: true });
 
     onBeforeUnmount(() => {
-      // cancel watch for parameters changed
-      unsubscribeParametersWatch();
-
       helper.removeFromParent();
       helper.dispose();
       scene.removeFromParent();

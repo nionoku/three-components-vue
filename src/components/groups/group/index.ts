@@ -7,7 +7,7 @@ import {
   BoxHelper, Group, LineBasicMaterial,
 } from 'three';
 import {
-  defineComponent, onBeforeUnmount, watch,
+  defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
 import { Object3DComponent } from '@/types/object3d';
 
@@ -17,6 +17,10 @@ export default defineComponent({
   extends: useRenderWithDefaultSlot,
   props: {
     ...useTransformsProps,
+    parameters: {
+      type: Object as PropType<Pick<Group, 'name'>>,
+      default: undefined,
+    },
     helper: {
       type: [String, Number],
       default: undefined,
@@ -36,6 +40,16 @@ export default defineComponent({
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Group must be child of Object3D' });
     object3D.add(group);
 
+    // watch for parameters changed
+    watch(
+      () => props.parameters,
+      (value) => {
+        if (value?.name) {
+          group.name = value.name;
+        }
+      },
+      { deep: true, immediate: true },
+    );
     // supports transforms
     const {
       applyPosition, applyRotation, applyScale, applyLookAt,

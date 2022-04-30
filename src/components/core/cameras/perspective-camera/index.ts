@@ -11,7 +11,7 @@ import {
 
 interface Props {
   // TODO (2022.03.27): Remove aspect? or watch by resize canvas
-  paramaters?: Partial<Pick<PerspectiveCamera, 'fov' | 'near' | 'far'>>
+  paramaters?: Partial<Pick<PerspectiveCamera, 'fov' | 'near' | 'far'> & Pick<PerspectiveCamera, 'name'>>
 }
 
 export type PerspectiveCameraComponent = CameraComponent & Pick<PerspectiveCamera, 'isPerspectiveCamera'>
@@ -49,6 +49,10 @@ export default defineComponent({
 
       if (value?.near) {
         camera.near = value.near;
+      }
+
+      if (value?.name) {
+        camera.name = value.name;
       }
 
       camera.updateProjectionMatrix();

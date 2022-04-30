@@ -21,6 +21,7 @@ export default defineComponent({
       type: Object as PropType<{
         color?: ColorRepresentation
         intensity?: number
+        name?: AmbientLight['name']
       }>,
       default: undefined,
     },
@@ -39,8 +40,17 @@ export default defineComponent({
     object3D.add(light);
 
     watch(() => props.parameters, (parameters) => {
-      light.color = new Color(parameters?.color);
-      light.intensity = parameters?.intensity || 1;
+      if (parameters?.color) {
+        light.color = new Color(parameters.color);
+      }
+
+      if (parameters?.intensity) {
+        light.intensity = parameters.intensity;
+      }
+
+      if (parameters?.name) {
+        light.name = parameters.name;
+      }
     }, { deep: true });
     // const helperWatcherCanceler = watch(() => props.helper, (value) => {
     //   if (value) {

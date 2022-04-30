@@ -7,7 +7,7 @@ import {
   BoxHelper, BufferGeometry, LineBasicMaterial, Material, Mesh,
 } from 'three';
 import {
-  defineComponent, onBeforeUnmount, watch,
+  defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
 
 export interface MeshComponent extends Pick<Mesh, 'isMesh'> {
@@ -19,6 +19,10 @@ export default defineComponent({
   extends: useRenderWithDefaultSlot,
   props: {
     ...useTransformsProps,
+    parameters: {
+      type: Object as PropType<Pick<Mesh, 'name'>>,
+      default: undefined,
+    },
     helper: {
       type: [String, Number],
       default: undefined,
@@ -38,6 +42,16 @@ export default defineComponent({
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });
     object3D.add(mesh);
 
+    // watch for parameters changed
+    watch(
+      () => props.parameters,
+      (value) => {
+        if (value?.name) {
+          mesh.name = value.name;
+        }
+      },
+      { deep: true, immediate: true },
+    );
     // supports transforms
     const {
       applyPosition, applyRotation, applyScale, applyLookAt,
