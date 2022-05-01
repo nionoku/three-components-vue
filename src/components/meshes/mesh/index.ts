@@ -21,7 +21,7 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
     parameters: {
-      type: Object as PropType<Pick<Mesh, 'name' | 'userData'>>,
+      type: Object as PropType<Partial<Pick<Mesh, 'name' | 'userData'>>>,
       default: undefined,
     },
     helper: {
