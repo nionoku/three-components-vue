@@ -10,6 +10,7 @@ import {
   defineComponent, onBeforeUnmount, PropType, watch,
 } from 'vue';
 import { Object3DComponent } from '@/types/object3d';
+import { assignUserData } from '@/utils/user-data';
 
 export type GroupComponent = Object3DComponent & Pick<Group, 'isGroup'>
 
@@ -18,7 +19,7 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
     parameters: {
-      type: Object as PropType<Pick<Group, 'name'>>,
+      type: Object as PropType<Pick<Group, 'name' | 'userData'>>,
       default: undefined,
     },
     helper: {
@@ -46,6 +47,10 @@ export default defineComponent({
       (value) => {
         if (value?.name) {
           group.name = value.name;
+        }
+
+        if (value?.userData) {
+          assignUserData(group, value.userData);
         }
       },
       { deep: true, immediate: true },

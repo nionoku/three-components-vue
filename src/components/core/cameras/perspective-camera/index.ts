@@ -4,14 +4,16 @@ import { useParentRenderer } from '@/composes/parent/renderer';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
 import { ResizeEmitter } from '@/utils/emitter';
+import { assignUserData } from '@/utils/user-data';
 import { PerspectiveCamera } from 'three';
 import {
-  defineComponent, onBeforeUnmount, PropType, watch,
+  defineComponent, PropType, watch,
 } from 'vue';
 
 interface Props {
   // TODO (2022.03.27): Remove aspect? or watch by resize canvas
-  paramaters?: Partial<Pick<PerspectiveCamera, 'fov' | 'near' | 'far'> & Pick<PerspectiveCamera, 'name'>>
+  paramaters?: Partial<
+    Pick<PerspectiveCamera, 'fov' | 'near' | 'far' | 'name' | 'userData'>>
 }
 
 export type PerspectiveCameraComponent = CameraComponent & Pick<PerspectiveCamera, 'isPerspectiveCamera'>
@@ -53,6 +55,10 @@ export default defineComponent({
 
       if (value?.name) {
         camera.name = value.name;
+      }
+
+      if (value?.userData) {
+        assignUserData(camera, value.userData);
       }
 
       camera.updateProjectionMatrix();

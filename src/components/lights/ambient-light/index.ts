@@ -1,12 +1,11 @@
 import { LightComponent } from '@/components/lights/light';
 import { useInitEventEmits } from '@/composes/events/init';
-import { PointerEventsEmit, usePointerEvents, usePointerEventsEmits } from '@/composes/events/pointer';
 import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
-import { useTransforms, useTransformsProps } from '@/composes/transform';
+import { assignUserData } from '@/utils/user-data';
 import {
   AmbientLight,
-  BoxHelper, Color, ColorRepresentation, LineBasicMaterial, Mesh,
+  Color, ColorRepresentation,
 } from 'three';
 import {
   defineComponent, onBeforeUnmount, PropType, watch,
@@ -20,9 +19,7 @@ export default defineComponent({
     parameters: {
       type: Object as PropType<{
         color?: ColorRepresentation
-        intensity?: number
-        name?: AmbientLight['name']
-      }>,
+      } & Pick<AmbientLight, 'intensity' | 'name' | 'userData'>>,
       default: undefined,
     },
   },
@@ -39,17 +36,21 @@ export default defineComponent({
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Light must be child of Object3D' });
     object3D.add(light);
 
-    watch(() => props.parameters, (parameters) => {
-      if (parameters?.color) {
-        light.color = new Color(parameters.color);
+    watch(() => props.parameters, (value) => {
+      if (value?.color) {
+        light.color = new Color(value.color);
       }
 
-      if (parameters?.intensity) {
-        light.intensity = parameters.intensity;
+      if (value?.intensity) {
+        light.intensity = value.intensity;
       }
 
-      if (parameters?.name) {
-        light.name = parameters.name;
+      if (value?.name) {
+        light.name = value.name;
+      }
+
+      if (value?.userData) {
+        assignUserData(light, value.userData);
       }
     }, { deep: true });
     // const helperWatcherCanceler = watch(() => props.helper, (value) => {

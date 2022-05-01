@@ -10,19 +10,19 @@ import { Object3DComponent } from '@/types/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useParentRenderer } from '@/composes/parent/renderer';
 import { useInitEventEmits } from '@/composes/events/init';
+import { assignUserData } from '@/utils/user-data';
 
 const DEFAULT_HELPER_SIZE = 5;
 
 interface Props {
   paramaters?: {
-    name?: string
     background?: ColorRepresentation
     fog?: {
       color: ColorRepresentation
       near: number
       far: number
     }
-  }
+  } & Partial<Pick<Scene, 'name' | 'userData'>>
   helper?: number
 }
 
@@ -63,6 +63,10 @@ export default defineComponent({
 
         if (value?.name) {
           scene.name = value.name;
+        }
+
+        if (value?.userData) {
+          assignUserData(scene, value.userData);
         }
       },
       { deep: true, immediate: true },

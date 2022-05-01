@@ -3,6 +3,7 @@ import { PointerEventsEmit, usePointerEvents, usePointerEventsEmits } from '@/co
 import { useParentObject3D } from '@/composes/parent/object3d';
 import { useRenderWithDefaultSlot } from '@/composes/render-with-default-slot';
 import { useTransforms, useTransformsProps } from '@/composes/transform';
+import { assignUserData } from '@/utils/user-data';
 import {
   BoxHelper, BufferGeometry, LineBasicMaterial, Material, Mesh,
 } from 'three';
@@ -20,7 +21,7 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
     parameters: {
-      type: Object as PropType<Pick<Mesh, 'name'>>,
+      type: Object as PropType<Pick<Mesh, 'name' | 'userData'>>,
       default: undefined,
     },
     helper: {
@@ -48,6 +49,10 @@ export default defineComponent({
       (value) => {
         if (value?.name) {
           mesh.name = value.name;
+        }
+
+        if (value?.userData) {
+          assignUserData(mesh, value.userData);
         }
       },
       { deep: true, immediate: true },
