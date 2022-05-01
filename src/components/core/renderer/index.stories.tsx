@@ -142,7 +142,7 @@ const Template = () => ({
               rotation={{ x: Math.PI }}
               onInit={() => console.log('Firefox проинициализирован')}
               onClick={() => console.log('Клик по лисе')}
-              onMount={(it) => {
+              onMounted={(it) => {
                 // setTimeout(() => {
                 const vec = new Vector3();
                 it.getWorldPosition(vec);
