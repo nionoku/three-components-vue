@@ -22,8 +22,7 @@ import WebGL from 'three/examples/jsm/capabilities/WebGL';
 import { useInitEventEmits } from '@/composes/events/init';
 
 interface Props {
-  paramaters?: Partial<Pick<WebGLRenderer, 'pixelRatio'>>
-    & Partial<Exclude<WebGLRendererParameters, 'canvas'>>
+  paramaters?: Partial<Exclude<WebGLRendererParameters, 'canvas'>>
   /**
    * Start rendering immediate
    */
@@ -39,10 +38,7 @@ export interface RendererComponent {
 
 function useRenderer(parameters: Props['paramaters']): WebGLRenderer {
   const renderer = new WebGLRenderer({ ...parameters });
-
-  if (parameters?.pixelRatio) {
-    renderer.setPixelRatio(parameters.pixelRatio);
-  }
+  renderer.setPixelRatio(window.devicePixelRatio);
 
   return renderer;
 }

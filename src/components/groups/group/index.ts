@@ -19,7 +19,7 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
     parameters: {
-      type: Object as PropType<Pick<Group, 'name' | 'userData'>>,
+      type: Object as PropType<Partial<Pick<Group, 'name' | 'userData'>>>,
       default: undefined,
     },
     helper: {

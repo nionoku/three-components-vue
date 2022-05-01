@@ -11,9 +11,7 @@ import {
 } from 'vue';
 
 interface Props {
-  // TODO (2022.03.27): Remove aspect? or watch by resize canvas
-  paramaters?: Partial<
-    Pick<PerspectiveCamera, 'fov' | 'near' | 'far' | 'name' | 'userData'>>
+  paramaters?: Partial<Pick<PerspectiveCamera, 'fov' | 'near' | 'far' | 'name' | 'userData'>>
 }
 
 export type PerspectiveCameraComponent = CameraComponent & Pick<PerspectiveCamera, 'isPerspectiveCamera'>
