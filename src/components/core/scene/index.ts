@@ -1,5 +1,5 @@
 import {
-  defineComponent, onBeforeUnmount, PropType, watch,
+  defineComponent, onBeforeUnmount, onMounted, PropType, watch,
 } from 'vue';
 import {
   AxesHelper,
@@ -48,6 +48,11 @@ export default defineComponent({
     const scene: Scene = new Scene();
     // emit init action
     emit('init', scene);
+
+    onMounted(() => {
+      // emit mount action
+      emit('mounted', scene);
+    });
 
     // watch for parameters changed
     watch(

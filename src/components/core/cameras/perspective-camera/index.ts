@@ -7,7 +7,7 @@ import { ResizeEmitter } from '@/utils/emitter';
 import { assignUserData } from '@/utils/user-data';
 import { PerspectiveCamera } from 'three';
 import {
-  defineComponent, PropType, watch,
+  defineComponent, onMounted, PropType, watch,
 } from 'vue';
 
 interface Props {
@@ -37,6 +37,12 @@ export default defineComponent({
     );
     // emit init action
     emit('init', camera);
+
+    onMounted(() => {
+      // emit mount action
+      emit('mounted', camera);
+    });
+
     // watch for parameters changed
     watch(() => props.parameters, (value) => {
       if (value?.fov) {

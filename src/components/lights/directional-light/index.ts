@@ -8,7 +8,7 @@ import {
   Color, ColorRepresentation, DirectionalLight, DirectionalLightHelper, Object3D, Vector3,
 } from 'three';
 import {
-  defineComponent, onBeforeUnmount, PropType, watch,
+  defineComponent, onBeforeUnmount, onMounted, PropType, watch,
 } from 'vue';
 
 export type DirectionalLightComponent = LightComponent & Pick<DirectionalLight, 'isDirectionalLight'>
@@ -40,6 +40,11 @@ export default defineComponent({
     const helper = new DirectionalLightHelper(light, undefined, props.helper);
     // emit init action
     emit('init', light);
+
+    onMounted(() => {
+      // emit mount action
+      emit('mounted', light);
+    });
 
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Light must be child of Object3D' });
     object3D.add(light);

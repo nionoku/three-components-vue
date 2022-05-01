@@ -8,7 +8,7 @@ import {
   Color, ColorRepresentation,
 } from 'three';
 import {
-  defineComponent, onBeforeUnmount, PropType, watch,
+  defineComponent, onBeforeUnmount, onMounted, PropType, watch,
 } from 'vue';
 
 export type AmbientLightComponent = LightComponent & Pick<AmbientLight, 'isAmbientLight'>
@@ -32,6 +32,11 @@ export default defineComponent({
     // const updateHelper = () => setTimeout(() => helper.update(), 0);
     // emit init action
     emit('init', light);
+
+    onMounted(() => {
+      // emit mount action
+      emit('mounted', light);
+    });
 
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Light must be child of Object3D' });
     object3D.add(light);

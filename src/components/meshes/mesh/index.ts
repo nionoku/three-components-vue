@@ -8,7 +8,7 @@ import {
   BoxHelper, BufferGeometry, LineBasicMaterial, Material, Mesh,
 } from 'three';
 import {
-  defineComponent, onBeforeUnmount, PropType, watch,
+  defineComponent, onBeforeUnmount, onMounted, PropType, watch,
 } from 'vue';
 
 export interface MeshComponent extends Pick<Mesh, 'isMesh'> {
@@ -39,6 +39,11 @@ export default defineComponent({
     const updateHelper = () => setTimeout(() => helper.update(), 0);
     // emit init action
     emit('init', mesh);
+
+    onMounted(() => {
+      // emit mount action
+      emit('mounted', mesh);
+    });
 
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Mesh must be child of Object3D' });
     object3D.add(mesh);

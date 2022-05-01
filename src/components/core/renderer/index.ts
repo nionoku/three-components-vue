@@ -99,6 +99,7 @@ export default defineComponent({
     const renderer: WebGLRenderer = useRenderer(props.parameters);
     // emit init action
     emit('init', renderer);
+
     let scene: Scene | null = null;
     let camera: Camera | null = null;
 
@@ -170,6 +171,8 @@ export default defineComponent({
       RenderEmitter.addEventListener('cancel-rendering', cancelRendering);
       // append canvas in html
       element.appendChild(renderer.domElement);
+      // emit mount action
+      emit('mounted', renderer);
       // emit renderer ready event
       RenderEmitter.dispatchEvent({ type: 'renderer-ready' });
 

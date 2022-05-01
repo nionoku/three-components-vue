@@ -7,7 +7,7 @@ import {
   BoxHelper, Group, LineBasicMaterial,
 } from 'three';
 import {
-  defineComponent, onBeforeUnmount, PropType, watch,
+  defineComponent, onBeforeUnmount, onMounted, PropType, watch,
 } from 'vue';
 import { Object3DComponent } from '@/types/object3d';
 import { assignUserData } from '@/utils/user-data';
@@ -37,6 +37,11 @@ export default defineComponent({
     const updateHelper = () => setTimeout(() => helper.update(), 0);
     // emit init action
     emit('init', group);
+
+    onMounted(() => {
+      // emit mount action
+      emit('mounted', group);
+    });
 
     const { object3D } = useParentObject3D(null, { invalidTypeMessage: 'Group must be child of Object3D' });
     object3D.add(group);

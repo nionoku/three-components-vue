@@ -17,7 +17,7 @@ import {
   DirectionalLight,
 } from '@/components';
 import {
-  Mesh as ThreeMesh, MeshStandardMaterial,
+  Mesh as ThreeMesh, MeshStandardMaterial, Vector3,
 } from 'three';
 
 export default {
@@ -142,6 +142,13 @@ const Template = () => ({
               rotation={{ x: Math.PI }}
               onInit={() => console.log('Firefox проинициализирован')}
               onClick={() => console.log('Клик по лисе')}
+              onMount={(it) => {
+                // setTimeout(() => {
+                const vec = new Vector3();
+                it.getWorldPosition(vec);
+                console.log({ ...it.position }, vec);
+                // }, 0);
+              }}
             >
               <ExtrudeGeometry
                 svg={this.svg}
