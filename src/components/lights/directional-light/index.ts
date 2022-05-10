@@ -69,8 +69,6 @@ export default defineComponent({
       if (value?.userData) {
         assignUserData(light, value.userData);
       }
-
-      light.visible = !!value?.visible;
     }, { deep: true });
 
     watch(() => props.helper, (value) => {

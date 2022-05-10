@@ -63,8 +63,6 @@ export default defineComponent({
         if (value?.userData) {
           assignUserData(mesh, value.userData);
         }
-
-        mesh.visible = !!value?.visible;
       },
       { deep: true, immediate: true },
     );

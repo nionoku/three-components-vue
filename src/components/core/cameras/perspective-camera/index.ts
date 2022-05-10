@@ -69,8 +69,6 @@ export default defineComponent({
         assignUserData(camera, value.userData);
       }
 
-      camera.visible = !!value?.visible;
-
       camera.updateProjectionMatrix();
     }, { deep: true });
 

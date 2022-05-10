@@ -61,8 +61,6 @@ export default defineComponent({
         if (value?.userData) {
           assignUserData(group, value.userData);
         }
-
-        group.visible = !!value?.visible;
       },
       { deep: true, immediate: true },
     );
