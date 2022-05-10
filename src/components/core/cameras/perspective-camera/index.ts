@@ -61,7 +61,7 @@ export default defineComponent({
         camera.name = value.name;
       }
 
-      if (value?.visible) {
+      if (typeof value?.visible === 'boolean') {
         camera.visible = value.visible;
       }
 

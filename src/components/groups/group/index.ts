@@ -54,7 +54,7 @@ export default defineComponent({
           group.name = value.name;
         }
 
-        if (value?.visible) {
+        if (typeof value?.visible === 'boolean') {
           group.visible = value.visible;
         }
 

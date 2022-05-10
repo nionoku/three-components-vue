@@ -56,7 +56,7 @@ export default defineComponent({
           mesh.name = value.name;
         }
 
-        if (value?.visible) {
+        if (typeof value?.visible === 'boolean') {
           mesh.visible = value.visible;
         }
 

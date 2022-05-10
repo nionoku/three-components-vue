@@ -62,7 +62,7 @@ export default defineComponent({
         light.name = value.name;
       }
 
-      if (value?.visible) {
+      if (typeof value?.visible === 'boolean') {
         light.visible = value.visible;
       }
 

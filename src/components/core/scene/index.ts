@@ -70,7 +70,7 @@ export default defineComponent({
           scene.name = value.name;
         }
 
-        if (value?.visible) {
+        if (typeof value?.visible === 'boolean') {
           scene.visible = value.visible;
         }
 
