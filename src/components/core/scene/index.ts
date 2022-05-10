@@ -77,6 +77,8 @@ export default defineComponent({
         if (value?.userData) {
           assignUserData(scene, value.userData);
         }
+
+        scene.visible = !!value?.visible;
       },
       { deep: true, immediate: true },
     );
