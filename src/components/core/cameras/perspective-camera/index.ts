@@ -11,7 +11,7 @@ import {
 } from 'vue';
 
 interface Props {
-  paramaters?: Partial<Pick<PerspectiveCamera, 'fov' | 'near' | 'far' | 'name' | 'userData'>>
+  paramaters?: Partial<Pick<PerspectiveCamera, 'fov' | 'near' | 'far' | 'name' | 'userData' | 'visible'>>
 }
 
 export type PerspectiveCameraComponent = CameraComponent & Pick<PerspectiveCamera, 'isPerspectiveCamera'>
@@ -59,6 +59,10 @@ export default defineComponent({
 
       if (value?.name) {
         camera.name = value.name;
+      }
+
+      if (value?.visible) {
+        camera.visible = value.visible;
       }
 
       if (value?.userData) {

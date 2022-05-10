@@ -21,7 +21,7 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
     parameters: {
-      type: Object as PropType<Partial<Pick<Mesh, 'name' | 'userData'>>>,
+      type: Object as PropType<Partial<Pick<Mesh, 'name' | 'userData' | 'visible'>>>,
       default: undefined,
     },
     helper: {
@@ -54,6 +54,10 @@ export default defineComponent({
       (value) => {
         if (value?.name) {
           mesh.name = value.name;
+        }
+
+        if (value?.visible) {
+          mesh.visible = value.visible;
         }
 
         if (value?.userData) {

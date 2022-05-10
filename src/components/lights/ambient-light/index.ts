@@ -19,7 +19,7 @@ export default defineComponent({
     parameters: {
       type: Object as PropType<{
         color?: ColorRepresentation
-      } & Partial<Pick<AmbientLight, 'intensity' | 'name' | 'userData'>>>,
+      } & Partial<Pick<AmbientLight, 'intensity' | 'name' | 'userData' | 'visible'>>>,
       default: undefined,
     },
   },
@@ -52,6 +52,10 @@ export default defineComponent({
 
       if (value?.name) {
         light.name = value.name;
+      }
+
+      if (value?.visible) {
+        light.visible = value.visible;
       }
 
       if (value?.userData) {

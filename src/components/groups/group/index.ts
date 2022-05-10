@@ -19,7 +19,7 @@ export default defineComponent({
   props: {
     ...useTransformsProps,
     parameters: {
-      type: Object as PropType<Partial<Pick<Group, 'name' | 'userData'>>>,
+      type: Object as PropType<Partial<Pick<Group, 'name' | 'userData' | 'visible'>>>,
       default: undefined,
     },
     helper: {
@@ -52,6 +52,10 @@ export default defineComponent({
       (value) => {
         if (value?.name) {
           group.name = value.name;
+        }
+
+        if (value?.visible) {
+          group.visible = value.visible;
         }
 
         if (value?.userData) {

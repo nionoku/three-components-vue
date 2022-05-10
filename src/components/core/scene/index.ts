@@ -22,7 +22,7 @@ interface Props {
       near: number
       far: number
     }
-  } & Partial<Pick<Scene, 'name' | 'userData'>>
+  } & Partial<Pick<Scene, 'name' | 'userData' | 'visible'>>
   helper?: number
 }
 
@@ -68,6 +68,10 @@ export default defineComponent({
 
         if (value?.name) {
           scene.name = value.name;
+        }
+
+        if (value?.visible) {
+          scene.visible = value.visible;
         }
 
         if (value?.userData) {

@@ -24,7 +24,7 @@ export default defineComponent({
     parameters: {
       type: Object as PropType<{
         color?: ColorRepresentation
-      } & Partial<Pick<DirectionalLight, 'intensity' | 'name' | 'userData'>>>,
+      } & Partial<Pick<DirectionalLight, 'intensity' | 'name' | 'userData' | 'visible'>>>,
       default: null,
     },
     helper: {
@@ -60,6 +60,10 @@ export default defineComponent({
 
       if (value?.name) {
         light.name = value.name;
+      }
+
+      if (value?.visible) {
+        light.visible = value.visible;
       }
 
       if (value?.userData) {
