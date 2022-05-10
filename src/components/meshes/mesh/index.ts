@@ -56,13 +56,11 @@ export default defineComponent({
           mesh.name = value.name;
         }
 
-        if (value?.visible) {
-          mesh.visible = value.visible;
-        }
-
         if (value?.userData) {
           assignUserData(mesh, value.userData);
         }
+
+        mesh.visible = !!value?.visible;
       },
       { deep: true, immediate: true },
     );

@@ -70,13 +70,11 @@ export default defineComponent({
           scene.name = value.name;
         }
 
-        if (value?.visible) {
-          scene.visible = value.visible;
-        }
-
         if (value?.userData) {
           assignUserData(scene, value.userData);
         }
+
+        scene.visible = !!value?.visible;
       },
       { deep: true, immediate: true },
     );

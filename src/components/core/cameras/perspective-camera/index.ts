@@ -61,13 +61,11 @@ export default defineComponent({
         camera.name = value.name;
       }
 
-      if (value?.visible) {
-        camera.visible = value.visible;
-      }
-
       if (value?.userData) {
         assignUserData(camera, value.userData);
       }
+
+      camera.visible = !!value?.visible;
 
       camera.updateProjectionMatrix();
     }, { deep: true });

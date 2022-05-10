@@ -54,13 +54,11 @@ export default defineComponent({
           group.name = value.name;
         }
 
-        if (value?.visible) {
-          group.visible = value.visible;
-        }
-
         if (value?.userData) {
           assignUserData(group, value.userData);
         }
+
+        group.visible = !!value?.visible;
       },
       { deep: true, immediate: true },
     );
